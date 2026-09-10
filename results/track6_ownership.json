@@ -1,0 +1,137 @@
+{
+  "by_ownership": {
+    "Coop": {
+      "mean_retained_share": 0.6977974880555058,
+      "median_customers": 20754.0,
+      "median_implied_sigma": 2.5432273062422643,
+      "median_retained_share": 0.7554890219560878,
+      "median_saidi_with": 170.1,
+      "median_saidi_without": 113.9,
+      "n": 1813,
+      "share_reporting_ieee": 0.7137341423055709,
+      "share_zero_exclusion": 0.28019856591285164
+    },
+    "IOU": {
+      "mean_retained_share": 0.6305102501755473,
+      "median_customers": 317878.5,
+      "median_implied_sigma": 2.630615590842435,
+      "median_retained_share": 0.6440590041724608,
+      "median_saidi_with": 171.0,
+      "median_saidi_without": 105.64500000000001,
+      "n": 632,
+      "share_reporting_ieee": 0.814873417721519,
+      "share_zero_exclusion": 0.12974683544303797
+    },
+    "Municipal": {
+      "mean_retained_share": 0.7084629057189393,
+      "median_customers": 16435.0,
+      "median_implied_sigma": 2.944662357103961,
+      "median_retained_share": 0.9260463513549333,
+      "median_saidi_with": 49.45,
+      "median_saidi_without": 34.39,
+      "n": 947,
+      "share_reporting_ieee": 0.5850052798310454,
+      "share_zero_exclusion": 0.46673706441393875
+    }
+  },
+  "conditional": {
+    "note": "reference class is Coop; state and year fixed effects in every specification; standard errors clustered by utility-state",
+    "retained_share_no_size": {
+      "IOU_p": 1.491497989362413e-05,
+      "IOU_se": 0.01583771121624764,
+      "IOU_vs_Coop": -0.06857634340993518,
+      "Municipal_p": 0.08453978186557916,
+      "Municipal_se": 0.017709972112121893,
+      "Municipal_vs_Coop": 0.030548492309224663,
+      "log_customers": null,
+      "log_customers_p": null,
+      "n": 3392,
+      "r2": 0.08083629116915703
+    },
+    "retained_share_with_size": {
+      "IOU_p": 0.0039187153210896095,
+      "IOU_se": 0.022540373266461973,
+      "IOU_vs_Coop": -0.06502068031024816,
+      "Municipal_p": 0.08725316998285154,
+      "Municipal_se": 0.01773806563776744,
+      "Municipal_vs_Coop": 0.03033331083863767,
+      "log_customers": -0.0013761780680960722,
+      "log_customers_p": 0.8072668972724059,
+      "n": 3392,
+      "r2": 0.08086013924056601
+    },
+    "zero_exclusion_no_size": {
+      "IOU_p": 2.5103151562032938e-14,
+      "IOU_se": 0.023943294979566605,
+      "IOU_vs_Coop": -0.18248028937023458,
+      "Municipal_p": 1.4964976345341374e-14,
+      "Municipal_se": 0.027338125752466687,
+      "Municipal_vs_Coop": 0.2101709032051819,
+      "log_customers": null,
+      "log_customers_p": null,
+      "n": 3392,
+      "r2": 0.13698009269020528
+    },
+    "zero_exclusion_with_size": {
+      "IOU_p": 0.02555577395433699,
+      "IOU_se": 0.03337363547877156,
+      "IOU_vs_Coop": -0.07451987208206548,
+      "Municipal_p": 4.0459598501962735e-14,
+      "Municipal_se": 0.026937910781647628,
+      "Municipal_vs_Coop": 0.20363735919216247,
+      "log_customers": -0.04178482446988356,
+      "log_customers_p": 3.752582443456343e-07,
+      "n": 3392,
+      "r2": 0.14668915067936872
+    }
+  },
+  "size_deciles": {
+    "deciles": {
+      "0": {
+        "Coop_median_r": 0.948051948051948,
+        "IOU_median_r": 0.5609844372059356,
+        "gap_IOU_minus_Coop": -0.38706751084601243,
+        "median_customers": 3893.0,
+        "n": 340
+      },
+      "1": {
+        "Coop_median_r": 0.8410185513940022,
+        "IOU_median_r": 0.5416752970779345,
+        "gap_IOU_minus_Coop": -0.2993432543160677,
+        "median_customers": 7609.0,
+        "n": 339
+      },
+      "5": {
+        "Coop_median_r": 0.6938437605856802,
+        "IOU_median_r": 0.5833706898097509,
+        "gap_IOU_minus_Coop": -0.11047307077592927,
+        "median_customers": 28641.0,
+        "n": 339
+      },
+      "6": {
+        "Coop_median_r": 0.6715020673838756,
+        "IOU_median_r": 0.6940503585222673,
+        "gap_IOU_minus_Coop": 0.02254829113839163,
+        "median_customers": 40841.0,
+        "n": 339
+      },
+      "7": {
+        "Coop_median_r": 0.7090909090909091,
+        "IOU_median_r": 0.7419828497180685,
+        "gap_IOU_minus_Coop": 0.03289194062715939,
+        "median_customers": 68071.0,
+        "n": 339
+      },
+      "8": {
+        "Coop_median_r": 0.7636162127929069,
+        "IOU_median_r": 0.6763641375343057,
+        "gap_IOU_minus_Coop": -0.08725207525860124,
+        "median_customers": 165988.0,
+        "n": 339
+      }
+    },
+    "deciles_with_both": 6,
+    "median_gap": -0.09886257301726525,
+    "n_deciles_iou_excludes_more": 4
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "breakeven": {
+    "case_study_high|cost_central|voll_central": {
+      "breakeven_saidi_min_per_yr": 1633.1690352270969,
+      "n_above": 22,
+      "share_of_2022_utilities_above": 0.024858757062146894
+    },
+    "case_study_high|cost_central|voll_high": {
+      "breakeven_saidi_min_per_yr": 755.748971051339,
+      "n_above": 86,
+      "share_of_2022_utilities_above": 0.09717514124293786
+    },
+    "case_study_high|cost_central|voll_low": {
+      "breakeven_saidi_min_per_yr": 4030.6611789404747,
+      "n_above": 6,
+      "share_of_2022_utilities_above": 0.006779661016949152
+    },
+    "case_study_high|cost_high|voll_central": {
+      "breakeven_saidi_min_per_yr": 5587.15722577691,
+      "n_above": 5,
+      "share_of_2022_utilities_above": 0.005649717514124294
+    },
+    "case_study_high|cost_high|voll_high": {
+      "breakeven_saidi_min_per_yr": 2585.4570062282655,
+      "n_above": 9,
+      "share_of_2022_utilities_above": 0.010169491525423728
+    },
+    "case_study_high|cost_high|voll_low": {
+      "breakeven_saidi_min_per_yr": 13789.104033217414,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "case_study_high|cost_low|voll_central": {
+      "breakeven_saidi_min_per_yr": 257.8687950358574,
+      "n_above": 317,
+      "share_of_2022_utilities_above": 0.3581920903954802
+    },
+    "case_study_high|cost_low|voll_high": {
+      "breakeven_saidi_min_per_yr": 119.328784902843,
+      "n_above": 570,
+      "share_of_2022_utilities_above": 0.6440677966101694
+    },
+    "case_study_high|cost_low|voll_low": {
+      "breakeven_saidi_min_per_yr": 636.420186148496,
+      "n_above": 116,
+      "share_of_2022_utilities_above": 0.1310734463276836
+    },
+    "case_study_low|cost_central|voll_central": {
+      "breakeven_saidi_min_per_yr": 2228.268985049573,
+      "n_above": 11,
+      "share_of_2022_utilities_above": 0.012429378531073447
+    },
+    "case_study_low|cost_central|voll_high": {
+      "breakeven_saidi_min_per_yr": 1031.13147283169,
+      "n_above": 52,
+      "share_of_2022_utilities_above": 0.05875706214689266
+    },
+    "case_study_low|cost_central|voll_low": {
+      "breakeven_saidi_min_per_yr": 5499.367855102348,
+      "n_above": 5,
+      "share_of_2022_utilities_above": 0.005649717514124294
+    },
+    "case_study_low|cost_high|voll_central": {
+      "breakeven_saidi_min_per_yr": 7623.025475169594,
+      "n_above": 4,
+      "share_of_2022_utilities_above": 0.004519774011299435
+    },
+    "case_study_low|cost_high|voll_high": {
+      "breakeven_saidi_min_per_yr": 3527.5550386347295,
+      "n_above": 7,
+      "share_of_2022_utilities_above": 0.007909604519774011
+    },
+    "case_study_low|cost_high|voll_low": {
+      "breakeven_saidi_min_per_yr": 18813.626872718556,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "case_study_low|cost_low|voll_central": {
+      "breakeven_saidi_min_per_yr": 351.83194500782736,
+      "n_above": 227,
+      "share_of_2022_utilities_above": 0.25649717514124293
+    },
+    "case_study_low|cost_low|voll_high": {
+      "breakeven_saidi_min_per_yr": 162.81023255237213,
+      "n_above": 463,
+      "share_of_2022_utilities_above": 0.5231638418079096
+    },
+    "case_study_low|cost_low|voll_low": {
+      "breakeven_saidi_min_per_yr": 868.321240279318,
+      "n_above": 69,
+      "share_of_2022_utilities_above": 0.07796610169491526
+    },
+    "econometric|cost_central|voll_central": {
+      "breakeven_saidi_min_per_yr": 16266.363590861885,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "econometric|cost_central|voll_high": {
+      "breakeven_saidi_min_per_yr": 7527.259751671338,
+      "n_above": 4,
+      "share_of_2022_utilities_above": 0.004519774011299435
+    },
+    "econometric|cost_central|voll_low": {
+      "breakeven_saidi_min_per_yr": 40145.38534224713,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "econometric|cost_high|voll_central": {
+      "breakeven_saidi_min_per_yr": 55648.085968738036,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "econometric|cost_high|voll_high": {
+      "breakeven_saidi_min_per_yr": 25751.151782033525,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "econometric|cost_high|voll_low": {
+      "breakeven_saidi_min_per_yr": 137339.47617084545,
+      "n_above": 0,
+      "share_of_2022_utilities_above": 0.0
+    },
+    "econometric|cost_low|voll_central": {
+      "breakeven_saidi_min_per_yr": 2568.37319855714,
+      "n_above": 10,
+      "share_of_2022_utilities_above": 0.011299435028248588
+    },
+    "econometric|cost_low|voll_high": {
+      "breakeven_saidi_min_per_yr": 1188.5146976323163,
+      "n_above": 39,
+      "share_of_2022_utilities_above": 0.04406779661016949
+    },
+    "econometric|cost_low|voll_low": {
+      "breakeven_saidi_min_per_yr": 6338.74505403902,
+      "n_above": 5,
+      "share_of_2022_utilities_above": 0.005649717514124294
+    }
+  },
+  "customers_per_mile": {
+    "line_miles": 5500000,
+    "national_customers_per_mile": 30.511933636363636,
+    "total_us_customers_2022": 167815635.0
+  },
+  "density_sweep": {
+    "case_study_high": {
+      "breakeven_saidi_min_per_yr": [
+        9966.229043962641,
+        4983.114521981321,
+        2491.5572609906603,
+        1845.5979711041932,
+        996.6229043962642,
+        498.3114521981321,
+        249.15572609906604,
+        124.57786304953302
+      ],
+      "customers_per_mile": [
+        5,
+        10,
+        20,
+        27,
+        50,
+        100,
+        200,
+        400
+      ],
+      "reduction_used": "case_study_high"
+    },
+    "case_study_low": {
+      "breakeven_saidi_min_per_yr": [
+        13597.759079159987,
+        6798.879539579993,
+        3399.4397697899967,
+        2518.1035331777757,
+        1359.775907915999,
+        679.8879539579995,
+        339.94397697899973,
+        169.97198848949986
+      ],
+      "customers_per_mile": [
+        5,
+        10,
+        20,
+        27,
+        50,
+        100,
+        200,
+        400
+      ],
+      "reduction_used": "case_study_low"
+    },
+    "econometric": {
+      "breakeven_saidi_min_per_yr": [
+        99263.64127786791,
+        49631.820638933954,
+        24815.910319466977,
+        18382.15579219776,
+        9926.36412778679,
+        4963.182063893395,
+        2481.5910319466975,
+        1240.7955159733488
+      ],
+      "customers_per_mile": [
+        5,
+        10,
+        20,
+        27,
+        50,
+        100,
+        200,
+        400
+      ],
+      "reduction_used": "econometric"
+    }
+  },
+  "headline_ratio_case_vs_econometric": 7.300000000000001,
+  "observed_median_saidi_with_2022": 173.655,
+  "params": {
+    "asset_life_years": {
+      "source": "underground plant life commonly cited at ~30 years vs 40-50 for overhead",
+      "value": 30
+    },
+    "cost_per_customer_hour_usd": {
+      "central": 370.2,
+      "high": 800,
+      "low": 150,
+      "source": "$370.2 (2022 USD) average cost per customer-hour of interruption used in Quantifying distribution system resilience from utility data (arXiv:2407.10773), derived from the LBNL ICE Calculator customer mix; low/high bracket the residential-heavy and commercial-heavy ends"
+    },
+    "cost_per_mile_usd": {
+      "central": 3800000,
+      "high": 13000000,
+      "low": 600000,
+      "source": "EEI 'Out of Sight, Out of Mind' conversion range restated in 2019 USD ($0.6M-$13M/mile); central value is the CPUC average conversion cost of $3.8M per circuit mile across the three California IOUs"
+    },
+    "discount_rate": {
+      "central": 0.07,
+      "high": 0.09,
+      "low": 0.05,
+      "source": "utility WACC range used for illustration"
+    },
+    "saidi_reduction": {
+      "case_study_high": 0.996,
+      "case_study_low": 0.73,
+      "econometric": 0.1,
+      "source": "case studies: FPL 73% five-year average, WPSC SMRP 95%, Virginia Electric and Power 99.6%. Econometric: Larsen et al. 2020 finds SAIDI effect negative and statistically insignificant; 0.10 is used here as a deliberately generous stand-in for 'small and not clearly distinguishable from zero', so the econometric case is not strawmanned"
+    },
+    "us_distribution_line_miles": {
+      "source": "5.5 million miles of US distribution line, EEI figure as restated by Exponent",
+      "value": 5500000
+    }
+  }
+}

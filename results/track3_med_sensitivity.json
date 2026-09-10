@@ -1,0 +1,200 @@
+{
+  "bunching": {
+    "ci95": [
+      5.738170908478692,
+      23.558364320348115
+    ],
+    "excess_mass_ratio": 9.288515164038389,
+    "fit_range_lo": 0.3,
+    "n_bootstrap_effective": 2000,
+    "n_clusters": 1096,
+    "observed_count_in_window": 1150,
+    "poly_degree": 5,
+    "window": 0.05
+  },
+  "coverage": {
+    "implied_sigma_quantiles": {
+      "10": 1.3475687120123252,
+      "25": 1.8917027305837086,
+      "50": 2.6390338086992897,
+      "75": 3.521235004323991,
+      "90": 4.514489538051984
+    },
+    "n": 3427,
+    "n_admissible": 2267,
+    "n_exactly_zero_exclusion": 1040,
+    "n_too_clean": 1071,
+    "n_too_excluded": 89,
+    "r_max_modelable": 0.9936750551202856,
+    "r_min_modelable": 0.027665468935336623,
+    "share_admissible": 0.6615115261161366,
+    "share_exactly_zero_exclusion": 0.3034724248613948,
+    "share_too_clean": 0.31251823752553254,
+    "share_too_excluded": 0.0259702363583309
+  },
+  "elasticity": {
+    "analytic_at_r_half": 0.3989422804014327,
+    "corr_analytic_vs_numeric": 0.9255311162106493,
+    "max_analytic_dr_dbeta": 0.3989422804014327,
+    "median_analytic": 0.34303483205598817,
+    "median_numeric_finite_sample": 0.4764326418544734,
+    "n": 2236,
+    "note": "analytic is the closed-form identity, numeric differentiates the finite-sample surface; they agree in shape, not in level"
+  },
+  "sensitivity": {
+    "beta_grid": [
+      1.5,
+      1.55,
+      1.6,
+      1.65,
+      1.7,
+      1.75,
+      1.8,
+      1.85,
+      1.9,
+      1.95,
+      2.0,
+      2.05,
+      2.1,
+      2.15,
+      2.2,
+      2.25,
+      2.3,
+      2.35,
+      2.4,
+      2.45,
+      2.5,
+      2.55,
+      2.6,
+      2.65,
+      2.7,
+      2.75,
+      2.8,
+      2.85,
+      2.9,
+      2.95,
+      3.0,
+      3.05,
+      3.1,
+      3.15,
+      3.2,
+      3.25,
+      3.3,
+      3.35,
+      3.4,
+      3.45,
+      3.5
+    ],
+    "customer_weighted": true,
+    "fleet_range_ratio": 6.6197954093467235,
+    "fleet_saidi_without_med": [
+      39.06647182236426,
+      41.44237389817318,
+      43.95176532934133,
+      46.5608461516593,
+      49.214781059244345,
+      52.061422105515916,
+      55.046243983183416,
+      58.13747425302833,
+      61.406602026834626,
+      64.80732669258853,
+      68.30670657668963,
+      72.01675295895427,
+      75.8461082742561,
+      79.98850016559473,
+      83.99256349445974,
+      88.60354321183762,
+      93.2326594690283,
+      98.10780225018988,
+      103.10553429201143,
+      108.37808922462753,
+      113.78529344852433,
+      119.87117010480054,
+      126.06270126643248,
+      132.73484267066732,
+      140.04144707362053,
+      147.63335537712757,
+      155.2670488758509,
+      165.23324816639612,
+      185.16257324973378,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906,
+      258.61205082906
+    ],
+    "headline": {
+      "beta_1.5": {
+        "expected_med_days_per_year": 24.3846284631332,
+        "fleet_saidi_without_med": 39.06647182236426,
+        "median_retained_share": 0.16417638509571922,
+        "pct_change_vs_2_5": -65.66650167313787,
+        "unweighted_mean_saidi_without_med": 47.460760211717954
+      },
+      "beta_2.0": {
+        "expected_med_days_per_year": 8.30379816108541,
+        "fleet_saidi_without_med": 68.30670657668963,
+        "median_retained_share": 0.3361810775312971,
+        "pct_change_vs_2_5": -39.9687740774768,
+        "unweighted_mean_saidi_without_med": 82.78401615055954
+      },
+      "beta_2.5": {
+        "expected_med_days_per_year": 2.266527843908298,
+        "fleet_saidi_without_med": 113.78529344852433,
+        "median_retained_share": 0.576591140713531,
+        "pct_change_vs_2_5": 0.0,
+        "unweighted_mean_saidi_without_med": 139.53505276606063
+      },
+      "beta_3.0": {
+        "expected_med_days_per_year": 0.49271278154498777,
+        "fleet_saidi_without_med": 258.61205082906,
+        "median_retained_share": 1.0,
+        "pct_change_vs_2_5": 127.28073461097526,
+        "unweighted_mean_saidi_without_med": 333.0723096603444
+      },
+      "beta_3.5": {
+        "expected_med_days_per_year": 0.08490961384797213,
+        "fleet_saidi_without_med": 258.61205082906,
+        "median_retained_share": 1.0,
+        "pct_change_vs_2_5": 127.28073461097526,
+        "unweighted_mean_saidi_without_med": 333.0723096603444
+      }
+    },
+    "n_admissible_rows": 2267
+  },
+  "standard_choice": {
+    "IEEE": {
+      "mean_retained_share": 0.6754821054439465,
+      "median_retained_share": 0.7133524440515825,
+      "median_saidi_with": 147.1,
+      "median_saidi_without": 96.28,
+      "n": 2386,
+      "share_zero_exclusion": 0.26152556580050296
+    },
+    "Other": {
+      "mean_retained_share": 0.7172561296140206,
+      "median_retained_share": 0.8777012522361359,
+      "median_saidi_with": 89.975,
+      "median_saidi_without": 64.0,
+      "n": 1041,
+      "share_zero_exclusion": 0.39961575408261285
+    },
+    "switchers": {
+      "n_switched_standard": 160,
+      "n_utility_states": 1096,
+      "share_switched": 0.145985401459854
+    },
+    "test": {
+      "mannwhitney_u": 1097041.0,
+      "note": "utility-state-years are not independent across filing years; treat the p-value as descriptive, the effect size is the point",
+      "p_value": 3.4615959721595236e-08
+    }
+  }
+}

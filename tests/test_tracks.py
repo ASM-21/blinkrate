@@ -1,0 +1,256 @@
+"""Tests that pin each track's headline number, and the claims guard itself.
+
+Every number quoted in README.md or FINDINGS.md appears here with a tolerance
+tight enough that a real change in the analysis breaks the build. Loose enough
+tolerances would make these tests decorative.
+"""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from blinkrate import (track1_investment, track2_weather_split,
+                       track3_med_sensitivity, track4_cause_exclusions,
+                       track5_undergrounding, track6_ownership, track7_validation)
+from blinkrate.shared import ingest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _results(name: str) -> dict:
+    path = ROOT / "results" / f"{name}.json"
+    if not path.exists():
+        pytest.skip(f"{name}.json missing; run `python -m blinkrate.run_all`")
+    return json.loads(path.read_text())
+
+
+# --------------------------------------------------------------------------
+# track 3, the headline
+# --------------------------------------------------------------------------
+
+def test_track3_sensitivity_range():
+    s = _results("track3_med_sensitivity")["sensitivity"]
+    h = s["headline"]
+    assert h["beta_1.5"]["fleet_saidi_without_med"] == pytest.approx(39, abs=1.0)
+    assert h["beta_2.5"]["fleet_saidi_without_med"] == pytest.approx(114, abs=1.0)
+    assert h["beta_3.0"]["fleet_saidi_without_med"] == pytest.approx(259, abs=1.0)
+    assert s["fleet_range_ratio"] == pytest.approx(6.62, abs=0.03)
+
+
+def test_track3_qualifying_days_is_exact_not_estimated():
+    """Expected qualifying days is 365 * (1 - Phi(beta)), independent of sigma.
+    If this drifts, the beta grid or the identity has been changed."""
+    h = _results("track3_med_sensitivity")["sensitivity"]["headline"]
+    assert h["beta_2.5"]["expected_med_days_per_year"] == pytest.approx(2.27, abs=0.01)
+    assert h["beta_3.0"]["expected_med_days_per_year"] == pytest.approx(0.49, abs=0.01)
+
+
+def test_track3_zero_exclusion_mass():
+    c = _results("track3_med_sensitivity")["coverage"]
+    assert c["share_exactly_zero_exclusion"] == pytest.approx(0.303, abs=0.002)
+    assert c["share_admissible"] == pytest.approx(0.662, abs=0.005)
+    assert c["n"] == 3427
+
+
+def test_track3_bunching_survives():
+    b = _results("track3_med_sensitivity")["bunching"]
+    assert b["excess_mass_ratio"] == pytest.approx(9.3, abs=0.2)
+    assert b["ci95"][0] > 1.0, "CI must exclude 1 or the bunching claim is dead"
+    assert b["n_clusters"] > 1000
+
+
+def test_track3_standard_choice_gap():
+    sc = _results("track3_med_sensitivity")["standard_choice"]
+    assert sc["Other"]["median_retained_share"] > sc["IEEE"]["median_retained_share"]
+    assert sc["Other"]["median_retained_share"] == pytest.approx(0.878, abs=0.002)
+    assert sc["IEEE"]["median_retained_share"] == pytest.approx(0.713, abs=0.002)
+
+
+def test_track3_bunching_is_deterministic():
+    """Same seed, same answer. A bootstrap that wanders makes the CI unciteable."""
+    df = ingest.analysis_sample()
+    a = track3_med_sensitivity.excess_mass_at_zero_exclusion(df, n_boot=300)
+    b = track3_med_sensitivity.excess_mass_at_zero_exclusion(df, n_boot=300)
+    assert a["excess_mass_ratio"] == b["excess_mass_ratio"]
+    assert a["ci95"] == b["ci95"]
+
+
+# --------------------------------------------------------------------------
+# track 2
+# --------------------------------------------------------------------------
+
+def test_track2_excluded_part_carries_the_trend():
+    t2 = _results("track2_weather_split")
+    assert t2["balanced_panel_utility_states"] == 589
+    assert t2["within_utility"]["share_of_change_from_excluded_part"] == pytest.approx(
+        0.829, abs=0.005)
+
+
+def test_track2_panel_is_balanced():
+    """Composition change alone moves the fleet average, so the trend must be
+    computed on utilities present in every year."""
+    df = track2_weather_split.balanced_panel()
+    counts = df.groupby("utility_state")["year"].nunique()
+    assert (counts == 4).all()
+    assert df.groupby("year").size().nunique() <= 2  # multi-state rows aside
+
+
+def test_track2_net_entry_into_exclusion():
+    e = _results("track2_weather_split")["exclusion_entry"]
+    assert e["started_excluding"] > e["stopped_excluding"]
+    assert e["net_entry_into_exclusion"] == pytest.approx(0.083, abs=0.005)
+
+
+# --------------------------------------------------------------------------
+# track 6
+# --------------------------------------------------------------------------
+
+def test_track6_ownership_ordering():
+    o = _results("track6_ownership")["by_ownership"]
+    assert o["IOU"]["median_retained_share"] == pytest.approx(0.644, abs=0.002)
+    assert o["Municipal"]["median_retained_share"] == pytest.approx(0.926, abs=0.002)
+    assert (o["IOU"]["median_retained_share"] < o["Coop"]["median_retained_share"]
+            < o["Municipal"]["median_retained_share"])
+
+
+def test_track6_gap_shrinks_when_size_is_controlled():
+    """The falsification result, pinned. If a future change makes the pooled and
+    conditional gaps equal, the README's 'two thirds is size' line is wrong."""
+    c = _results("track6_ownership")["conditional"]
+    raw = abs(c["zero_exclusion_no_size"]["IOU_vs_Coop"])
+    conditioned = abs(c["zero_exclusion_with_size"]["IOU_vs_Coop"])
+    assert conditioned < raw / 2
+    assert conditioned == pytest.approx(0.0745, abs=0.005)
+
+
+# --------------------------------------------------------------------------
+# tracks 1, 4, 5, 7
+# --------------------------------------------------------------------------
+
+def test_track1_null_and_its_power():
+    t1 = _results("track1_investment")
+    ami = t1["models"]["log_saidi_without_fe"]["coefficients"]["ami_share"]
+    assert ami["beta"] == pytest.approx(-0.185, abs=0.003)
+    assert ami["ci95"][0] < 0 < ami["ci95"][1], "the null depends on the CI crossing"
+    vd = t1["variance_decomposition"]
+    assert vd["share_between_utility"] == pytest.approx(0.74, abs=0.005)
+    assert vd["share_between_utility"] + vd["share_within_utility"] == pytest.approx(1)
+
+
+def test_track1_states_its_substitution():
+    """A substituted question must announce itself in the payload, not only in a
+    docstring nobody reads."""
+    assert "FERC" in _results("track1_investment")["substitution"]
+    assert "deployment" in _results("track1_investment")["substitution"]
+
+
+def test_track4_is_marked_blocked():
+    t4 = _results("track4_cause_exclusions")
+    assert t4["status"] == "BLOCKED"
+    assert "ferc.gov blocked" in t4["blocker"]
+    assert t4["los"]["median_los_retained_share"] == pytest.approx(0.960, abs=0.002)
+
+
+def test_track5_breakeven_is_far_above_observed():
+    t5 = _results("track5_undergrounding")
+    be = t5["breakeven"]["case_study_high|cost_central|voll_central"]
+    assert be["breakeven_saidi_min_per_yr"] == pytest.approx(1633, abs=2)
+    assert be["breakeven_saidi_min_per_yr"] > 8 * t5["observed_median_saidi_with_2022"]
+    assert t5["customers_per_mile"]["national_customers_per_mile"] == pytest.approx(
+        30.5, abs=0.05)
+
+
+def test_track5_density_is_what_decides_it():
+    """Breakeven scales inversely with customers per mile; the dense end clears
+    the median utility's SAIDI, which is the nuance the headline needs."""
+    d = _results("track5_undergrounding")["density_sweep"]["case_study_high"]
+    dens = d["customers_per_mile"]
+    be = d["breakeven_saidi_min_per_yr"]
+    assert be[0] > be[-1]
+    assert be[-1] * dens[-1] == pytest.approx(be[0] * dens[0], rel=1e-6)
+    assert be[-1] < _results("track5_undergrounding")["observed_median_saidi_with_2022"]
+
+
+def test_track7_source_data_is_internally_consistent():
+    c = _results("track7_validation")["caidi_identity"]
+    assert c["with_med"]["share_within_tolerance"] == 1.0
+    assert c["with_med"]["n_checked"] > 800
+    assert c["without_med"]["share_within_tolerance"] == 1.0
+
+
+def test_track7_calibration_beats_closed_form():
+    v = _results("track7_validation")["closed_form_vs_procedure"]
+    assert v["max_abs_err_calibration"] < 0.03
+    assert v["max_abs_err_closed_form"] > 0.15
+    assert _results("track7_validation")["round_trip"]["max_abs_error"] < 0.05
+
+
+# --------------------------------------------------------------------------
+# the guard itself
+# --------------------------------------------------------------------------
+
+def _run_guard(cwd: Path) -> subprocess.CompletedProcess:
+    return subprocess.run([sys.executable, str(ROOT / "tools" / "check_claims.py")],
+                          cwd=cwd, capture_output=True, text=True)
+
+
+def test_claims_guard_passes_on_the_real_prose():
+    r = _run_guard(ROOT)
+    assert r.returncode == 0, r.stdout
+
+
+@pytest.mark.parametrize("corruption,expect", [
+    # a drifted number
+    (lambda t: t.replace("6.62x", "9.99x"), "drift"),
+    # a deleted hedge
+    (lambda t: t.replace("model-implied", "measured"), "hedge missing"),
+    # an overclaim
+    (lambda t: t.replace("The direction is a property of the rule.",
+                         "This proves the rule is arbitrary for all utilities."),
+     "forbidden"),
+])
+def test_claims_guard_catches_corrupted_prose(corruption, expect, tmp_path):
+    """The guard is only worth having if it can fail. Feed it a broken copy of
+    the real prose and require a non-zero exit."""
+    for name in ("README.md", "FINDINGS.md", "FALSIFICATION.md"):
+        (tmp_path / name).write_text(corruption((ROOT / name).read_text()))
+    (tmp_path / "results").symlink_to(ROOT / "results", target_is_directory=True)
+
+    # the guard resolves paths from its own location, so run a copy rooted here
+    src = (ROOT / "tools" / "check_claims.py").read_text()
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    (tools / "check_claims.py").write_text(src)
+
+    r = subprocess.run([sys.executable, str(tools / "check_claims.py")],
+                       cwd=tmp_path, capture_output=True, text=True)
+    assert r.returncode == 1, f"guard passed corrupted prose:\n{r.stdout}"
+    assert expect.split()[0] in r.stdout.lower()
+
+
+def test_readme_test_count_is_not_stale():
+    """The README quotes a test count in its usage block.
+
+    A stale count is a small lie that survives every refactor, so it gets a test
+    like any other quoted number. Collection runs in a subprocess so this does
+    not recurse.
+    """
+    import re
+    r = subprocess.run(
+        [sys.executable, "-m", "pytest", "--collect-only", "-q", str(ROOT / "tests")],
+        cwd=ROOT, capture_output=True, text=True)
+    m = re.search(r"(\d+) tests? collected", r.stdout)
+    assert m, f"could not parse collection output:\n{r.stdout[-500:]}"
+    collected = int(m.group(1))
+
+    readme = (ROOT / "README.md").read_text()
+    stated = re.search(r"pytest\s+#\s*(\d+) tests", readme)
+    assert stated, "README usage block no longer states a test count"
+    assert int(stated.group(1)) == collected, (
+        f"README says {stated.group(1)} tests, collection finds {collected}")

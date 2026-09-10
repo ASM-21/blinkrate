@@ -1,0 +1,506 @@
+{
+  "A1_heavy_tail": {
+    "by_case": {
+      "nu10_sigma1.0": {
+        "difference": -0.06613095557445414,
+        "heavy_tail_median_r": 0.8741893605624724,
+        "lognormal_median_r": 0.9403203161369266
+      },
+      "nu10_sigma2.0": {
+        "difference": -0.27135872602103484,
+        "heavy_tail_median_r": 0.48677927471956584,
+        "lognormal_median_r": 0.7581380007406007
+      },
+      "nu10_sigma3.0": {
+        "difference": -0.2851023124107418,
+        "heavy_tail_median_r": 0.20254453535709993,
+        "lognormal_median_r": 0.48764684776784173
+      },
+      "nu3_sigma1.0": {
+        "difference": -0.24336780599311092,
+        "heavy_tail_median_r": 0.6969525101438157,
+        "lognormal_median_r": 0.9403203161369266
+      },
+      "nu3_sigma2.0": {
+        "difference": -0.6758304919604541,
+        "heavy_tail_median_r": 0.0823075087801466,
+        "lognormal_median_r": 0.7581380007406007
+      },
+      "nu3_sigma3.0": {
+        "difference": -0.48540683694854114,
+        "heavy_tail_median_r": 0.002240010819300588,
+        "lognormal_median_r": 0.48764684776784173
+      },
+      "nu5_sigma1.0": {
+        "difference": -0.1329450384928802,
+        "heavy_tail_median_r": 0.8073752776440464,
+        "lognormal_median_r": 0.9403203161369266
+      },
+      "nu5_sigma2.0": {
+        "difference": -0.5341353883998289,
+        "heavy_tail_median_r": 0.2240026123407718,
+        "lognormal_median_r": 0.7581380007406007
+      },
+      "nu5_sigma3.0": {
+        "difference": -0.4455617100405548,
+        "heavy_tail_median_r": 0.04208513772728692,
+        "lognormal_median_r": 0.48764684776784173
+      }
+    },
+    "max_abs_shift_in_r": 0.6758304919604541,
+    "verdict": "holding sigma fixed is the harsh version of this attack and it lands hard. a1b_heavy_tail_matched is the fair version: it re-inverts sigma under each distribution so the model reproduces the SAME observed r, then compares the beta sweep, which is what track 3 actually claims"
+  },
+  "A1b_heavy_tail_matched": {
+    "by_distribution": {
+      "lognormal": {
+        "matched_sigma": 2.6404502613151344,
+        "r_by_beta": {
+          "1.5": 0.16389646032473681,
+          "2.0": 0.3355537993826949,
+          "2.5": 0.5755917514514132,
+          "3.0": 1.0
+        },
+        "sweep_ratio_2_5_over_1_5": 3.5119230171961155
+      },
+      "t_nu10": {
+        "matched_sigma": 1.828371450608183,
+        "r_by_beta": {
+          "1.5": 0.3029471689135359,
+          "2.0": 0.4456934432035169,
+          "2.5": 0.5968403276829843,
+          "3.0": 0.7572424279281121
+        },
+        "sweep_ratio_2_5_over_1_5": 1.9701135674033265
+      },
+      "t_nu3": {
+        "matched_sigma": 1.0690724956287818,
+        "r_by_beta": {
+          "1.5": 0.4626577853752005,
+          "2.0": 0.5025582530431333,
+          "2.5": 0.5329327973224687,
+          "3.0": 0.5899917066001013
+        },
+        "sweep_ratio_2_5_over_1_5": 1.1518941519384083
+      },
+      "t_nu5": {
+        "matched_sigma": 1.3786050921487767,
+        "r_by_beta": {
+          "1.5": 0.4269590311812662,
+          "2.0": 0.5220169479596211,
+          "2.5": 0.6077667473866002,
+          "3.0": 0.7016694460020736
+        },
+        "sweep_ratio_2_5_over_1_5": 1.4234779053744193
+      }
+    },
+    "sweep_ratio_max": 3.5119230171961155,
+    "sweep_ratio_min": 1.1518941519384083,
+    "sweep_ratio_spread_x": 3.0488244178393034,
+    "target_retained_share": 0.5898617511520737
+  },
+  "A2_mean_vs_median": {
+    "by_sigma": {
+      "sigma_1.0": {
+        "mean": 0.936471840448204,
+        "mean_minus_median": -0.007461316637957571,
+        "median": 0.9439331570861615
+      },
+      "sigma_1.5": {
+        "mean": 0.8487946893522623,
+        "mean_minus_median": -0.011337140027552928,
+        "median": 0.8601318293798152
+      },
+      "sigma_2.0": {
+        "mean": 0.7488659706825344,
+        "mean_minus_median": -0.012678249810109454,
+        "median": 0.7615442204926438
+      },
+      "sigma_2.5": {
+        "mean": 0.6359466068218909,
+        "mean_minus_median": -0.0038909227746872777,
+        "median": 0.6398375295965781
+      },
+      "sigma_3.0": {
+        "mean": 0.5133754597211593,
+        "mean_minus_median": 0.015402461885322682,
+        "median": 0.4979729978358366
+      },
+      "sigma_4.0": {
+        "mean": 0.37129855354899705,
+        "mean_minus_median": 0.0763664467633618,
+        "median": 0.29493210678563525
+      },
+      "sigma_5.0": {
+        "mean": 0.29126289557221674,
+        "mean_minus_median": 0.12449033494721329,
+        "median": 0.16677256062500345
+      },
+      "sigma_6.0": {
+        "mean": 0.21596302494521052,
+        "mean_minus_median": 0.1307941312968276,
+        "median": 0.08516889364838293
+      }
+    },
+    "max_gap": 0.1307941312968276,
+    "sigma_range_tested": [
+      1.0,
+      6.0
+    ],
+    "verdict": "mean minus median is reported as measured over the sigma range that the observed data actually implies; the gap widens with sigma because a minority of years contain no qualifying day and pin r at 1"
+  },
+  "A3_bunching_specs": {
+    "by_spec": {
+      "deg3_win0.02_lo0.2": {
+        "ci95": [
+          26.517146146792395,
+          45.58542385837558
+        ],
+        "excess_mass_ratio": 33.53407735267959
+      },
+      "deg3_win0.02_lo0.3": {
+        "ci95": [
+          26.75335317104949,
+          49.84648760581896
+        ],
+        "excess_mass_ratio": 34.93956662849469
+      },
+      "deg3_win0.02_lo0.5": {
+        "ci95": [
+          24.334660973702352,
+          50.873342318503546
+        ],
+        "excess_mass_ratio": 34.73400415769499
+      },
+      "deg3_win0.05_lo0.2": {
+        "ci95": [
+          8.730040209802674,
+          15.174195879420258
+        ],
+        "excess_mass_ratio": 10.980131897596744
+      },
+      "deg3_win0.05_lo0.3": {
+        "ci95": [
+          8.605490664209396,
+          16.217161282746137
+        ],
+        "excess_mass_ratio": 11.189147605993588
+      },
+      "deg3_win0.05_lo0.5": {
+        "ci95": [
+          6.9470016444284255,
+          16.220874585375064
+        ],
+        "excess_mass_ratio": 10.216306578237923
+      },
+      "deg3_win0.1_lo0.2": {
+        "ci95": [
+          3.7850453323170377,
+          7.782776410799901
+        ],
+        "excess_mass_ratio": 4.997473583354396
+      },
+      "deg3_win0.1_lo0.3": {
+        "ci95": [
+          3.5847888391327194,
+          8.05167352260549
+        ],
+        "excess_mass_ratio": 5.003909903004425
+      },
+      "deg3_win0.1_lo0.5": {
+        "ci95": [
+          2.5972900503827874,
+          9.001038135565238
+        ],
+        "excess_mass_ratio": 3.8518374396831554
+      },
+      "deg4_win0.02_lo0.2": {
+        "ci95": [
+          27.037049444691363,
+          62.19915828110242
+        ],
+        "excess_mass_ratio": 39.85627195493418
+      },
+      "deg4_win0.02_lo0.3": {
+        "ci95": [
+          26.188509171817124,
+          65.37997964407093
+        ],
+        "excess_mass_ratio": 40.25033200931969
+      },
+      "deg4_win0.02_lo0.5": {
+        "ci95": [
+          26.758894449806064,
+          133.01007904578145
+        ],
+        "excess_mass_ratio": 45.227358360021555
+      },
+      "deg4_win0.05_lo0.2": {
+        "ci95": [
+          8.106712259120641,
+          19.8315705461513
+        ],
+        "excess_mass_ratio": 12.106100034983882
+      },
+      "deg4_win0.05_lo0.3": {
+        "ci95": [
+          7.6975973067489525,
+          24.545393780534564
+        ],
+        "excess_mass_ratio": 11.836266003401667
+      },
+      "deg4_win0.05_lo0.5": {
+        "ci95": [
+          6.627550672919703,
+          39.0275603208202
+        ],
+        "excess_mass_ratio": 11.988210840960939
+      },
+      "deg4_win0.1_lo0.2": {
+        "ci95": [
+          3.212173488990582,
+          11.559387281491576
+        ],
+        "excess_mass_ratio": 5.201196807674331
+      },
+      "deg4_win0.1_lo0.3": {
+        "ci95": [
+          2.915639413542926,
+          13.197965299705116
+        ],
+        "excess_mass_ratio": 4.723381721690754
+      },
+      "deg4_win0.1_lo0.5": {
+        "ci95": [
+          1.591112216297289,
+          9.004392707160116
+        ],
+        "excess_mass_ratio": 2.9726753295486836
+      },
+      "deg5_win0.02_lo0.2": {
+        "ci95": [
+          23.907031974444315,
+          71.36111915132558
+        ],
+        "excess_mass_ratio": 37.29131350198109
+      },
+      "deg5_win0.02_lo0.3": {
+        "ci95": [
+          23.7990001724399,
+          84.36930064999233
+        ],
+        "excess_mass_ratio": 36.643272064973225
+      },
+      "deg5_win0.02_lo0.5": {
+        "ci95": [
+          25.222105008412388,
+          504.1985714444886
+        ],
+        "excess_mass_ratio": 55.56412243894034
+      },
+      "deg5_win0.05_lo0.2": {
+        "ci95": [
+          6.244477999823182,
+          24.777110051906156
+        ],
+        "excess_mass_ratio": 10.074688892630602
+      },
+      "deg5_win0.05_lo0.3": {
+        "ci95": [
+          5.76307337182963,
+          24.032327694383223
+        ],
+        "excess_mass_ratio": 9.288515164038389
+      },
+      "deg5_win0.05_lo0.5": {
+        "ci95": [
+          6.795024299257977,
+          91.0266021911856
+        ],
+        "excess_mass_ratio": 17.27143217328586
+      },
+      "deg5_win0.1_lo0.2": {
+        "ci95": [
+          1.8729447836670534,
+          7.663560257440823
+        ],
+        "excess_mass_ratio": 3.118554934210315
+      },
+      "deg5_win0.1_lo0.3": {
+        "ci95": [
+          1.3793116163656134,
+          5.283950820309109
+        ],
+        "excess_mass_ratio": 2.2787670323113436
+      },
+      "deg5_win0.1_lo0.5": {
+        "ci95": [
+          0.896846652754788,
+          21.902374709836913
+        ],
+        "excess_mass_ratio": 2.04444749374071
+      },
+      "deg7_win0.02_lo0.2": {
+        "ci95": [
+          25.769118042092483,
+          1404.905347228892
+        ],
+        "excess_mass_ratio": 62.20958305614391
+      },
+      "deg7_win0.02_lo0.3": {
+        "ci95": [
+          23.196852379076677,
+          858.6396698328343
+        ],
+        "excess_mass_ratio": 56.41522841814395
+      },
+      "deg7_win0.02_lo0.5": {
+        "ci95": [
+          14.357851993784935,
+          280.62705005157
+        ],
+        "excess_mass_ratio": 33.91938441551531
+      },
+      "deg7_win0.05_lo0.2": {
+        "ci95": [
+          7.115100137303378,
+          160.93809237727322
+        ],
+        "excess_mass_ratio": 21.905422045194985
+      },
+      "deg7_win0.05_lo0.3": {
+        "ci95": [
+          6.335802224524103,
+          273.38984625966566
+        ],
+        "excess_mass_ratio": 28.81404442069318
+      },
+      "deg7_win0.05_lo0.5": {
+        "ci95": [
+          4.496139077490734,
+          387.09001338946996
+        ],
+        "excess_mass_ratio": 50.08431875903161
+      },
+      "deg7_win0.1_lo0.2": {
+        "ci95": [
+          0.8225506287146733,
+          13.054190641803444
+        ],
+        "excess_mass_ratio": 1.8459382413708298
+      },
+      "deg7_win0.1_lo0.3": {
+        "ci95": [
+          0.6257591791012507,
+          27.258232132424215
+        ],
+        "excess_mass_ratio": 1.740865837281793
+      },
+      "deg7_win0.1_lo0.5": {
+        "ci95": [
+          0.22193385384955522,
+          59.3911530785806
+        ],
+        "excess_mass_ratio": 0.8785004098040461
+      }
+    },
+    "failing_specs": [
+      "deg5_win0.1_lo0.5",
+      "deg7_win0.1_lo0.2",
+      "deg7_win0.1_lo0.3",
+      "deg7_win0.1_lo0.5"
+    ],
+    "max_excess_mass": 62.20958305614391,
+    "median_excess_mass": 11.912238422181304,
+    "min_excess_mass": 0.8785004098040461,
+    "n_specifications": 36,
+    "n_specs_with_ci_lower_above_1": 32,
+    "verdict": "bunching survives iff the excess mass ratio stays above 1 with the CI excluding 1 across every specification"
+  },
+  "A4_track2_trimmed": {
+    "baseline_share_from_excluded": 0.8288036225125581,
+    "n_baseline": 589,
+    "n_trimmed": 550,
+    "trim": 0.01,
+    "trimmed_share_from_excluded": 0.7869193596127816,
+    "unweighted_share_from_excluded": 0.8108216985713897
+  },
+  "A5_ownership_large_only": {
+    "above_median_size": {
+      "Coop": {
+        "median_r": 0.6943512036060229,
+        "n": 755.0,
+        "share_zero_exclusion": 0.20662251655629138
+      },
+      "IOU": {
+        "median_r": 0.6567695582544241,
+        "n": 576.0,
+        "share_zero_exclusion": 0.125
+      },
+      "Municipal": {
+        "median_r": 0.8316517401655141,
+        "n": 355.0,
+        "share_zero_exclusion": 0.4197183098591549
+      },
+      "comparable": true,
+      "iou_minus_coop_median_r": -0.0375816453515988
+    },
+    "all": {
+      "Coop": {
+        "median_r": 0.7554890219560878,
+        "n": 1813.0,
+        "share_zero_exclusion": 0.28019856591285164
+      },
+      "IOU": {
+        "median_r": 0.6440590041724608,
+        "n": 632.0,
+        "share_zero_exclusion": 0.12974683544303797
+      },
+      "Municipal": {
+        "median_r": 0.9260463513549333,
+        "n": 947.0,
+        "share_zero_exclusion": 0.46673706441393875
+      },
+      "comparable": true,
+      "iou_minus_coop_median_r": -0.11143001778362704
+    },
+    "top_decile": {
+      "Coop": {
+        "median_r": 1.0,
+        "n": 1.0,
+        "share_zero_exclusion": 1.0
+      },
+      "IOU": {
+        "median_r": 0.6299212598425197,
+        "n": 293.0,
+        "share_zero_exclusion": 0.08191126279863481
+      },
+      "Municipal": {
+        "median_r": 0.6522019680593644,
+        "n": 33.0,
+        "share_zero_exclusion": 0.36363636363636365
+      },
+      "comparable": false,
+      "iou_minus_coop_median_r": -0.3700787401574803
+    }
+  },
+  "A6_track1_power": {
+    "ami_share_beta": -0.18470834647756168,
+    "ami_share_se": 0.118520281382403,
+    "ami_share_variation": {
+      "iqr": [
+        0.9603727559347675,
+        1.0
+      ],
+      "sd": 0.34100197705666185,
+      "share_at_100pct": 0.47570621468926555
+    },
+    "detectable": {
+      "effect_0.05": false,
+      "effect_0.1": false,
+      "effect_0.2": false,
+      "effect_0.4": true
+    },
+    "mde_80pct_power": 0.33185678787072836,
+    "mde_as_pct_saidi_change": -28.24099169002442
+  }
+}

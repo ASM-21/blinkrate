@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "blinkrate: measurement rules and reported electric distribution reliability"
+message: "If you use these findings or this code, please cite it."
+type: software
+authors:
+  - given-names: Andrew
+version: 1.0.0
+date-released: 2026-09-09
+license: MIT
+keywords:
+  - SAIDI
+  - IEEE 1366
+  - major event day
+  - electric distribution reliability
+  - EIA-861
+abstract: >-
+  IEEE 1366 permits utilities to exclude "major event days" from reported SAIDI
+  using a threshold set 2.5 standard deviations up a log-normal fit to their own
+  daily outage history. Using 3,427 utility-state-years of EIA-861 reliability
+  filings, this work inverts the closed-form exclusion identity to show that
+  re-evaluating the same filed outage records at other threshold values moves
+  customer-weighted fleet SAIDI over a 6.62x range, that 30.3% of filings report
+  no major event days at all (9.3x excess mass over a polynomial counterfactual),
+  and that 82.9% of the 2013-2022 increase in reported SAIDI on a balanced panel
+  falls in the excluded portion. The threshold sensitivity is model-implied and
+  inherits IEEE 1366's own log-normality assumption; an adversarial track shows
+  its direction survives heavier-tailed daily outage distributions while its
+  magnitude does not.

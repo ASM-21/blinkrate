@@ -1,0 +1,67 @@
+{
+  "balanced_panel_utility_states": 589,
+  "blocker": "no external weather severity index: NOAA blocked, no mirrored storm panel keyed to service territories found. The MED gap cannot be separated into weather severity vs classification.",
+  "exclusion_entry": {
+    "n": 589,
+    "net_entry_into_exclusion": 0.08319185059422751,
+    "started_excluding": 0.19185059422750425,
+    "stopped_excluding": 0.10865874363327674,
+    "zero_exclusion_2013": 0.28183361629881154,
+    "zero_exclusion_2022": 0.19864176570458403
+  },
+  "trend": {
+    "by_year": {
+      "2013": {
+        "med_gap_cw": 109.34141432751349,
+        "median_retained_share": 0.7504629286719502,
+        "n": 589,
+        "saidi_with_cw": 209.9652109516893,
+        "saidi_without_cw": 100.62379662417581,
+        "saifi_with_cw": 1.7484628285964714,
+        "share_zero_exclusion": 0.28183361629881154
+      },
+      "2014": {
+        "med_gap_cw": 108.36838314223813,
+        "median_retained_share": 0.7630662020905923,
+        "n": 595,
+        "saidi_with_cw": 212.42964491733682,
+        "saidi_without_cw": 104.06126177509873,
+        "saifi_with_cw": 1.3090370849660902,
+        "share_zero_exclusion": 0.27563025210084036
+      },
+      "2015": {
+        "med_gap_cw": 89.12468781144302,
+        "median_retained_share": 0.767156862745098,
+        "n": 589,
+        "saidi_with_cw": 198.952592233392,
+        "saidi_without_cw": 109.82790442194901,
+        "saifi_with_cw": 1.254397921135019,
+        "share_zero_exclusion": 0.28522920203735147
+      },
+      "2022": {
+        "med_gap_cw": 224.18779405418184,
+        "median_retained_share": 0.6510393631136665,
+        "n": 589,
+        "saidi_with_cw": 347.6984750685099,
+        "saidi_without_cw": 123.5106810143281,
+        "saifi_with_cw": 1.3926520038374246,
+        "share_zero_exclusion": 0.19864176570458403
+      }
+    },
+    "pct_change_2013_2022": {
+      "med_gap_cw": 105.03465720926717,
+      "saidi_with_cw": 65.59813575426621,
+      "saidi_without_cw": 22.7450018365273
+    }
+  },
+  "within_utility": {
+    "mean_change_excluded_cw": 116.16044075821341,
+    "mean_change_saidi_with_cw": 140.154359371726,
+    "mean_change_saidi_without_cw": 23.99391861351259,
+    "median_change_retained_share": -0.010052970936197003,
+    "n_utility_states": 589,
+    "share_of_change_from_excluded_part": 0.8288036225125581,
+    "share_of_utilities_worsening_with_med": 0.6604414261460102,
+    "share_of_utilities_worsening_without_med": 0.6400679117147708
+  }
+}
