@@ -20,8 +20,9 @@ number is regenerated from code and pinned by a test that fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 45 tests
+pytest                           # 49 tests
 python tools/check_claims.py     # every quoted figure recomputed
+python tools/utility_profile.py --name "PPL" --figure
 ```
 
 ---
@@ -33,6 +34,7 @@ python tools/check_claims.py     # every quoted figure recomputed
 | 3 | What is the threshold parameter worth? | 6.62x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | direction solid, **magnitude assumption-dependent** |
 | 3 | Do utilities cluster at zero exclusion? | Yes — **9.3x** excess mass, 32 of 36 specifications | solid |
 | 2 | Is the decade's deterioration weather or performance? | **82.9% of the** increase is in the excluded part | solid, but **cannot separate weather severity from classification** |
+| 3 | Does the exclusion change *who* looks reliable? | **52%** of large IOUs change quartile depending on which series you rank on | solid |
 | 6 | Does ownership predict exclusion? | IOU median retained share **0.644** vs municipal **0.926**, but two thirds of the gap is size | weakened by falsification |
 | 4 | Do cause carve-outs stack? | Loss-of-supply removes another 4% (retained **0.960**); both together leave 59.3% | solid, descriptive |
 | 1 | Does capital deployment predict reliability? | AMI coefficient **-0.185**, CI crosses zero — and the design could not have detected it | **underpowered null** |
@@ -112,6 +114,7 @@ data/raw/                       vendored EIA-861 (US Gov, public domain)
 docs/derivation.md              the exclusion identity
 docs/DATA_ACCESS.md             provenance, licences, what is blocked
 tools/check_claims.py           drift and overclaim guard
+tools/utility_profile.py        run one utility's filed numbers through the engine
 ```
 
 ## Data

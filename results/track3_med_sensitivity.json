@@ -41,6 +41,128 @@
     "n": 2236,
     "note": "analytic is the closed-form identity, numeric differentiates the finite-sample surface; they agree in shape, not in level"
   },
+  "ranking": {
+    "by_year": {
+      "2013": {
+        "excluded_share_p0_p50_p100": [
+          0.0,
+          0.34632034632034636,
+          0.9268632132688109
+        ],
+        "max_rank_move": 87.0,
+        "median_rank_move": 14.0,
+        "median_rank_move_pct_of_field": 12.844036697247706,
+        "n": 109,
+        "pct_changing_quartile": 53.21100917431193,
+        "pct_entering_or_leaving_best_quartile": 14.678899082568808,
+        "spearman": 0.6760703053259223
+      },
+      "2014": {
+        "excluded_share_p0_p50_p100": [
+          0.0,
+          0.3308270676691729,
+          1.0
+        ],
+        "max_rank_move": 82.0,
+        "median_rank_move": 12.0,
+        "median_rank_move_pct_of_field": 10.81081081081081,
+        "n": 111,
+        "pct_changing_quartile": 47.74774774774775,
+        "pct_entering_or_leaving_best_quartile": 17.117117117117118,
+        "spearman": 0.7507316259938792
+      },
+      "2015": {
+        "excluded_share_p0_p50_p100": [
+          0.0,
+          0.3120630474778263,
+          1.0
+        ],
+        "max_rank_move": 86.0,
+        "median_rank_move": 11.0,
+        "median_rank_move_pct_of_field": 9.322033898305085,
+        "n": 118,
+        "pct_changing_quartile": 39.83050847457627,
+        "pct_entering_or_leaving_best_quartile": 13.559322033898304,
+        "spearman": 0.7668734958070548
+      },
+      "2022": {
+        "excluded_share_p0_p50_p100": [
+          0.0,
+          0.4080806638258294,
+          0.9582199817478597
+        ],
+        "max_rank_move": 116.0,
+        "median_rank_move": 18.5,
+        "median_rank_move_pct_of_field": 14.682539682539682,
+        "n": 126,
+        "pct_changing_quartile": 52.38095238095239,
+        "pct_entering_or_leaving_best_quartile": 25.396825396825395,
+        "spearman": 0.6551511061117361
+      }
+    },
+    "largest_gains_latest_year": {
+      "n": 126,
+      "utilities": [
+        {
+          "excluded_share": 0.9582199817478597,
+          "name": "Florida Power & Light Co",
+          "rank_with": 123,
+          "rank_without": 7,
+          "saidi_with": 1150.55,
+          "saidi_without": 48.07,
+          "state": "FL"
+        },
+        {
+          "excluded_share": 0.9348946911883668,
+          "name": "Tampa Electric Co",
+          "rank_with": 122,
+          "rank_without": 15,
+          "saidi_with": 1026.03,
+          "saidi_without": 66.8,
+          "state": "FL"
+        },
+        {
+          "excluded_share": 0.8756586219107816,
+          "name": "Northern States Power Co - Minnesota",
+          "rank_with": 99,
+          "rank_without": 12,
+          "saidi_with": 465.935,
+          "saidi_without": 57.935,
+          "state": "SD"
+        },
+        {
+          "excluded_share": 0.8572980804056501,
+          "name": "Public Service Co of NH",
+          "rank_with": 107,
+          "rank_without": 27,
+          "saidi_with": 552.2,
+          "saidi_without": 78.8,
+          "state": "NH"
+        },
+        {
+          "excluded_share": 0.8916202525842902,
+          "name": "Duke Energy Florida, LLC",
+          "rank_with": 120,
+          "rank_without": 44,
+          "saidi_with": 872.58,
+          "saidi_without": 94.57,
+          "state": "FL"
+        }
+      ],
+      "year": 2022
+    },
+    "min_customers": 100000,
+    "note": "a large rank gain is not evidence of anything improper. Gulf-coast utilities have genuine hurricane days and the exclusion exists to remove them. The point is that the two series answer different questions, so a benchmark that picks one without saying which has made a decision, not a measurement",
+    "ownership": "IOU",
+    "pct_changing_quartile_range": [
+      39.83050847457627,
+      53.21100917431193
+    ],
+    "spearman_range": [
+      0.6551511061117361,
+      0.7668734958070548
+    ]
+  },
   "sensitivity": {
     "beta_grid": [
       1.5,

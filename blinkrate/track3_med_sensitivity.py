@@ -241,6 +241,76 @@ def standard_choice(df: pd.DataFrame) -> dict:
     return out
 
 
+def ranking_sensitivity(df: pd.DataFrame, min_customers: int = 100_000,
+                        ownership: str = "IOU") -> dict:
+    """Does the exclusion change WHO looks reliable, not just by how much?
+
+    Benchmarking is comparative: regulators, trade press and investor decks rank
+    utilities against each other. EIA-861 publishes two SAIDI series per utility
+    and they are not interchangeable, so the ranking is a choice. This measures
+    how much of a choice.
+
+    Restricted to large investor-owned utilities, because that is the population
+    that actually gets ranked against itself.
+    """
+    out = {"min_customers": min_customers, "ownership": ownership, "by_year": {}}
+    for year, sub in df[(df["customers"] >= min_customers)
+                        & (df["ownership_class"] == ownership)].groupby("year"):
+        if len(sub) < 20:
+            continue
+        n = len(sub)
+        rank_with = stats.rankdata(sub["saidi_with"])
+        rank_without = stats.rankdata(sub["saidi_without"])
+        moves = np.abs(rank_with - rank_without)
+        q_with = pd.qcut(sub["saidi_with"], 4, labels=False)
+        q_without = pd.qcut(sub["saidi_without"], 4, labels=False)
+        out["by_year"][int(year)] = {
+            "n": int(n),
+            "spearman": float(stats.spearmanr(sub["saidi_with"],
+                                              sub["saidi_without"]).statistic),
+            "median_rank_move": float(np.median(moves)),
+            "median_rank_move_pct_of_field": float(100 * np.median(moves) / n),
+            "max_rank_move": float(moves.max()),
+            "pct_changing_quartile": float(100 * (q_with != q_without).mean()),
+            "pct_entering_or_leaving_best_quartile": float(
+                100 * ((q_with == 0) != (q_without == 0)).mean()),
+            "excluded_share_p0_p50_p100": [
+                float(sub["excluded_share"].quantile(q)) for q in (0, 0.5, 1)],
+        }
+    yrs = out["by_year"]
+    out["pct_changing_quartile_range"] = [
+        min(v["pct_changing_quartile"] for v in yrs.values()),
+        max(v["pct_changing_quartile"] for v in yrs.values())]
+    out["spearman_range"] = [min(v["spearman"] for v in yrs.values()),
+                             max(v["spearman"] for v in yrs.values())]
+
+    latest = max(yrs)
+    sub = df[(df["year"] == latest) & (df["customers"] >= min_customers)
+             & (df["ownership_class"] == ownership)].copy()
+    sub["rank_with"] = stats.rankdata(sub["saidi_with"])
+    sub["rank_without"] = stats.rankdata(sub["saidi_without"])
+    sub["move"] = sub["rank_with"] - sub["rank_without"]
+    top = sub.nlargest(5, "move")
+    out["largest_gains_latest_year"] = {
+        "year": int(latest),
+        "n": int(len(sub)),
+        "utilities": [
+            {"name": r["utility_name"], "state": r["state"],
+             "saidi_with": float(r["saidi_with"]),
+             "saidi_without": float(r["saidi_without"]),
+             "excluded_share": float(r["excluded_share"]),
+             "rank_with": int(r["rank_with"]), "rank_without": int(r["rank_without"])}
+            for _, r in top.iterrows()],
+    }
+    out["note"] = ("a large rank gain is not evidence of anything improper. "
+                   "Gulf-coast utilities have genuine hurricane days and the "
+                   "exclusion exists to remove them. The point is that the two "
+                   "series answer different questions, so a benchmark that picks "
+                   "one without saying which has made a decision, not a "
+                   "measurement")
+    return out
+
+
 def _fig_sensitivity(df: pd.DataFrame, sens: dict) -> None:
     import matplotlib.pyplot as plt
     betas = np.array(sens["beta_grid"])
@@ -305,6 +375,7 @@ def run(save: bool = True) -> dict:
         "elasticity": elasticity_identity(df),
         "bunching": excess_mass_at_zero_exclusion(df),
         "standard_choice": standard_choice(df),
+        "ranking": ranking_sensitivity(df),
     }
     if save:
         _fig_sensitivity(df, out["sensitivity"])

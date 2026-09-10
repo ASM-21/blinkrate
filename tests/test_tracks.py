@@ -254,3 +254,44 @@ def test_readme_test_count_is_not_stale():
     assert stated, "README usage block no longer states a test count"
     assert int(stated.group(1)) == collected, (
         f"README says {stated.group(1)} tests, collection finds {collected}")
+
+
+def test_track3_ranking_sensitivity():
+    """The exclusion reorders the leaderboard, in every filing year."""
+    rk = _results("track3_med_sensitivity")["ranking"]
+    assert set(rk["by_year"]) == {"2013", "2014", "2015", "2022"}
+    y = rk["by_year"]["2022"]
+    assert y["spearman"] == pytest.approx(0.655, abs=0.003)
+    assert y["pct_changing_quartile"] == pytest.approx(52, abs=1.0)
+    assert y["median_rank_move"] == pytest.approx(18, abs=0.5)
+    # the effect is present in all four years, not a 2022 artefact
+    assert max(v["spearman"] for v in rk["by_year"].values()) < 0.8
+    assert min(v["pct_changing_quartile"] for v in rk["by_year"].values()) > 35
+
+
+def test_track3_ranking_note_refuses_the_manipulation_reading():
+    """The finding is about incommensurable series, not misconduct. If the
+    disclaimer is dropped from the payload, the result reads as an accusation."""
+    note = _results("track3_med_sensitivity")["ranking"]["note"]
+    assert "not evidence of anything improper" in note
+    assert "hurricane" in note
+
+
+def test_utility_profile_cli_runs():
+    """The per-utility tool is a deliverable, so it gets a smoke test."""
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "utility_profile.py"),
+         "--id", "14715"],
+        cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "WHAT WOULD HAVE BEEN FILED AT OTHER THRESHOLDS" in r.stdout
+    assert "model-implied" in r.stdout, "the caveat must print with the numbers"
+
+
+def test_utility_profile_refuses_ambiguous_match():
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "utility_profile.py"),
+         "--name", "Power"],
+        cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 1
+    assert "more than one utility-state" in r.stdout

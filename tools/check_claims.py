@@ -64,6 +64,20 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"{s['beta_2.5']['expected_med_days_per_year']:.2f} qualifying days",
         s["beta_2.5"]["expected_med_days_per_year"], 0.01)
 
+    rk = t3["ranking"]
+    y = rk["by_year"][str(max(int(k) for k in rk["by_year"]))]
+    add(f"is **{y['spearman']:.3f}** in 2022", y["spearman"], 0.002)
+    add(f"above\n  **{max(v['spearman'] for v in rk['by_year'].values()):.3f}**",
+        max(v["spearman"] for v in rk["by_year"].values()), 0.002)
+    add(f"moves **{y['median_rank_move']:.0f} places**", y["median_rank_move"], 0.5)
+    add(f"**{y['pct_changing_quartile']:.0f}%** change quartile",
+        y["pct_changing_quartile"], 0.5)
+    add(f"**{min(v['pct_changing_quartile'] for v in rk['by_year'].values()):.0f}%** to",
+        min(v["pct_changing_quartile"] for v in rk["by_year"].values()), 0.5)
+    add(f"a **{rk['largest_gains_latest_year']['utilities'][0]['rank_with'] - rk['largest_gains_latest_year']['utilities'][0]['rank_without']}-place** swing",
+        rk["largest_gains_latest_year"]["utilities"][0]["rank_with"]
+        - rk["largest_gains_latest_year"]["utilities"][0]["rank_without"], 0.5)
+
     # --- track 2 -----------------------------------------------------------
     add(f"{100 * t2['within_utility']['share_of_change_from_excluded_part']:.1f}% of the",
         100 * t2["within_utility"]["share_of_change_from_excluded_part"], 0.2)

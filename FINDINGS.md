@@ -90,6 +90,35 @@ bounding the question, not settling it. The methodology-adoption movement is at
 least partly a classification story, since switching from reporting no exclusion
 to reporting some is a discrete methodology change rather than weather.
 
+## 3b. The exclusion reorders the leaderboard
+
+Benchmarking is comparative. EIA-861 publishes two SAIDI series per utility and
+they rank utilities differently, so "which utility is more reliable" is decided
+partly by which series someone chose.
+
+Among large investor-owned utilities (100,000+ customers, n = 126 in 2022):
+
+- rank correlation between the two series is **0.655** in 2022, and never above
+  **0.767** in any of the four filing years
+- the median utility moves **18 places** out of 126, about 15% of the field
+- **52%** change quartile depending on which series is used, and that runs
+  **40%** to 53% across the four years
+- 25% of the field enters or leaves the best quartile
+
+The extremes are large. Florida Power & Light files 1,150.5 min/yr with major
+event days and 48.1 without, an exclusion share of 0.96, which moves it from
+123rd of 126 to 7th — a **116-place** swing. Tampa Electric moves 122nd to 15th.
+Exclusion shares among these peers span 0.000 to 0.958.
+
+**This is not evidence of anything improper, and reading it that way gets it
+backwards.** Gulf-coast utilities have real hurricane days and the exclusion
+exists precisely to remove them. The point is narrower and harder to argue with:
+the two series answer different questions, so any benchmark that picks one
+without saying which has made a decision rather than a measurement. Ranking on
+the without-MED series asks "how good is your everyday distribution system";
+ranking on with-MED asks "how long were your customers actually out". Both are
+legitimate. Publishing one and calling it reliability is not.
+
 ## 4. Who excludes: ownership matters, but less than the pooled numbers suggest
 
 Median retained share: investor-owned **0.644**, cooperative 0.755, municipal
@@ -181,6 +210,8 @@ reported is decided more by measurement rules than by anything on the poles.**
 - A third of utilities do not apply the exclusion rule at all, and which standard
   they file under moves their number more than ownership does (tracks 3, 6).
 - Two carve-outs stack to remove 41% of median outage minutes (track 4).
+- Half the large-IOU field changes quartile depending on which of the two
+  published series you rank on (track 3).
 - The one thing that should move the number — capital deployment — cannot be
   detected, and the spending data that would test it properly is unreachable
   (track 1).
