@@ -30,7 +30,8 @@ so this is a clone-and-run research repo, not a library you can `pip install`
 from a wheel and use elsewhere. `verify.sh` installs editable for that reason.
 
 `data/calibration_med.npz` is generated. Rebuild it with
-`python -m blinkrate.shared.finite_sample` (about three minutes). Rebuilding it
+`python -m blinkrate.shared.finite_sample` (about 20 seconds, and bit-identical
+to the committed cache since it is fully seeded). Rebuilding it
 changes track 3, 6 and 8 numbers at the third decimal, so rerun the tracks and
 the guard afterwards.
 

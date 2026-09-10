@@ -20,7 +20,7 @@ number is regenerated from code and pinned by a test that fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 43 tests
+pytest                           # 45 tests
 python tools/check_claims.py     # every quoted figure recomputed
 ```
 

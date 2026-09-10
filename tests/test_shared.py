@@ -210,3 +210,26 @@ def test_exclusion_switches_off_above_beta_2_95():
     assert np.all(c["surface"][:, j3] >= 0.999999)
     j29 = int(np.argmin(np.abs(c["beta_grid"] - 2.9)))
     assert c["surface"][:, j29].min() < 0.5
+
+
+def test_calibration_is_seeded_and_reproducible():
+    """The committed surface must be regenerable bit for bit.
+
+    A cached artifact nobody can reproduce is a magic number. Checked on a small
+    grid slice rather than the full build so the test stays cheap; the full
+    rebuild is exercised by verify.sh.
+    """
+    a = fs.build_calibration(n_sims=25, seed=99)
+    b = fs.build_calibration(n_sims=25, seed=99)
+    assert np.array_equal(a["surface"], b["surface"])
+
+    c = fs.calibration()
+    assert int(c["seed"][0]) == fs.SEED
+    assert int(c["n_sims"][0]) == fs.N_SIMS
+
+
+def test_committed_calibration_matches_its_own_parameters():
+    """Guards against a cache built with different settings being committed."""
+    c = fs.calibration()
+    assert np.array_equal(c["sigma_grid"], fs.SIGMA_GRID)
+    assert np.array_equal(c["beta_grid"], fs.BETA_GRID)
