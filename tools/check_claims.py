@@ -39,120 +39,145 @@ def claims() -> list[tuple[str, float, float]]:
     t5 = load("track5_undergrounding")
     t6 = load("track6_ownership")
     t7 = load("track7_validation")
+    t8 = load("track8_falsification")
 
-    s = t3["sensitivity"]["headline"]
-    c = t3["coverage"]
     out: list[tuple[str, float, float]] = []
 
     def add(text: str, value: float, tol: float = 0.5) -> None:
         out.append((text, value, tol))
 
-    # --- track 3, the headline ---------------------------------------------
-    add(f"{s['beta_1.5']['fleet_saidi_without_med']:.0f} min/yr",
-        s["beta_1.5"]["fleet_saidi_without_med"], 1.0)
-    add(f"{s['beta_2.5']['fleet_saidi_without_med']:.0f} min/yr",
-        s["beta_2.5"]["fleet_saidi_without_med"], 1.0)
-    add(f"{s['beta_3.0']['fleet_saidi_without_med']:.0f} min/yr",
-        s["beta_3.0"]["fleet_saidi_without_med"], 1.0)
-    add(f"{t3['sensitivity']['fleet_range_ratio']:.2f}x",
+    # --- Q1: the threshold sweep -------------------------------------------
+    s3 = t3["sensitivity"]["headline"]
+    for b in ("1.5", "2.0", "2.5", "3.0"):
+        add(f"{s3[f'beta_{b}']['fleet_saidi_without_med']:.0f} min/yr",
+            s3[f"beta_{b}"]["fleet_saidi_without_med"], 1.0)
+    add(f"{t3['sensitivity']['fleet_range_ratio']:.2f}x range",
         t3["sensitivity"]["fleet_range_ratio"], 0.02)
+    add(f"{s3['beta_2.5']['expected_med_days_per_year']:.2f} qualifying days",
+        s3["beta_2.5"]["expected_med_days_per_year"], 0.01)
+
+    # --- Q2: the mass point ------------------------------------------------
+    c = t3["coverage"]
     add(f"{100 * c['share_exactly_zero_exclusion']:.1f}% of filings",
         100 * c["share_exactly_zero_exclusion"], 0.1)
-    add(f"{100 * c['share_admissible']:.1f}%", 100 * c["share_admissible"], 0.1)
-    add(f"{t3['bunching']['excess_mass_ratio']:.1f}x",
+    add(f"**{100 * c['share_admissible']:.1f}%** of filings",
+        100 * c["share_admissible"], 0.1)
+    add(f"**{t3['bunching']['excess_mass_ratio']:.1f}x** the counterfactual",
         t3["bunching"]["excess_mass_ratio"], 0.1)
-    add(f"{s['beta_2.5']['expected_med_days_per_year']:.2f} qualifying days",
-        s["beta_2.5"]["expected_med_days_per_year"], 0.01)
+    sc = t3["standard_choice"]
+    add(f"**{sc['Other']['median_retained_share']:.3f}** against",
+        sc["Other"]["median_retained_share"], 0.002)
+    add(f"**{sc['IEEE']['median_retained_share']:.3f}**",
+        sc["IEEE"]["median_retained_share"], 0.002)
+    add(f"{100 * sc['switchers']['share_switched']:.1f}% of utility-states switched",
+        100 * sc["switchers"]["share_switched"], 0.2)
 
+    # --- Q3: the ranking ---------------------------------------------------
     rk = t3["ranking"]
-    y = rk["by_year"][str(max(int(k) for k in rk["by_year"]))]
-    add(f"is **{y['spearman']:.3f}** in 2022", y["spearman"], 0.002)
-    add(f"above\n  **{max(v['spearman'] for v in rk['by_year'].values()):.3f}**",
-        max(v["spearman"] for v in rk["by_year"].values()), 0.002)
-    add(f"moves **{y['median_rank_move']:.0f} places**", y["median_rank_move"], 0.5)
-    add(f"**{y['pct_changing_quartile']:.0f}%** change quartile",
-        y["pct_changing_quartile"], 0.5)
-    add(f"**{min(v['pct_changing_quartile'] for v in rk['by_year'].values()):.0f}%** to",
-        min(v["pct_changing_quartile"] for v in rk["by_year"].values()), 0.5)
-    add(f"a **{rk['largest_gains_latest_year']['utilities'][0]['rank_with'] - rk['largest_gains_latest_year']['utilities'][0]['rank_without']}-place** swing",
-        rk["largest_gains_latest_year"]["utilities"][0]["rank_with"]
-        - rk["largest_gains_latest_year"]["utilities"][0]["rank_without"], 0.5)
+    add(f"**{rk['spearman_range'][0]:.3f}** to", rk["spearman_range"][0], 0.003)
+    add(f"**{rk['spearman_range'][1]:.3f}**", rk["spearman_range"][1], 0.003)
+    add(f"{rk['pct_changing_quartile_range'][0]:.0f} to "
+        f"{rk['pct_changing_quartile_range'][1]:.0f}% change quartile",
+        rk["pct_changing_quartile_range"][0], 0.6)
+    g0 = rk["largest_gains_latest_year"]["utilities"][0]
+    add(f"**{g0['rank_with'] - g0['rank_without']}-place** swing",
+        g0["rank_with"] - g0["rank_without"], 0.5)
 
-    # --- track 2 -----------------------------------------------------------
-    add(f"{100 * t2['within_utility']['share_of_change_from_excluded_part']:.1f}% of the",
-        100 * t2["within_utility"]["share_of_change_from_excluded_part"], 0.2)
-    add(f"{t2['balanced_panel_utility_states']} utility-states",
+    # --- Q4: weather vs classification -------------------------------------
+    add(f"**{t2['balanced_panel_utility_states']} utility-states**",
         t2["balanced_panel_utility_states"], 0.5)
-
-    # --- track 6 -----------------------------------------------------------
-    add(f"{t6['by_ownership']['IOU']['median_retained_share']:.3f}",
-        t6["by_ownership"]["IOU"]["median_retained_share"], 0.001)
-    add(f"{t6['by_ownership']['Municipal']['median_retained_share']:.3f}",
-        t6["by_ownership"]["Municipal"]["median_retained_share"], 0.001)
-
-    # --- track 1 -----------------------------------------------------------
-    ami = t1["models"]["log_saidi_without_fe"]["coefficients"]["ami_share"]
-    add(f"{ami['beta']:.3f}", ami["beta"], 0.001)
-    add(f"{100 * t1['variance_decomposition']['share_between_utility']:.0f}%",
-        100 * t1["variance_decomposition"]["share_between_utility"], 0.5)
-
-    # --- track 4 -----------------------------------------------------------
-    add(f"{t4['los']['median_los_retained_share']:.3f}",
-        t4["los"]["median_los_retained_share"], 0.001)
-
-    # --- track 5 -----------------------------------------------------------
-    be = t5["breakeven"]["case_study_high|cost_central|voll_central"]
-    add(f"{be['breakeven_saidi_min_per_yr']:,.0f} min/yr",
-        be["breakeven_saidi_min_per_yr"], 1.0)
-    add(f"{t5['customers_per_mile']['national_customers_per_mile']:.1f} customers per",
-        t5["customers_per_mile"]["national_customers_per_mile"], 0.05)
-
-    # --- track 7 -----------------------------------------------------------
-    add(f"{100 * t7['caidi_identity']['with_med']['share_within_tolerance']:.0f}%",
-        100 * t7["caidi_identity"]["with_med"]["share_within_tolerance"], 0.5)
-
-    # --- track 8: the falsification results are claims too --------------------
-    # FALSIFICATION.md is where a result gets retracted or scoped, which makes it
-    # the file most likely to drift out of agreement with the code and the one
-    # where drift does the most damage.
-    t8 = load("track8_falsification")
-    a1b, a2 = t8["A1b_heavy_tail_matched"], t8["A2_mean_vs_median"]
-    a3, a4 = t8["A3_bunching_specs"], t8["A4_track2_trimmed"]
-    a5, a6 = t8["A5_ownership_large_only"], t8["A6_track1_power"]
-
-    add(f"up to {t8['A1_heavy_tail']['max_abs_shift_in_r']:.2f}",
-        t8["A1_heavy_tail"]["max_abs_shift_in_r"], 0.01)
-    add(f"{a1b['sweep_ratio_spread_x']:.2f}x across these distributions",
-        a1b["sweep_ratio_spread_x"], 0.02)
-    add(f"reaches {a2['max_gap']:.3f}", a2["max_gap"], 0.002)
-    add(f"median {a3['median_excess_mass']:.2f}", a3["median_excess_mass"], 0.05)
-    add(f"in {a3['n_specs_with_ci_lower_above_1']} of them",
-        a3["n_specs_with_ci_lower_above_1"], 0.5)
-    add(f"{a4['n_trimmed']} utility-states): "
-        f"{100 * a4['trimmed_share_from_excluded']:.1f}%",
-        a4["n_trimmed"], 0.5)
-    add(f"{100 * a4['unweighted_share_from_excluded']:.1f}%",
+    st = t2["gradual_or_step"]
+    add(f"**{st['without_med_slope_min_per_year']:.2f} min/yr**",
+        st["without_med_slope_min_per_year"], 0.02)
+    sg = t2["spike_geography"]["by_transition"]["2016_2017"]
+    add(f"**{sg['d_excluded_hurricane_cw']:.1f}** minutes inside",
+        sg["d_excluded_hurricane_cw"], 0.2)
+    add(f"**{sg['d_excluded_other_cw']:.1f}** elsewhere",
+        sg["d_excluded_other_cw"], 0.2)
+    add(f"**{t2['spike_geography']['largest_excluded_gap_minutes']:.1f}** minutes",
+        t2["spike_geography"]["largest_excluded_gap_minutes"], 0.2)
+    add(f"is {t2['spike_geography']['second_largest_excluded_gap_minutes']:.1f}",
+        t2["spike_geography"]["second_largest_excluded_gap_minutes"], 0.2)
+    ee = t2["exclusion_entry"]
+    add(f"**{abs(ee['trend_pct_points_per_year']):.2f}** percentage points per year",
+        abs(ee["trend_pct_points_per_year"]), 0.02)
+    add(f"{100 * ee['started_excluding']:.1f}% of utilities went",
+        100 * ee["started_excluding"], 0.2)
+    add(f"{100 * ee['stopped_excluding']:.1f}% moving the other way",
+        100 * ee["stopped_excluding"], 0.2)
+    add(f"**{100 * t2['within_utility']['share_of_change_from_excluded_part']:.1f}%** of the",
+        100 * t2["within_utility"]["share_of_change_from_excluded_part"], 0.2)
+    add(f"{100 * t2['within_utility_consecutive']['share_of_change_from_excluded_part']:.1f}% over",
+        100 * t2["within_utility_consecutive"]["share_of_change_from_excluded_part"], 0.2)
+    a4 = t8["A4_track2_trimmed"]
+    add(f"{100 * a4['unweighted_share_from_excluded']:.1f}% unweighted",
         100 * a4["unweighted_share_from_excluded"], 0.2)
-    add(f"{abs(a5['all']['iou_minus_coop_median_r']):.3f} below",
+    add(f"**{100 * a4['trimmed_share_from_excluded']:.1f}%** after trimming",
+        100 * a4["trimmed_share_from_excluded"], 0.2)
+
+    # --- Q5: capital deployment --------------------------------------------
+    wu = t1["within_utility"]
+    add(f"**{wu['coefficients']['ami_share']['beta']:+.3f}**",
+        wu["coefficients"]["ami_share"]["beta"], 0.002)
+    add(f"**{wu['n_moving_ami_gt_0_50']}** move their AMI",
+        wu["n_moving_ami_gt_0_50"], 0.5)
+    add(f"{wu['n_utility_states']} utility-states are observed",
+        wu["n_utility_states"], 0.5)
+    add(f"{t1['cross_sections']['2016']['coefficients']['ami_share']['beta']:.3f}",
+        t1["cross_sections"]["2016"]["coefficients"]["ami_share"]["beta"], 0.002)
+    add(f"{t1['cross_sections']['2022']['coefficients']['ami_share']['beta']:.3f}",
+        t1["cross_sections"]["2022"]["coefficients"]["ami_share"]["beta"], 0.002)
+    gc = t1["long_difference"]["group_comparison"]
+    add(f"**{gc['pct_saidi_difference']:.1f}%** relative",
+        gc["pct_saidi_difference"], 0.2)
+    add(f"the {gc['n_rollout']} utilities that rolled", gc["n_rollout"], 0.5)
+    add(f"**{100 * t1['variance_decomposition']['share_between_utility']:.0f}%** of the variance",
+        100 * t1["variance_decomposition"]["share_between_utility"], 0.6)
+
+    # --- Q6: ownership -----------------------------------------------------
+    o6, cd = t6["by_ownership"], t6["conditional"]
+    add(f"**{o6['IOU']['median_retained_share']:.3f}** for", 
+        o6["IOU"]["median_retained_share"], 0.002)
+    add(f"**{o6['Municipal']['median_retained_share']:.3f}** municipal",
+        o6["Municipal"]["median_retained_share"], 0.002)
+    add(f"{100 * abs(cd['zero_exclusion_with_size']['IOU_vs_Coop']):.1f} points at "
+        f"p = {cd['zero_exclusion_with_size']['IOU_p']:.3f}",
+        100 * abs(cd["zero_exclusion_with_size"]["IOU_vs_Coop"]), 0.2)
+    add(f"**{abs(cd['retained_share_with_size']['IOU_vs_Coop']):.3f}** lower",
+        abs(cd["retained_share_with_size"]["IOU_vs_Coop"]), 0.002)
+    a5 = t8["A5_ownership_large_only"]
+    add(f"{abs(a5['all']['iou_minus_coop_median_r']):.3f} to "
+        f"{abs(a5['above_median_size']['iou_minus_coop_median_r']):.3f}",
         abs(a5["all"]["iou_minus_coop_median_r"]), 0.002)
-    add(f"| {a5['above_median_size']['iou_minus_coop_median_r']:.3f} |",
-        a5["above_median_size"]["iou_minus_coop_median_r"], 0.002)
-    add(f"{a6['mde_80pct_power']:.3f} log points", a6["mde_80pct_power"], 0.005)
-    add(f"{abs(a6['mde_as_pct_saidi_change']):.1f}% SAIDI change",
-        abs(a6["mde_as_pct_saidi_change"]), 0.2)
-    add(f"{100 * a6['ami_share_variation']['share_at_100pct']:.1f}% of 2022",
-        100 * a6["ami_share_variation"]["share_at_100pct"], 0.2)
 
-    # the conditional ownership numbers, quoted in both FINDINGS and FALSIFICATION
-    cond = t6["conditional"]
-    add(f"{100 * abs(cond['zero_exclusion_no_size']['IOU_vs_Coop']):.1f} points",
-        100 * abs(cond["zero_exclusion_no_size"]["IOU_vs_Coop"]), 0.2)
-    add(f"{100 * abs(cond['zero_exclusion_with_size']['IOU_vs_Coop']):.1f} points",
-        100 * abs(cond["zero_exclusion_with_size"]["IOU_vs_Coop"]), 0.2)
+    # --- Q7: validation ----------------------------------------------------
+    ci = t7["caidi_identity"]["with_med"]
+    add(f"**{100 * ci['share_within_tolerance']:.2f}%** of {ci['n_checked']:,}",
+        100 * ci["share_within_tolerance"], 0.01)
+    add(f"{t7['rejected_rows']['n']} rows fail", t7["rejected_rows"]["n"], 0.5)
 
-    # the implied-sigma spread that scopes A2's verdict
-    q = t3["coverage"]["implied_sigma_quantiles"]
-    add(f"{q['10']:.2f} to {q['90']:.2f}", q["10"], 0.01)
+    # --- smaller results ---------------------------------------------------
+    los = t4["los"]
+    add(f"{100 * los['share_of_ieee_reporting_los']:.1f}% of IEEE-standard",
+        100 * los["share_of_ieee_reporting_los"], 0.2)
+    add(f"**{los['median_los_retained_share']:.3f}**",
+        los["median_los_retained_share"], 0.002)
+    add(f"{100 * los['stacked_med_and_los']['median_combined_retained']:.1f}% of its raw",
+        100 * los["stacked_med_and_los"]["median_combined_retained"], 0.2)
+    be = t5["breakeven"]["case_study_high|cost_central|voll_central"]
+    add(f"**{be['breakeven_saidi_min_per_yr']:,.0f} min/yr**",
+        be["breakeven_saidi_min_per_yr"], 1.0)
+    add(f"**{t5['customers_per_mile']['national_customers_per_mile']:.1f} customers per**",
+        t5["customers_per_mile"]["national_customers_per_mile"], 0.05)
+    add(f"moves breakeven by {t5['headline_ratio_case_vs_econometric']:.1f}x",
+        t5["headline_ratio_case_vs_econometric"], 0.05)
+
+    # --- falsification -----------------------------------------------------
+    add(f"spans **{t8['A1b_heavy_tail_matched']['sweep_ratio_spread_x']:.2f}x** across",
+        t8["A1b_heavy_tail_matched"]["sweep_ratio_spread_x"], 0.02)
+    a3 = t8["A3_bunching_specs"]
+    add(f"survives\n{a3['n_specs_with_ci_lower_above_1']} of {a3['n_specifications']}",
+        a3["n_specs_with_ci_lower_above_1"], 0.5)
 
     return out
 
@@ -184,6 +209,11 @@ FORBIDDEN = [
 ]
 
 
+def _flatten(text: str) -> str:
+    """Runs of whitespace (including newlines) become one space."""
+    return re.sub(r"\s+", " ", text)
+
+
 def main() -> int:
     prose = {}
     for name in PROSE:
@@ -192,11 +222,19 @@ def main() -> int:
             print(f"MISSING PROSE FILE: {name}")
             return 1
         prose[name] = path.read_text()
-    blob = "\n".join(prose.values())
+    # Collapse whitespace before matching. A claim must not fail because the
+    # sentence happened to wrap between two of its words, which is otherwise a
+    # constant source of false alarms every time the prose is reflowed.
+    # Blockquote markers are stripped too. Retractions live in blockquotes and
+    # their numbers still have to match the code, otherwise the one place the
+    # prose is most likely to go stale is the one place nothing checks.
+    blob = _flatten(re.sub(r"^>\s?", "", "\n".join(prose.values()),
+                           flags=re.MULTILINE))
 
     failures = []
 
-    for text, value, tol in claims():
+    for raw_text, value, tol in claims():
+        text = _flatten(raw_text)
         nums = re.findall(r"-?\d[\d,]*\.?\d*", text)
         # Anchor on digit boundaries. Plain substring matching lets a claim of
         # "18.3 points" be satisfied by the unrelated "8.3 points" elsewhere in

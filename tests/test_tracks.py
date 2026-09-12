@@ -37,10 +37,10 @@ def _results(name: str) -> dict:
 def test_track3_sensitivity_range():
     s = _results("track3_med_sensitivity")["sensitivity"]
     h = s["headline"]
-    assert h["beta_1.5"]["fleet_saidi_without_med"] == pytest.approx(39, abs=1.0)
-    assert h["beta_2.5"]["fleet_saidi_without_med"] == pytest.approx(114, abs=1.0)
-    assert h["beta_3.0"]["fleet_saidi_without_med"] == pytest.approx(259, abs=1.0)
-    assert s["fleet_range_ratio"] == pytest.approx(6.62, abs=0.03)
+    assert h["beta_1.5"]["fleet_saidi_without_med"] == pytest.approx(37, abs=1.0)
+    assert h["beta_2.5"]["fleet_saidi_without_med"] == pytest.approx(115, abs=1.0)
+    assert h["beta_3.0"]["fleet_saidi_without_med"] == pytest.approx(287, abs=1.0)
+    assert s["fleet_range_ratio"] == pytest.approx(7.66, abs=0.03)
 
 
 def test_track3_qualifying_days_is_exact_not_estimated():
@@ -53,23 +53,26 @@ def test_track3_qualifying_days_is_exact_not_estimated():
 
 def test_track3_zero_exclusion_mass():
     c = _results("track3_med_sensitivity")["coverage"]
-    assert c["share_exactly_zero_exclusion"] == pytest.approx(0.303, abs=0.002)
-    assert c["share_admissible"] == pytest.approx(0.662, abs=0.005)
-    assert c["n"] == 3427
+    assert c["share_exactly_zero_exclusion"] == pytest.approx(0.298, abs=0.002)
+    assert c["share_admissible"] == pytest.approx(0.672, abs=0.005)
+    assert c["n"] == 6245
 
 
 def test_track3_bunching_survives():
     b = _results("track3_med_sensitivity")["bunching"]
-    assert b["excess_mass_ratio"] == pytest.approx(9.3, abs=0.2)
+    assert b["excess_mass_ratio"] == pytest.approx(12.0, abs=0.2)
     assert b["ci95"][0] > 1.0, "CI must exclude 1 or the bunching claim is dead"
-    assert b["n_clusters"] > 1000
+    assert b["n_clusters"] > 1100
+    # 6,245 rows over only ~1,129 distinct utility-states: the panel is deep,
+    # not wide, which is exactly why the bootstrap clusters on utility-state
+    assert b["n_clusters"] < _results("track3_med_sensitivity")["coverage"]["n"] / 4
 
 
 def test_track3_standard_choice_gap():
     sc = _results("track3_med_sensitivity")["standard_choice"]
     assert sc["Other"]["median_retained_share"] > sc["IEEE"]["median_retained_share"]
-    assert sc["Other"]["median_retained_share"] == pytest.approx(0.878, abs=0.002)
-    assert sc["IEEE"]["median_retained_share"] == pytest.approx(0.713, abs=0.002)
+    assert sc["Other"]["median_retained_share"] == pytest.approx(0.883, abs=0.002)
+    assert sc["IEEE"]["median_retained_share"] == pytest.approx(0.700, abs=0.002)
 
 
 def test_track3_bunching_is_deterministic():
@@ -87,9 +90,12 @@ def test_track3_bunching_is_deterministic():
 
 def test_track2_excluded_part_carries_the_trend():
     t2 = _results("track2_weather_split")
-    assert t2["balanced_panel_utility_states"] == 589
+    assert t2["balanced_panel_utility_states"] == 568
     assert t2["within_utility"]["share_of_change_from_excluded_part"] == pytest.approx(
         0.829, abs=0.005)
+    # the headline is a range, not a point; the consecutive window must differ
+    assert t2["within_utility_consecutive"]["share_of_change_from_excluded_part"] \
+        == pytest.approx(0.880, abs=0.005)
 
 
 def test_track2_panel_is_balanced():
@@ -97,14 +103,18 @@ def test_track2_panel_is_balanced():
     computed on utilities present in every year."""
     df = track2_weather_split.balanced_panel()
     counts = df.groupby("utility_state")["year"].nunique()
-    assert (counts == 4).all()
-    assert df.groupby("year").size().nunique() <= 2  # multi-state rows aside
+    assert (counts == len(track2_weather_split.ALL_YEARS)).all()
+    # after deduplication every year must contribute exactly the same utilities
+    assert df.groupby("year").size().nunique() == 1
 
 
 def test_track2_net_entry_into_exclusion():
     e = _results("track2_weather_split")["exclusion_entry"]
     assert e["started_excluding"] > e["stopped_excluding"]
-    assert e["net_entry_into_exclusion"] == pytest.approx(0.083, abs=0.005)
+    assert e["net_entry_into_exclusion"] == pytest.approx(0.086, abs=0.005)
+    # and it is a trend across years, not two endpoints
+    assert e["trend_pct_points_per_year"] < 0
+    assert e["trend_p"] < 0.05
 
 
 # --------------------------------------------------------------------------
@@ -113,34 +123,74 @@ def test_track2_net_entry_into_exclusion():
 
 def test_track6_ownership_ordering():
     o = _results("track6_ownership")["by_ownership"]
-    assert o["IOU"]["median_retained_share"] == pytest.approx(0.644, abs=0.002)
-    assert o["Municipal"]["median_retained_share"] == pytest.approx(0.926, abs=0.002)
+    assert o["IOU"]["median_retained_share"] == pytest.approx(0.643, abs=0.002)
+    assert o["Municipal"]["median_retained_share"] == pytest.approx(0.901, abs=0.002)
     assert (o["IOU"]["median_retained_share"] < o["Coop"]["median_retained_share"]
             < o["Municipal"]["median_retained_share"])
 
 
-def test_track6_gap_shrinks_when_size_is_controlled():
-    """The falsification result, pinned. If a future change makes the pooled and
-    conditional gaps equal, the README's 'two thirds is size' line is wrong."""
+def test_track6_retraction_holds():
+    """Pins the retraction itself.
+
+    On four filing years the conditional zero-exclusion effect was significant
+    at p = 0.026 and was published as a finding. On seven it is not. If a future
+    change makes it significant again, FINDINGS' retraction blockquote is wrong
+    and has to be rewritten rather than quietly left in place.
+    """
     c = _results("track6_ownership")["conditional"]
     raw = abs(c["zero_exclusion_no_size"]["IOU_vs_Coop"])
     conditioned = abs(c["zero_exclusion_with_size"]["IOU_vs_Coop"])
-    assert conditioned < raw / 2
-    assert conditioned == pytest.approx(0.0745, abs=0.005)
+    assert conditioned < raw / 3, "size no longer explains most of the raw gap"
+    assert c["zero_exclusion_with_size"]["IOU_p"] > 0.05, (
+        "the retracted effect is significant again; rewrite the retraction")
+    # what DOES survive conditioning is the intensive margin
+    r = c["retained_share_with_size"]
+    assert r["IOU_vs_Coop"] < 0
+    assert r["IOU_p"] < 0.05
+    assert abs(r["IOU_vs_Coop"]) == pytest.approx(0.045, abs=0.004)
 
 
 # --------------------------------------------------------------------------
 # tracks 1, 4, 5, 7
 # --------------------------------------------------------------------------
 
-def test_track1_null_and_its_power():
+def test_track1_null_is_bounded_not_merely_absent():
+    """Q5's null only means something if the design had power and variation."""
     t1 = _results("track1_investment")
-    ami = t1["models"]["log_saidi_without_fe"]["coefficients"]["ami_share"]
-    assert ami["beta"] == pytest.approx(-0.185, abs=0.003)
+    w = t1["within_utility"]
+    ami = w["coefficients"]["ami_share"]
+    assert ami["beta"] == pytest.approx(0.036, abs=0.004)
     assert ami["ci95"][0] < 0 < ami["ci95"][1], "the null depends on the CI crossing"
+    # the identifying variation must actually be there
+    assert w["n_moving_ami_gt_0_50"] >= 50
+    assert w["n_utility_states"] == 589
+    # and the design must have been able to see a moderate effect
+    assert ami["mde_80pct_power"] < 0.35
+
     vd = t1["variance_decomposition"]
-    assert vd["share_between_utility"] == pytest.approx(0.74, abs=0.005)
+    assert vd["share_between_utility"] == pytest.approx(0.587, abs=0.005)
     assert vd["share_between_utility"] + vd["share_within_utility"] == pytest.approx(1)
+
+
+def test_track1_cross_section_loses_variation_over_time():
+    """The reason the first version of this track was wrong, pinned so it cannot
+    be reintroduced: AMI share stops varying, so a late cross-section is
+    uninformative however it is specified."""
+    cs = _results("track1_investment")["cross_sections"]
+    assert cs["2016"]["ami_share_iqr"][0] < 0.2
+    assert cs["2022"]["ami_share_iqr"][0] > 0.9
+    assert cs["2022"]["share_at_100pct"] > cs["2016"]["share_at_100pct"]
+
+
+def test_track1_designs_agree():
+    """Three designs, one answer. If they diverge the writeup is wrong."""
+    t1 = _results("track1_investment")
+    for res, key in ((t1["within_utility"], "ami_share"),
+                     (t1["long_difference"], "d_ami")):
+        c = res["coefficients"][key]
+        assert c["ci95"][0] < 0 < c["ci95"][1]
+    g = t1["long_difference"]["group_comparison"]
+    assert abs(g["pct_saidi_difference"]) < 10, "a large group gap would contradict"
 
 
 def test_track1_states_its_substitution():
@@ -154,7 +204,7 @@ def test_track4_is_marked_blocked():
     t4 = _results("track4_cause_exclusions")
     assert t4["status"] == "BLOCKED"
     assert "ferc.gov blocked" in t4["blocker"]
-    assert t4["los"]["median_los_retained_share"] == pytest.approx(0.960, abs=0.002)
+    assert t4["los"]["median_los_retained_share"] == pytest.approx(0.964, abs=0.002)
 
 
 def test_track5_breakeven_is_far_above_observed():
@@ -180,7 +230,9 @@ def test_track5_density_is_what_decides_it():
 def test_track7_source_data_is_internally_consistent():
     c = _results("track7_validation")["caidi_identity"]
     assert c["with_med"]["share_within_tolerance"] == 1.0
-    assert c["with_med"]["n_checked"] > 800
+    assert c["with_med"]["n_checked"] > 3500, "CAIDI check must span every year"
+    assert set(_results("track7_validation")["caidi_identity"]["years_checked"]) == {
+        2016, 2017, 2018, 2022}
     assert c["without_med"]["share_within_tolerance"] == 1.0
 
 
@@ -207,7 +259,7 @@ def test_claims_guard_passes_on_the_real_prose():
 
 @pytest.mark.parametrize("corruption,expect", [
     # a drifted number
-    (lambda t: t.replace("6.62x", "9.99x"), "drift"),
+    (lambda t: t.replace("7.66x", "9.99x"), "drift"),
     # a deleted hedge
     (lambda t: t.replace("model-implied", "measured"), "hedge missing"),
     # an overclaim
@@ -259,12 +311,13 @@ def test_readme_test_count_is_not_stale():
 def test_track3_ranking_sensitivity():
     """The exclusion reorders the leaderboard, in every filing year."""
     rk = _results("track3_med_sensitivity")["ranking"]
-    assert set(rk["by_year"]) == {"2013", "2014", "2015", "2022"}
+    assert set(rk["by_year"]) == {"2013", "2014", "2015", "2016", "2017",
+                                 "2018", "2022"}
     y = rk["by_year"]["2022"]
     assert y["spearman"] == pytest.approx(0.655, abs=0.003)
-    assert y["pct_changing_quartile"] == pytest.approx(52, abs=1.0)
-    assert y["median_rank_move"] == pytest.approx(18, abs=0.5)
-    # the effect is present in all four years, not a 2022 artefact
+    assert y["pct_changing_quartile"] == pytest.approx(52.4, abs=1.0)
+    assert y["median_rank_move"] == pytest.approx(18.5, abs=0.5)
+    # present in all seven years, not a 2022 artefact
     assert max(v["spearman"] for v in rk["by_year"].values()) < 0.8
     assert min(v["pct_changing_quartile"] for v in rk["by_year"].values()) > 35
 
@@ -295,3 +348,39 @@ def test_utility_profile_refuses_ambiguous_match():
         cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 1
     assert "more than one utility-state" in r.stdout
+
+
+def test_track2_hurricane_placebo_is_a_placebo():
+    """The geographic weather test only means something as a placebo.
+
+    The state list is fixed from the 2017 storm tracks and applied to every
+    transition. If those states moved most in some other year the list would
+    just be picking up storm-prone states generally, and the inference dies.
+    """
+    geo = _results("track2_weather_split")["spike_geography"]
+    assert geo["largest_excluded_gap_transition"] == "2016_2017"
+    # 2017 must stand clear of the runner-up, not edge past it
+    assert geo["largest_excluded_gap_minutes"] > 2 * geo[
+        "second_largest_excluded_gap_minutes"]
+
+    t = geo["by_transition"]["2016_2017"]
+    assert t["d_excluded_hurricane_cw"] > 5 * t["d_excluded_other_cw"]
+    # and the everyday series in those same states must NOT move, or the spike
+    # is not specific to the excluded portion
+    assert abs(t["d_everyday_hurricane_cw"]) < 5
+    # the following year it gives the minutes back
+    assert _results("track2_weather_split")["spike_geography"][
+        "by_transition"]["2017_2018"]["d_excluded_hurricane_cw"] < -400
+
+    # the list must not simply be the biggest states
+    assert geo["hurricane_states_share_of_panel_customers_pct"] < 35
+
+
+def test_track2_separates_trend_from_spike():
+    """Q4's whole claim is that the two series behave differently in kind: the
+    everyday one trends, the excluded one spikes."""
+    st = _results("track2_weather_split")["gradual_or_step"]
+    assert st["without_med_slope_p"] < 0.01
+    assert st["without_med_r2"] > 0.8
+    assert st["gap_slope_p"] > 0.05, "if the gap trends cleanly, Q4 is rewritten"
+    assert st["gap_r2"] < st["without_med_r2"]

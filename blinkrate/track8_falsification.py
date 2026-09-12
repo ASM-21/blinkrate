@@ -192,32 +192,41 @@ def a3_bunching_specs() -> dict:
 
 
 def a4_track2_trimmed(trim: float = 0.01) -> dict:
-    df = track2_weather_split.balanced_panel()
-    base = track2_weather_split.within_utility_decomposition(df)
+    """Track 2's headline, with extreme utilities removed and weighting dropped.
+
+    Also re-run on the 2013-2018 consecutive window, which the seven-year panel
+    made available. If the result only exists across the 2013-2022 endpoints it
+    is an endpoint artefact.
+    """
+    years = track2_weather_split.ALL_YEARS
+    df = track2_weather_split.balanced_panel(years)
+    base = track2_weather_split.within_utility_decomposition(
+        df, min(years), max(years))
 
     saidi = df["saidi_with"]
     lo, hi = saidi.quantile(trim), saidi.quantile(1 - trim)
-    # drop a utility-state if ANY of its four years is extreme. Keeping it when
-    # only one year is in range (the first version of this attack) drops nobody
-    # and makes the attack vacuous.
+    # drop a utility-state if ANY of its years is extreme. Keeping it when only
+    # one year is in range (the first version of this attack) drops nobody and
+    # makes the attack vacuous.
     outside = df.loc[(saidi < lo) | (saidi > hi), "utility_state"].unique()
     trimmed = df[~df["utility_state"].isin(outside)]
     n = trimmed.groupby("utility_state")["year"].nunique()
-    trimmed = trimmed[trimmed["utility_state"].isin(n[n == 4].index)]
-    tr = track2_weather_split.within_utility_decomposition(trimmed)
+    trimmed = trimmed[trimmed["utility_state"].isin(n[n == len(years)].index)]
+    tr = track2_weather_split.within_utility_decomposition(
+        trimmed, min(years), max(years))
 
-    # also unweighted, in case one very large utility carries the result
-    a = df[df["year"] == 2013].set_index("utility_state")
-    b = df[df["year"] == 2022].set_index("utility_state")
-    common = a.index.intersection(b.index)
-    d_with = (b.loc[common, "saidi_with"] - a.loc[common, "saidi_with"]).mean()
-    d_exc = (b.loc[common, "excluded_minutes"] - a.loc[common, "excluded_minutes"]).mean()
+    cons = track2_weather_split.CONSECUTIVE
+    consec = track2_weather_split.within_utility_decomposition(
+        track2_weather_split.balanced_panel(cons), min(cons), max(cons))
 
     return {
         "baseline_share_from_excluded": base["share_of_change_from_excluded_part"],
         "trimmed_share_from_excluded": tr["share_of_change_from_excluded_part"],
         "n_baseline": base["n_utility_states"], "n_trimmed": tr["n_utility_states"],
-        "unweighted_share_from_excluded": float(d_exc / d_with),
+        "unweighted_share_from_excluded": base["unweighted_share_from_excluded"],
+        "consecutive_window_share_from_excluded":
+            consec["share_of_change_from_excluded_part"],
+        "consecutive_span": consec["span"],
         "trim": trim,
     }
 
@@ -245,31 +254,44 @@ def a5_ownership_large_only() -> dict:
     return out
 
 
-def a6_track1_power(effect_sizes=(0.05, 0.10, 0.20, 0.40)) -> dict:
-    """Minimum detectable effect for the 2022 AMI coefficient.
+def a6_track1_power() -> dict:
+    """Track 1's null: could any of its three designs have seen an effect?
 
-    A null is only informative if the design could have seen the effect. The
-    MDE at 80% power for a two-sided 5% test is about 2.8 standard errors.
+    A null is only informative if the design had power. Track 1 now reports a
+    cross-section, a within-utility panel and a long difference, so this reports
+    the minimum detectable effect for each and how much identifying variation
+    each one had to work with. The cross-section's problem was never the
+    estimator, it was that AMI stopped varying.
     """
-    df = track1_investment.build_cross_section()
-    m = track1_investment._ols(
-        df, "log_saidi_without", ["ami_share", "volt_opt_share", "log_customers"],
-        True, True)
-    se = m["coefficients"]["ami_share"]["se"]
-    mde = 2.8 * se
-    return {
-        "ami_share_beta": m["coefficients"]["ami_share"]["beta"],
-        "ami_share_se": se,
-        "mde_80pct_power": float(mde),
-        "mde_as_pct_saidi_change": float(100 * (np.exp(-mde) - 1)),
-        "ami_share_variation": {
-            "sd": float(df["ami_share"].std()),
-            "share_at_100pct": float((df["ami_share"] >= 0.999).mean()),
-            "iqr": [float(df["ami_share"].quantile(0.25)),
-                    float(df["ami_share"].quantile(0.75))],
-        },
-        "detectable": {f"effect_{e}": bool(e > mde) for e in effect_sizes},
+    t1 = track1_investment.run(save=False)
+    out = {"designs": {}}
+    for year, res in t1["cross_sections"].items():
+        c = res["coefficients"]["ami_share"]
+        out["designs"][f"cross_section_{year}"] = {
+            "beta": c["beta"], "se": c["se"], "ci95": c["ci95"],
+            "mde_80pct_power": c["mde_80pct_power"],
+            "mde_as_pct_saidi": c["mde_as_pct_saidi"],
+            "ami_share_iqr": res["ami_share_iqr"],
+            "share_at_100pct": res["share_at_100pct"],
+        }
+    w = t1["within_utility"]["coefficients"]["ami_share"]
+    out["designs"]["within_utility_2016_2018"] = {
+        "beta": w["beta"], "se": w["se"], "ci95": w["ci95"],
+        "mde_80pct_power": w["mde_80pct_power"],
+        "mde_as_pct_saidi": w["mde_as_pct_saidi"],
+        "n_utilities_rolling_out": t1["within_utility"]["n_moving_ami_gt_0_50"],
     }
+    ld = t1["long_difference"]["coefficients"]["d_ami"]
+    out["designs"]["long_difference_2016_2018"] = {
+        "beta": ld["beta"], "se": ld["se"], "ci95": ld["ci95"],
+        "mde_80pct_power": ld["mde_80pct_power"],
+        "mde_as_pct_saidi": ld["mde_as_pct_saidi"],
+    }
+    out["group_comparison"] = t1["long_difference"]["group_comparison"]
+    out["verdict"] = ("every design agrees the effect is indistinguishable from "
+                      "zero; the within-utility design is the one that had the "
+                      "identifying variation to say so")
+    return out
 
 
 def run(save: bool = True) -> dict:

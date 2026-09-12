@@ -28,10 +28,22 @@ from .shared import reliability_metrics as rm
 from .shared.io import save_results
 
 
+CAIDI_YEARS = (2016, 2017, 2018, 2022)
+
+
 def caidi_identity(tolerance: float = 0.01) -> dict:
-    """Does reported CAIDI equal reported SAIDI / SAIFI? 2022 only; the earlier
-    files do not carry CAIDI."""
-    df = ingest.load_year(2022)
+    """Does reported CAIDI equal reported SAIDI / SAIFI?
+
+    CAIDI is definitionally SAIDI / SAIFI, and EIA-861 collects all three
+    independently, so any filing where the identity fails is an arithmetic error
+    in the source. The rate of those errors is the honest error bar on
+    everything downstream.
+
+    Run on every year that carries a CAIDI column. The 2013-2015 files do not,
+    so they cannot be checked this way and their arithmetic is validated only by
+    the with/without ordering constraint in the ingest filter.
+    """
+    df = pd.concat([ingest.load_year(y) for y in CAIDI_YEARS], ignore_index=True)
     rows = []
     for block in ("ieee", "other"):
         sub = df[[f"{block}_saidi_with", f"{block}_saifi_with", f"{block}_caidi_with",
@@ -60,6 +72,7 @@ def caidi_identity(tolerance: float = 0.01) -> dict:
             "n_failing": int((rel > tolerance).sum()),
         }
     out["tolerance"] = tolerance
+    out["years_checked"] = list(CAIDI_YEARS)
     return out
 
 
@@ -139,6 +152,11 @@ def run(save: bool = True) -> dict:
             "n": int(len(ingest.rejected_rows())),
             "by_reason": ingest.rejected_rows()["reject_reason"]
             .value_counts().to_dict(),
+        },
+        "duplicate_filings": {
+            "n_rows_involved": int(len(ingest.duplicate_filings())),
+            "note": ("genuine duplicate utility-state-year filings in the 2014 "
+                     "source; the larger-customer-count filing is kept"),
         },
     }
     if save:

@@ -2,14 +2,26 @@
 
 One row per (utility, state, year). Every track reads through `load_panel()`.
 
-Layout note that costs you the whole dataset if you miss it: the 2013-2015 CSVs
-and the 2022 XLSX are the same form with different headers. The CSVs carry two
-header rows and name the columns "SAIDI With MED"; 2022 carries three header
-rows, names them "SAIDI (minutes per year)" under a merged banner, and adds
-Ownership and CAIDI columns that the earlier years do not have. Both files put
-the IEEE-standard block and the Other-standard block side by side with
-IDENTICAL column names, so a naive header read silently keeps only one of them.
-We index by position, not by name.
+Layout note that costs you the whole dataset if you miss it. Three filing
+layouts are vendored here and they disagree about almost everything except
+column order:
+
+  2013-2015  CSV, two header rows, columns named "SAIDI With MED", no Ownership
+             and no CAIDI at all
+  2016-2018  XLSX, two header rows, columns named "SAIDI With MED", Ownership
+             and CAIDI present
+  2022       XLSX, three header rows, the same columns renamed to
+             "SAIDI (minutes per year)" under a merged banner
+
+Reading by column name would work for 2016-2018 and then silently fail on 2022,
+where every metric column was renamed. Reading by POSITION works across all
+three, because EIA changed the labels but not the order. That is why this module
+indexes positionally and treats the header rows as something to skip rather than
+something to parse.
+
+Worse, every layout puts the IEEE-standard block and the Other-standard block
+side by side with IDENTICAL column names, so even within one file a header-based
+read keeps one block and drops the other.
 
 Missing values are the literal string "." in EIA files, and customer counts are
 comma-formatted strings. Both become NaN under a default read.
@@ -88,18 +100,27 @@ def _reshape(raw: pd.DataFrame, colmap: dict) -> pd.DataFrame:
     return out
 
 
+# Header rows to skip, by filing year. Getting this wrong by one shifts a
+# header row into the data and every metric becomes NaN, which looks like a
+# quiet coverage problem rather than a parse error.
+_HEADER_ROWS = {2013: 2, 2014: 2, 2015: 2,
+                2016: 2, 2017: 2, 2018: 2, 2022: 3}
+YEARS_AVAILABLE = (2013, 2014, 2015, 2016, 2017, 2018, 2022)
+
+
 def load_year(year: int) -> pd.DataFrame:
     """Load one filing year in the harmonized wide layout."""
     if year in (2013, 2014, 2015):
         raw = pd.read_csv(
-            DATA_DIR / f"Reliability_{year}.csv", header=None, skiprows=2,
-            dtype=str, keep_default_na=False,
+            DATA_DIR / f"Reliability_{year}.csv", header=None,
+            skiprows=_HEADER_ROWS[year], dtype=str, keep_default_na=False,
         )
         df = _reshape(raw, _LEGACY_COLS)
-    elif year == 2022:
+    elif year in (2016, 2017, 2018, 2022):
         raw = pd.read_excel(
-            DATA_DIR / "Reliability_2022.xlsx", sheet_name="Reliability_States",
-            header=None, skiprows=3, dtype=str,
+            DATA_DIR / f"Reliability_{year}.xlsx",
+            sheet_name="Reliability_States", header=None,
+            skiprows=_HEADER_ROWS[year], dtype=str,
         )
         df = _reshape(raw, _MODERN_COLS)
     else:
@@ -155,6 +176,8 @@ def _ownership_lookup() -> pd.DataFrame:
                       header=0, dtype=str, usecols=[0, 1, 5])
     f.columns = ["year", "utility_id", "ownership"]
     frames.append(f)
+    # 2016-2018 carry Ownership inline in the reliability file itself, so they
+    # need no lookup row; the fillna in load_panel leaves them untouched.
     look = pd.concat(frames, ignore_index=True)
     look["year"] = _to_num(look["year"]).astype("Int64")
     look["utility_id"] = _to_num(look["utility_id"]).astype("Int64")
@@ -164,7 +187,7 @@ def _ownership_lookup() -> pd.DataFrame:
 
 
 @functools.lru_cache(maxsize=1)
-def load_panel(years: tuple[int, ...] = (2013, 2014, 2015, 2022)) -> pd.DataFrame:
+def load_panel(years: tuple[int, ...] = YEARS_AVAILABLE) -> pd.DataFrame:
     """The BlinkRate analysis panel: one row per utility-state-year.
 
     Adds the two derived quantities every track leans on:
@@ -212,7 +235,34 @@ def analysis_sample(min_customers: int = 100) -> pd.DataFrame:
     df["utility_state"] = (
         df["utility_id"].astype(str) + "_" + df["state"].astype(str)
     )
-    return df.reset_index(drop=True)
+    # Six rows in the 2014 file are genuine duplicate filings: three utilities
+    # each appear twice for the same state with different customer counts and
+    # different SAIDI. Left alone they break any set_index("utility_state")
+    # panel operation with "cannot reindex on an axis with duplicate labels",
+    # and if they slipped through they would double-count those utility-years.
+    # Keep the filing with the larger customer count, which is the more complete
+    # of the two, and expose the discards through duplicate_filings().
+    df = (df.sort_values("customers", ascending=False)
+            .drop_duplicates(subset=["utility_state", "year"], keep="first"))
+    return df.sort_values(["utility_id", "state", "year"]).reset_index(drop=True)
+
+
+def duplicate_filings(min_customers: int = 100) -> pd.DataFrame:
+    """The rows analysis_sample() drops as duplicate utility-state-years."""
+    df = load_panel().copy()
+    ok = (
+        df["saidi_with"].notna() & df["saidi_without"].notna()
+        & (df["saidi_with"] > 0)
+        & (df["retained_share"] >= 0) & (df["retained_share"] <= 1)
+        & (df["customers"] >= min_customers)
+    )
+    df = df[ok].copy()
+    df["utility_state"] = (
+        df["utility_id"].astype(str) + "_" + df["state"].astype(str)
+    )
+    dup = df.groupby(["utility_state", "year"]).size()
+    keys = dup[dup > 1].index
+    return df.set_index(["utility_state", "year"]).loc[keys].reset_index()
 
 
 def rejected_rows(min_customers: int = 100) -> pd.DataFrame:
@@ -232,3 +282,74 @@ def rejected_rows(min_customers: int = 100) -> pd.DataFrame:
         reasons.append(";".join(why) if why else "")
     df["reject_reason"] = reasons
     return df[df["reject_reason"] != ""].reset_index(drop=True)
+
+
+# --------------------------------------------------------------------------
+# Capital deployment (Advanced Meters, Distribution Systems)
+# --------------------------------------------------------------------------
+
+# (header rows to skip, AMR total col, AMI total col, state col). 2022 inserted
+# an Ownership column at position 3, shifting everything after it by one. This
+# is the same positional-drift trap as the reliability files and it fails the
+# same way: read by name and 2022 silently mismatches.
+_METER_POS = {2016: (2, 10, 15, 4), 2017: (2, 10, 15, 4),
+              2018: (2, 10, 15, 4), 2022: (2, 11, 16, 5)}
+
+# (header rows to skip, circuits col, voltage-optimised circuits col, state col)
+_DIST_POS = {2016: (1, 4, 5, 3), 2017: (1, 4, 5, 3),
+             2018: (1, 4, 5, 3), 2022: (1, 4, 5, 3)}
+
+DEPLOYMENT_YEARS = (2016, 2017, 2018, 2022)
+
+
+def load_deployment(year: int) -> pd.DataFrame:
+    """AMI/AMR meter counts and distribution circuit counts, per utility-state."""
+    skip, amr_c, ami_c, st_c = _METER_POS[year]
+    d = pd.read_excel(DATA_DIR / f"Advanced_Meters_{year}.xlsx", sheet_name=0,
+                      header=None, skiprows=skip, dtype=str)
+    meters = pd.DataFrame({
+        "utility_id": _to_num(d.iloc[:, 1]).astype("Int64"),
+        "state": d.iloc[:, st_c].astype(str).str.strip(),
+        "amr_total": _to_num(d.iloc[:, amr_c]),
+        "ami_total": _to_num(d.iloc[:, ami_c]),
+    }).groupby(["utility_id", "state"], as_index=False).sum(min_count=1)
+
+    skip, circ_c, vo_c, st_c = _DIST_POS[year]
+    try:
+        d2 = pd.read_excel(DATA_DIR / f"Distribution_Systems_{year}.xlsx",
+                           sheet_name=0, header=None, skiprows=skip, dtype=str)
+        circ = pd.DataFrame({
+            "utility_id": _to_num(d2.iloc[:, 1]).astype("Int64"),
+            "state": d2.iloc[:, st_c].astype(str).str.strip(),
+            "circuits": _to_num(d2.iloc[:, circ_c]),
+            "circuits_volt_opt": _to_num(d2.iloc[:, vo_c]),
+        }).groupby(["utility_id", "state"], as_index=False).sum(min_count=1)
+    except FileNotFoundError:
+        circ = pd.DataFrame(columns=["utility_id", "state", "circuits",
+                                     "circuits_volt_opt"])
+
+    out = meters.merge(circ, on=["utility_id", "state"], how="outer")
+    out["year"] = year
+    return out
+
+
+def deployment_panel() -> pd.DataFrame:
+    """All deployment years stacked, joined onto the reliability panel.
+
+    AMI share is the regressor track 1 leans on. Its usefulness collapses over
+    time: in 2016 the interquartile range is 0.04 to 1.00, by 2022 it is 0.96 to
+    1.00. A cross-section run in 2022 is asking a question the data can no
+    longer answer, which is why track 1 leads with the 2016-2018 panel.
+    """
+    dep = pd.concat([load_deployment(y) for y in DEPLOYMENT_YEARS],
+                    ignore_index=True)
+    df = analysis_sample().merge(dep, on=["utility_id", "state", "year"],
+                                 how="left")
+    df["ami_share"] = (df["ami_total"] / df["customers"]).clip(0, 1)
+    df["advanced_meter_share"] = (
+        (df["ami_total"].fillna(0) + df["amr_total"].fillna(0)) / df["customers"]
+    ).clip(0, 1)
+    df["volt_opt_share"] = (df["circuits_volt_opt"] / df["circuits"]).clip(0, 1)
+    df["log_saidi_without"] = np.log(df["saidi_without"].where(df["saidi_without"] > 0))
+    df["log_saidi_with"] = np.log(df["saidi_with"].where(df["saidi_with"] > 0))
+    return df

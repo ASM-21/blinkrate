@@ -23,19 +23,20 @@ entirely. PUDL distributes processed Form 1 via Zenodo.
 
 ## Would strengthen what is already here
 
-**EIA-861 filing years 2016-2021.** Four years with a seven-year hole is the
-single biggest structural weakness. It would let track 2 date the change rather
-than just measure the endpoints, and would let track 1 run with lags rather than
-as a cross-section.
+**EIA-861 filing years 2019-2021.** Partly done: 2016-2018 were found in
+`IMMM-SFA/electricity_entity_boundaries` and folded in, which closed most of the
+gap and changed three conclusions. What remains is 2019-2021, without which 2022
+is a single later observation rather than a continuation and no movement after
+2018 can be dated.
 
 **Leave-one-state-out on track 6.** Named in FALSIFICATION as an attack not run.
 The ownership gap already lost two thirds of its size to a size control; a few
 large states could plausibly carry the rest.
 
-**Pre-2022 AMI deployment.** Track 1's null is underpowered because AMI was
-near-universal by 2022 (47.6% of utility-states at exactly 100%). The 2013-2015
-Advanced Meters files, if mirrored anywhere, would put the regressor back in a
-period where it still varied. That is the version of track 1 worth running.
+**Pre-2016 AMI deployment.** Done for 2016-2018, which was enough to rebuild Q5
+around a within-utility design and turn an underpowered null into a bounded one.
+The 2013-2015 Advanced Meters files would extend the rollout window further back,
+to where AMI share varied most.
 
 **A bunching estimator with a proper counterfactual.** The current excess-mass
 estimator extrapolates a polynomial, and A3 showed four of 36 specifications kill

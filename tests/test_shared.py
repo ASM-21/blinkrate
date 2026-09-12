@@ -15,17 +15,23 @@ from blinkrate.shared import reliability_metrics as rm
 # ingest: the layout traps
 # --------------------------------------------------------------------------
 
-def test_all_four_years_load():
+def test_all_filing_years_load():
+    """Seven filing years across three incompatible file layouts. If a layout
+    change breaks a year it disappears silently rather than raising."""
     p = ingest.load_panel()
-    assert set(p["year"].dropna().unique()) == {2013, 2014, 2015, 2022}
+    assert set(p["year"].dropna().unique()) == set(ingest.YEARS_AVAILABLE)
+    assert set(ingest.YEARS_AVAILABLE) == {2013, 2014, 2015, 2016, 2017, 2018, 2022}
+    # every year must contribute a usable share, not just one row
+    counts = ingest.analysis_sample().groupby("year").size()
+    assert counts.min() > 700
 
 
 def test_panel_row_count_stable():
-    assert len(ingest.load_panel()) == 3854
+    assert len(ingest.load_panel()) == 7068
 
 
 def test_analysis_sample_row_count_stable():
-    assert len(ingest.analysis_sample()) == 3427
+    assert len(ingest.analysis_sample()) == 6245
 
 
 def test_both_reporting_standards_survive_the_read():
@@ -37,8 +43,8 @@ def test_both_reporting_standards_survive_the_read():
     """
     s = ingest.analysis_sample()
     counts = s["standard"].value_counts()
-    assert counts["IEEE"] > 2000
-    assert counts["Other"] > 900
+    assert counts["IEEE"] > 4000
+    assert counts["Other"] > 1500
 
 
 def test_missing_values_are_not_read_as_zero():
@@ -75,9 +81,24 @@ def test_retained_share_bounded_and_consistent():
 
 
 def test_rejected_rows_are_accounted_for():
+    """Every panel row is either kept, rejected by a stated reason, or dropped
+    as a duplicate filing. Nothing vanishes unexplained."""
     kept = len(ingest.analysis_sample())
     rejected = len(ingest.rejected_rows())
-    assert kept + rejected == len(ingest.load_panel())
+    dupes = len(ingest.duplicate_filings())
+    # duplicate_filings reports all rows in a duplicated key, of which one is kept
+    dropped_dupes = dupes // 2
+    assert kept + rejected + dropped_dupes == len(ingest.load_panel())
+
+
+def test_duplicate_filings_are_removed_not_silently_kept():
+    """Three utilities file twice for the same state in 2014. Left in, they
+    double-count and break every set_index panel operation."""
+    s = ingest.analysis_sample()
+    assert s.groupby(["utility_state", "year"]).size().max() == 1
+    d = ingest.duplicate_filings()
+    assert len(d) > 0
+    assert set(d["year"].unique()) == {2014}
 
 
 # --------------------------------------------------------------------------

@@ -16,6 +16,9 @@ holder.
 |---|---|---|---|
 | `Reliability_2013.csv`, `_2014`, `_2015` | 2013-2015 | `marcelMerchat/electricPowerReliability1` | none stated |
 | `Sales_Ult_Cust_2013.csv`, `_2014`, `_2015` | 2013-2015 | `marcelMerchat/electricPowerReliability1` | none stated |
+| `Reliability_2016/2017/2018.xlsx` | 2016-2018 | `IMMM-SFA/electricity_entity_boundaries` | BSD 2-Clause |
+| `Advanced_Meters_2016/2017/2018.xlsx` | 2016-2018 | same | BSD 2-Clause |
+| `Distribution_Systems_2016/2017/2018.xlsx` | 2016-2018 | same | BSD 2-Clause |
 | `Reliability_2022.xlsx` | 2022 | `Dex947/distribution-reliability-outage-analytics` | MIT |
 | `Advanced_Meters_2022.xlsx` | 2022 | same | MIT |
 | `Distribution_Systems_2022.xlsx` | 2022 | same | MIT |
@@ -27,21 +30,54 @@ holder.
 
 ## The panel this produces
 
-Four filing years — 2013, 2014, 2015, 2022 — with a seven-year hole in the
-middle. 3,854 utility-state-year rows load; 3,427 survive the analysis filter.
-The gap is the single biggest limitation in the repo. It is why:
+Seven filing years: 2013 through 2018, then 2022. 7,068 utility-state-year rows
+load; 6,245 survive the analysis filter; 12 rows are genuine duplicate filings in
+the 2014 source and are deduplicated on the larger customer count.
 
-- track 1's investment regression is a 2022 cross-section, not a panel with lags;
-- track 2's trend is four points with a jump, so a 2013-2022 change cannot be
-  distinguished from a level shift somewhere in the missing years;
-- nothing here estimates a year-by-year trajectory.
+**This started as four years and the difference was substantial.** The first
+version of this repository had 2013-2015 and 2022 only, a seven-year hole, and
+three tracks that could not answer their own question because of it. Finding the
+2016-2018 files closed most of the gap and changed real conclusions: it retracted
+one published regression result, turned a point estimate into a range, and let
+two previously unanswerable questions be answered. That is recorded in
+FALSIFICATION.md rather than smoothed over.
 
-Searched for the missing years and did not find them. Repository search on
-GitHub for `eia861`, `eia-861`, `SAIDI`, `SAIFI`, `IEEE 1366`, `annual electric
-power industry report 861` and several variants returns 11 distinct repositories;
-only the two mirrored above ship reliability data. Code search, which would find
-a stray `Reliability_2019.xlsx` inside an unrelated repo, requires
-authentication and there are no credentials in this environment.
+What the remaining hole still costs: 2019-2021 are missing, so 2022 is a single
+later observation rather than a continuation, and nothing here can date movement
+after 2018.
+
+### How they were found
+
+The repository search that produced the 2013-2015 and 2022 mirrors found nothing
+else. GitHub code search, which would locate a stray `Reliability_2019.xlsx`
+inside an unrelated repository, requires authentication and there are no
+credentials in this environment.
+
+What worked instead was a web search for the filenames rather than the topic.
+`IMMM-SFA/electricity_entity_boundaries` is a service-territory mapping project
+from a multi-sector modelling group; the EIA-861 reliability files are incidental
+inputs it happens to vendor, so no amount of searching for "SAIDI" or "reliability
+analysis" would surface it. **If a dataset is unreachable, search for the file
+name, not the subject.**
+
+### A layout trap worth knowing before you use these files
+
+The three vendored layouts disagree about nearly everything:
+
+| years | format | header rows | column naming | Ownership / CAIDI |
+|---|---|---|---|---|
+| 2013-2015 | CSV | 2 | "SAIDI With MED" | absent |
+| 2016-2018 | XLSX | 2 | "SAIDI With MED" | present |
+| 2022 | XLSX | 3 | "SAIDI (minutes per year)" | present |
+
+Reading by column name works for 2016-2018 and then silently fails on 2022,
+where every metric column was renamed. Reading by position works for all three,
+because EIA changed the labels but not the order. 2022 also inserted an Ownership
+column into the Advanced Meters file, shifting every column after it by one.
+
+Worse, all three layouts place the IEEE-standard block and the Other-standard
+block side by side with identical column names, so even within one file a
+header-based read keeps one and drops the other without complaint.
 
 ## Genuinely missing
 

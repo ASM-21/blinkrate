@@ -2,8 +2,8 @@ blinkrate
 Copyright (c) 2026 Andrew
 
 This product includes data from the US Energy Information Administration,
-Form EIA-861 (Annual Electric Power Industry Report), filing years 2013, 2014,
-2015 and 2022. Works of the US federal government are not subject to copyright
+Form EIA-861 (Annual Electric Power Industry Report), filing years 2013
+through 2018 and 2022. Works of the US federal government are not subject to copyright
 protection in the United States and are in the public domain.
 
 eia.gov is unreachable from the environment this repository was built in, so
@@ -13,6 +13,11 @@ the retrieval path, not the rights holder:
   - Reliability_2013/2014/2015.csv and Sales_Ult_Cust_2013/2014/2015.csv
     via github.com/marcelMerchat/electricPowerReliability1 (no licence stated;
     the mirrored files are the public-domain EIA originals)
+
+  - Reliability_2016/2017/2018.xlsx, Advanced_Meters_2016/2017/2018.xlsx and
+    Distribution_Systems_2016/2017/2018.xlsx
+    via github.com/IMMM-SFA/electricity_entity_boundaries (BSD 2-Clause,
+    Copyright (c) 2019 Integrated Multi-Sector Multi-Scale Modeling)
 
   - Reliability_2022.xlsx, Advanced_Meters_2022.xlsx,
     Distribution_Systems_2022.xlsx, Frame_2022.xlsx, Sales_Ult_Cust_2022.xlsx

@@ -1,137 +1,151 @@
 {
   "by_ownership": {
     "Coop": {
-      "mean_retained_share": 0.6977974880555058,
-      "median_customers": 20754.0,
-      "median_implied_sigma": 2.5432273062422643,
-      "median_retained_share": 0.7554890219560878,
-      "median_saidi_with": 170.1,
-      "median_saidi_without": 113.9,
-      "n": 1813,
-      "share_reporting_ieee": 0.7137341423055709,
-      "share_zero_exclusion": 0.28019856591285164
+      "mean_retained_share": 0.6854826313706012,
+      "median_customers": 20292.0,
+      "median_implied_sigma": 2.6310628508208085,
+      "median_retained_share": 0.7401360544217687,
+      "median_saidi_with": 188.4,
+      "median_saidi_without": 121.013,
+      "n": 3317,
+      "share_reporting_ieee": 0.7229424178474525,
+      "share_zero_exclusion": 0.27042508290624057
     },
     "IOU": {
-      "mean_retained_share": 0.6305102501755473,
+      "mean_retained_share": 0.624354492831269,
       "median_customers": 317878.5,
-      "median_implied_sigma": 2.630615590842435,
-      "median_retained_share": 0.6440590041724608,
-      "median_saidi_with": 171.0,
-      "median_saidi_without": 105.64500000000001,
-      "n": 632,
-      "share_reporting_ieee": 0.814873417721519,
-      "share_zero_exclusion": 0.12974683544303797
+      "median_implied_sigma": 2.650843577740594,
+      "median_retained_share": 0.6426483551889908,
+      "median_saidi_with": 177.0895,
+      "median_saidi_without": 107.455,
+      "n": 1136,
+      "share_reporting_ieee": 0.8248239436619719,
+      "share_zero_exclusion": 0.12852112676056338
     },
     "Municipal": {
-      "mean_retained_share": 0.7084629057189393,
-      "median_customers": 16435.0,
-      "median_implied_sigma": 2.944662357103961,
-      "median_retained_share": 0.9260463513549333,
-      "median_saidi_with": 49.45,
-      "median_saidi_without": 34.39,
-      "n": 947,
-      "share_reporting_ieee": 0.5850052798310454,
-      "share_zero_exclusion": 0.46673706441393875
+      "mean_retained_share": 0.7100053142472196,
+      "median_customers": 15742.0,
+      "median_implied_sigma": 2.9682607186456553,
+      "median_retained_share": 0.9011935390388321,
+      "median_saidi_with": 53.291,
+      "median_saidi_without": 35.135000000000005,
+      "n": 1738,
+      "share_reporting_ieee": 0.622554660529344,
+      "share_zero_exclusion": 0.4608745684695052
     }
   },
   "conditional": {
     "note": "reference class is Coop; state and year fixed effects in every specification; standard errors clustered by utility-state",
     "retained_share_no_size": {
-      "IOU_p": 1.491497989362413e-05,
-      "IOU_se": 0.01583771121624764,
-      "IOU_vs_Coop": -0.06857634340993518,
-      "Municipal_p": 0.08453978186557916,
-      "Municipal_se": 0.017709972112121893,
-      "Municipal_vs_Coop": 0.030548492309224663,
+      "IOU_p": 1.8334292128482493e-06,
+      "IOU_se": 0.013952434879461665,
+      "IOU_vs_Coop": -0.06656661646937953,
+      "Municipal_p": 0.005574635407843131,
+      "Municipal_se": 0.015342974679101043,
+      "Municipal_vs_Coop": 0.04252773987112626,
       "log_customers": null,
       "log_customers_p": null,
-      "n": 3392,
-      "r2": 0.08083629116915703
+      "n": 6191,
+      "r2": 0.0717273292178423
     },
     "retained_share_with_size": {
-      "IOU_p": 0.0039187153210896095,
-      "IOU_se": 0.022540373266461973,
-      "IOU_vs_Coop": -0.06502068031024816,
-      "Municipal_p": 0.08725316998285154,
-      "Municipal_se": 0.01773806563776744,
-      "Municipal_vs_Coop": 0.03033331083863767,
-      "log_customers": -0.0013761780680960722,
-      "log_customers_p": 0.8072668972724059,
-      "n": 3392,
-      "r2": 0.08086013924056601
+      "IOU_p": 0.022592681215670096,
+      "IOU_se": 0.019613043861867498,
+      "IOU_vs_Coop": -0.04472270421242495,
+      "Municipal_p": 0.007228927239612601,
+      "Municipal_se": 0.015319379423228332,
+      "Municipal_vs_Coop": 0.04114953918436182,
+      "log_customers": -0.008356691172430675,
+      "log_customers_p": 0.07981186896449531,
+      "n": 6191,
+      "r2": 0.07259938508983099
     },
     "zero_exclusion_no_size": {
-      "IOU_p": 2.5103151562032938e-14,
-      "IOU_se": 0.023943294979566605,
-      "IOU_vs_Coop": -0.18248028937023458,
-      "Municipal_p": 1.4964976345341374e-14,
-      "Municipal_se": 0.027338125752466687,
-      "Municipal_vs_Coop": 0.2101709032051819,
+      "IOU_p": 1.1717606928483784e-16,
+      "IOU_se": 0.020960875988587587,
+      "IOU_vs_Coop": -0.17368064128734637,
+      "Municipal_p": 2.347654352171396e-18,
+      "Municipal_se": 0.024553067481558086,
+      "Municipal_vs_Coop": 0.2145741850212054,
       "log_customers": null,
       "log_customers_p": null,
-      "n": 3392,
-      "r2": 0.13698009269020528
+      "n": 6191,
+      "r2": 0.12802192538925938
     },
     "zero_exclusion_with_size": {
-      "IOU_p": 0.02555577395433699,
-      "IOU_se": 0.03337363547877156,
-      "IOU_vs_Coop": -0.07451987208206548,
-      "Municipal_p": 4.0459598501962735e-14,
-      "Municipal_se": 0.026937910781647628,
-      "Municipal_vs_Coop": 0.20363735919216247,
-      "log_customers": -0.04178482446988356,
-      "log_customers_p": 3.752582443456343e-07,
-      "n": 3392,
-      "r2": 0.14668915067936872
+      "IOU_p": 0.1989522902949844,
+      "IOU_se": 0.028193921476721763,
+      "IOU_vs_Coop": -0.03621628333577898,
+      "Municipal_p": 1.3110560649016229e-17,
+      "Municipal_se": 0.024102542734638892,
+      "Municipal_vs_Coop": 0.2059011291003626,
+      "log_customers": -0.05258889401791991,
+      "log_customers_p": 8.589131538283536e-14,
+      "n": 6191,
+      "r2": 0.14354950640875042
     }
   },
   "size_deciles": {
     "deciles": {
       "0": {
         "Coop_median_r": 0.948051948051948,
-        "IOU_median_r": 0.5609844372059356,
-        "gap_IOU_minus_Coop": -0.38706751084601243,
-        "median_customers": 3893.0,
-        "n": 340
+        "IOU_median_r": 0.5961538461538461,
+        "gap_IOU_minus_Coop": -0.3518981018981019,
+        "median_customers": 3824.85,
+        "n": 620
       },
       "1": {
-        "Coop_median_r": 0.8410185513940022,
-        "IOU_median_r": 0.5416752970779345,
-        "gap_IOU_minus_Coop": -0.2993432543160677,
-        "median_customers": 7609.0,
-        "n": 339
+        "Coop_median_r": 0.80636957181901,
+        "IOU_median_r": 0.6346906973210519,
+        "gap_IOU_minus_Coop": -0.17167887449795816,
+        "median_customers": 7111.0,
+        "n": 619
+      },
+      "2": {
+        "Coop_median_r": 0.8451137884872825,
+        "IOU_median_r": 0.5230252343254723,
+        "gap_IOU_minus_Coop": -0.32208855416181015,
+        "median_customers": 11051.0,
+        "n": 619
+      },
+      "3": {
+        "Coop_median_r": 0.7652173913043478,
+        "IOU_median_r": 0.4383561643835616,
+        "gap_IOU_minus_Coop": -0.32686122692078623,
+        "median_customers": 15151.0,
+        "n": 619
       },
       "5": {
-        "Coop_median_r": 0.6938437605856802,
-        "IOU_median_r": 0.5833706898097509,
-        "gap_IOU_minus_Coop": -0.11047307077592927,
-        "median_customers": 28641.0,
-        "n": 339
+        "Coop_median_r": 0.6758807393581057,
+        "IOU_median_r": 0.5610561056105611,
+        "gap_IOU_minus_Coop": -0.11482463374754459,
+        "median_customers": 27576.0,
+        "n": 619
       },
       "6": {
-        "Coop_median_r": 0.6715020673838756,
-        "IOU_median_r": 0.6940503585222673,
-        "gap_IOU_minus_Coop": 0.02254829113839163,
-        "median_customers": 40841.0,
-        "n": 339
+        "Coop_median_r": 0.665519483002562,
+        "IOU_median_r": 0.6849175579595612,
+        "gap_IOU_minus_Coop": 0.01939807495699919,
+        "median_customers": 38944.0,
+        "n": 619
       },
       "7": {
-        "Coop_median_r": 0.7090909090909091,
-        "IOU_median_r": 0.7419828497180685,
-        "gap_IOU_minus_Coop": 0.03289194062715939,
-        "median_customers": 68071.0,
-        "n": 339
+        "Coop_median_r": 0.6462650602409638,
+        "IOU_median_r": 0.7291438347010237,
+        "gap_IOU_minus_Coop": 0.08287877446005998,
+        "median_customers": 64725.0,
+        "n": 619
       },
       "8": {
-        "Coop_median_r": 0.7636162127929069,
-        "IOU_median_r": 0.6763641375343057,
-        "gap_IOU_minus_Coop": -0.08725207525860124,
-        "median_customers": 165988.0,
-        "n": 339
+        "Coop_median_r": 0.7378277153558053,
+        "IOU_median_r": 0.6948317923079239,
+        "gap_IOU_minus_Coop": -0.04299592304788136,
+        "median_customers": 162868.0,
+        "n": 619
       }
     },
-    "deciles_with_both": 6,
-    "median_gap": -0.09886257301726525,
-    "n_deciles_iou_excludes_more": 4
+    "deciles_with_both": 8,
+    "median_gap": -0.14325175412275137,
+    "n_deciles_iou_excludes_more": 6
   }
 }

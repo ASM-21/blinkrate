@@ -3,19 +3,19 @@
   "los": {
     "by_ownership": {
       "Coop": {
-        "median_los_retained": 0.9325756203586306,
-        "n": 1199,
-        "share_los_removes_nothing": 0.17848206839032527
+        "median_los_retained": 0.9348370927318296,
+        "n": 2221,
+        "share_los_removes_nothing": 0.16118865375956776
       },
       "IOU": {
-        "median_los_retained": 0.9525525525525526,
-        "n": 485,
-        "share_los_removes_nothing": 0.20618556701030927
+        "median_los_retained": 0.95740144263485,
+        "n": 868,
+        "share_los_removes_nothing": 0.1912442396313364
       },
       "Municipal": {
         "median_los_retained": 1.0,
-        "n": 440,
-        "share_los_removes_nothing": 0.7159090909090909
+        "n": 817,
+        "share_los_removes_nothing": 0.7441860465116279
       }
     },
     "by_year": {
@@ -26,16 +26,34 @@
         "share_reporting_los": 0.898238747553816
       },
       "2014": {
-        "median_los_retained": 0.9450450450450449,
-        "n_ieee": 566,
-        "n_reporting_los": 505,
-        "share_reporting_los": 0.892226148409894
+        "median_los_retained": 0.9457611241217798,
+        "n_ieee": 562,
+        "n_reporting_los": 501,
+        "share_reporting_los": 0.891459074733096
       },
       "2015": {
         "median_los_retained": 0.9618996292848627,
         "n_ieee": 620,
         "n_reporting_los": 559,
         "share_reporting_los": 0.9016129032258065
+      },
+      "2016": {
+        "median_los_retained": 0.9662522202486677,
+        "n_ieee": 647,
+        "n_reporting_los": 557,
+        "share_reporting_los": 0.8608964451313755
+      },
+      "2017": {
+        "median_los_retained": 0.964358522795164,
+        "n_ieee": 687,
+        "n_reporting_los": 600,
+        "share_reporting_los": 0.8733624454148472
+      },
+      "2018": {
+        "median_los_retained": 0.9712879070575398,
+        "n_ieee": 730,
+        "n_reporting_los": 634,
+        "share_reporting_los": 0.8684931506849315
       },
       "2022": {
         "median_los_retained": 0.9761361800338688,
@@ -44,16 +62,16 @@
         "share_reporting_los": 0.9027576197387518
       }
     },
-    "customer_weighted_los_retained": 0.9217933659153564,
-    "mean_los_retained_share": 0.8526399454686426,
-    "median_los_retained_share": 0.9596203680418119,
-    "n_ieee_rows": 2386,
-    "n_reporting_los": 2145,
-    "n_valid": 2145,
-    "share_of_ieee_reporting_los": 0.8989941324392289,
-    "share_where_los_removes_nothing": 0.29603729603729606,
+    "customer_weighted_los_retained": 0.9268093565320293,
+    "mean_los_retained_share": 0.8715998963538948,
+    "median_los_retained_share": 0.9636482360980515,
+    "n_ieee_rows": 4446,
+    "n_reporting_los": 3932,
+    "n_valid": 3932,
+    "share_of_ieee_reporting_los": 0.8843904633378318,
+    "share_where_los_removes_nothing": 0.28992878942014244,
     "stacked_med_and_los": {
-      "median_combined_retained": 0.5926817639085633,
+      "median_combined_retained": 0.588090514447724,
       "note": "multiplicative approximation: EIA does not publish a both-removed variant, so this assumes the two carve-outs are independent, which they are not for storm events that take out transmission"
     }
   },

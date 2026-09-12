@@ -2,19 +2,25 @@
   "caidi_identity": {
     "tolerance": 0.01,
     "with_med": {
-      "median_relative_error": 6.83760692539735e-09,
-      "n_checked": 887,
+      "median_relative_error": 6.558407723394589e-09,
+      "n_checked": 3838,
       "n_failing": 0,
-      "p99_relative_error": 4.147611728128279e-08,
+      "p99_relative_error": 4.300033988352037e-08,
       "share_within_tolerance": 1.0
     },
     "without_med": {
-      "median_relative_error": 5.1858173880974556e-09,
-      "n_checked": 820,
+      "median_relative_error": 5.188800220450635e-09,
+      "n_checked": 3392,
       "n_failing": 0,
-      "p99_relative_error": 4.308983413343535e-08,
+      "p99_relative_error": 4.310928145115458e-08,
       "share_within_tolerance": 1.0
-    }
+    },
+    "years_checked": [
+      2016,
+      2017,
+      2018,
+      2022
+    ]
   },
   "closed_form_vs_procedure": {
     "by_sigma": {
@@ -71,6 +77,10 @@
     "max_abs_err_closed_form": 0.19640103032373613,
     "verdict": "closed form is accurate for sigma <= 1 and degrades badly above 2; the calibrated surface is what the tracks use"
   },
+  "duplicate_filings": {
+    "n_rows_involved": 12,
+    "note": "genuine duplicate utility-state-year filings in the 2014 source; the larger-customer-count filing is kept"
+  },
   "hand_checks": {
     "mismatched_ids": [],
     "n_checked": 10,
@@ -78,13 +88,13 @@
   },
   "rejected_rows": {
     "by_reason": {
-      "missing_saidi": 370,
+      "missing_saidi": 753,
       "missing_saidi;too_small_or_missing_customers": 11,
       "nonpositive_saidi_with": 14,
       "retained_share_out_of_range": 1,
-      "too_small_or_missing_customers": 31
+      "too_small_or_missing_customers": 38
     },
-    "n": 427
+    "n": 817
   },
   "round_trip": {
     "by_r": {
