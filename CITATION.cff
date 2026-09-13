@@ -27,7 +27,11 @@ abstract: >-
   within-utility design covering 53 advanced-metering rollouts finds no
   detectable reliability effect in a design powered to detect 24%. A geographic
   placebo separates weather-driven spikes in the excluded portion from a slower
-  methodological drift into using the exclusion at all. The threshold
+  methodological drift into using the exclusion at all, and a
+  leave-one-state-out jackknife shows that while the underlying deterioration
+  trend is national, the customer-weighted claim that most reported
+  deterioration falls in the excluded portion is substantially a Gulf-coast
+  result. The threshold
   sensitivity is model-implied and inherits IEEE 1366's own log-normality
   assumption; an adversarial track shows its direction survives heavier-tailed
   daily outage distributions while its magnitude does not.

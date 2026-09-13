@@ -119,6 +119,39 @@
     "reading": "the hurricane-state list is fixed from the 2017 storm tracks and applied to every transition, so 2017 has to distinguish itself rather than being selected",
     "second_largest_excluded_gap_minutes": 252.17289965890143
   },
+  "storm_state_sensitivity": {
+    "all_states": {
+      "everyday_p": 0.007747262310711419,
+      "everyday_r2": 0.8597843134383134,
+      "everyday_slope": 3.0776350501549223,
+      "gap_2017": 386.24924022580524,
+      "gap_p": 0.1434098301908544,
+      "gap_r2": 0.4521111327736085,
+      "gap_slope": 40.89562824544455,
+      "n_utility_states": 568,
+      "share_from_excluded_cw": 0.8294167211189792,
+      "share_from_excluded_unweighted": 0.814372279424173
+    },
+    "hurricane_states_dropped": {
+      "everyday_p": 0.005825384872185275,
+      "everyday_r2": 0.8780006559689572,
+      "everyday_slope": 2.721130452580941,
+      "gap_2017": 170.55468594362742,
+      "gap_p": 0.2623622268203545,
+      "gap_r2": 0.29814031430595955,
+      "gap_slope": 14.230377571114465,
+      "n_utility_states": 404,
+      "share_from_excluded_cw": 0.40491888085954814,
+      "share_from_excluded_unweighted": 0.7428579151450637
+    },
+    "reading": {
+      "everyday_trend_survives": true,
+      "excluded_share_drop": 0.4244978402594311,
+      "excluded_share_survives": false,
+      "note": "the customer-weighted share collapses while the unweighted one barely moves, which locates the effect precisely: a few very large storm-exposed utilities, not a broad pattern",
+      "unweighted_share_drop": 0.07151436427910929
+    }
+  },
   "trend": {
     "by_year": {
       "2013": {

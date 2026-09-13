@@ -577,5 +577,70 @@
       "pct_saidi_difference": -2.9941911084021555
     },
     "verdict": "every design agrees the effect is indistinguishable from zero; the within-utility design is the one that had the identifying variation to say so"
+  },
+  "A7_leave_one_state_out": {
+    "baseline": {
+      "excess_mass": 12.03049163602419,
+      "fleet_range_ratio": 7.656579147293274,
+      "fleet_saidi_at_2_5": 115.45659941815734,
+      "pct_changing_quartile_2022": 52.38095238095239,
+      "share_from_excluded": 0.8294167211189792
+    },
+    "florida": {
+      "excess_mass": 11.361334316011888,
+      "fleet_range_ratio": 7.419069709137703,
+      "fleet_saidi_at_2_5": 117.66431788874962,
+      "pct_changing_quartile_2022": 51.21951219512195,
+      "share_from_excluded": 0.5092718717367577
+    },
+    "n_states_dropped": 51,
+    "summary": {
+      "excess_mass": {
+        "baseline": 12.03049163602419,
+        "max_abs_shift": 0.9931597587594059,
+        "max_leaving_one_out": 12.959754859295515,
+        "max_pct_shift": 8.255354717054798,
+        "min_leaving_one_out": 11.037331877264783,
+        "most_influential_state": "NC",
+        "value_without_that_state": 11.037331877264783
+      },
+      "fleet_range_ratio": {
+        "baseline": 7.656579147293274,
+        "max_abs_shift": 0.6397218957162236,
+        "max_leaving_one_out": 8.296301043009498,
+        "max_pct_shift": 8.355192095707334,
+        "min_leaving_one_out": 7.231903247744141,
+        "most_influential_state": "CA",
+        "value_without_that_state": 8.296301043009498
+      },
+      "fleet_saidi_at_2_5": {
+        "baseline": 115.45659941815734,
+        "max_abs_shift": 3.2025087787583146,
+        "max_leaving_one_out": 118.65910819691565,
+        "max_pct_shift": 2.7737771551365045,
+        "min_leaving_one_out": 112.56543677673199,
+        "most_influential_state": "NY",
+        "value_without_that_state": 118.65910819691565
+      },
+      "pct_changing_quartile_2022": {
+        "baseline": 52.38095238095239,
+        "max_abs_shift": 2.3809523809523867,
+        "max_leaving_one_out": 53.6,
+        "max_pct_shift": 4.545454545454556,
+        "min_leaving_one_out": 50.0,
+        "most_influential_state": "AR",
+        "value_without_that_state": 50.0
+      },
+      "share_from_excluded": {
+        "baseline": 0.8294167211189792,
+        "max_abs_shift": 0.32014484938222154,
+        "max_leaving_one_out": 0.8755859080148363,
+        "max_pct_shift": 38.598793734265335,
+        "min_leaving_one_out": 0.5092718717367577,
+        "most_influential_state": "FL",
+        "value_without_that_state": 0.5092718717367577
+      }
+    },
+    "verdict": "a headline survives if dropping any single state leaves it inside the range the writeup claims; it fails if one state is carrying it"
   }
 }

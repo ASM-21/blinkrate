@@ -29,9 +29,16 @@ gap and changed three conclusions. What remains is 2019-2021, without which 2022
 is a single later observation rather than a continuation and no movement after
 2018 can be dated.
 
-**Leave-one-state-out on track 6.** Named in FALSIFICATION as an attack not run.
-The ownership gap already lost two thirds of its size to a size control; a few
-large states could plausibly carry the rest.
+**Leave-one-utility-out.** Leave-one-state-out is now attack A7 and it found
+that Q4's excluded-share headline is largely Florida. Within Florida a single
+utility is most of the mass, so the utility-level version would mostly restate
+A7 — but it becomes necessary the moment Q4 is quoted at a utility level.
+
+**Population weights for the national aggregate.** A7's real lesson is that a
+customer-weighted US SAIDI aggregate has a tail of a few enormous storm-exposed
+utilities and is not a national quantity. Reporting a trimmed or
+state-population-weighted alternative alongside it would make every
+cross-utility comparison in this repository more honest, not just Q4's.
 
 **Pre-2016 AMI deployment.** Done for 2016-2018, which was enough to rebuild Q5
 around a within-utility design and turn an underpowered null into a bounded one.

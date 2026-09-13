@@ -22,7 +22,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 54 tests
+pytest                           # 56 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "PPL" --figure
 ```
@@ -36,7 +36,7 @@ python tools/utility_profile.py --name "PPL" --figure
 | Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | direction solid, **magnitude assumption-dependent** |
 | Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion — 12.0x excess mass — which is the unflattering direction | solid |
 | Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | solid |
-| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | good, one figure is a **range not a point** |
+| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | trend **national and solid**; the excluded-share figure is **mostly the Gulf coast** |
 | Q5 | Does capital deployment show up in reliability? | No — and unlike the first version, the design could have caught a 24% effect | **bounded null** |
 | Q6 | Does ownership predict exclusion? | Partly; one half of this was **retracted** when the panel doubled | weakened |
 | Q7 | Is the source data internally consistent? | CAIDI identity reproduces in 100.00% of 3,838 filings | solid |
@@ -68,17 +68,20 @@ and rebuilds bit-identically in about 20 seconds.
 against SAIDI/SAIFI in the source, checks the closed form against the procedural
 simulator, and round-trips the inversion.
 
-**Falsification is a track, not an appendix.** Three attacks landed. Q6's
-regression result was retracted outright when the panel grew. Q4's headline
-became a range. Q1's magnitude was scoped to its distributional assumption, and
-the guard fails the build if that qualifier is deleted.
+**Falsification is a track, not an appendix.** Four attacks landed. Q6's
+regression result was retracted outright when the panel grew. Q1's magnitude was
+scoped to its distributional assumption, and the guard fails the build if that
+qualifier is deleted. Leave-one-state-out found that Q4's headline share falls
+from 0.829 to 0.509 when Florida alone is removed, while every other headline
+moves by under 8.4% whichever state is dropped — so Q4 was rewritten to separate
+a national trend from a Gulf-coast aggregate.
 
 **More data was allowed to break things.** The panel started at four filing
 years. Finding 2016-2018 nearly doubled it, retracted one published result at
 p = 0.026, turned another into a range, and let two questions be answered that
 were previously marked unanswerable. Nothing was re-tuned to keep an old number.
 
-**Claims cannot drift.** `tools/check_claims.py` pairs 52 figures quoted in the
+**Claims cannot drift.** `tools/check_claims.py` pairs 59 figures quoted in the
 prose with the code that recomputes them, including the numbers inside
 retraction blockquotes, and also fails on missing hedges and overclaiming
 language. A test feeds it a corrupted README to demonstrate that the guard can

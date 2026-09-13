@@ -5,8 +5,8 @@ Track 8 attacks the other tracks. Six attacks, run in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Three landed. One of the three landed only after the panel grew from four
-filing years to seven, which is worth stating plainly: **more data retracted a
+Four landed. Two of them landed only after the panel grew from four filing
+years to seven, which is worth stating plainly: **more data retracted a
 result that four years of data had supported at p = 0.026.**
 
 ---
@@ -167,11 +167,56 @@ The null is now bounded rather than uninformative.
 
 ---
 
+## A7 — leave one state out. **Landed on exactly one finding.**
+
+The attack this repository most needed and had gone without. Three of its four
+main headlines are customer-weighted, and Florida Power & Light files a 0.96
+exclusion share on millions of customers, so any of them could have been a
+Florida result wearing a national label.
+
+Each of the 51 states and territories in the panel is dropped in turn and every
+headline recomputed.
+
+| headline | baseline | leave-one-out range | most influential | max shift |
+|---|---|---|---|---|
+| Q1 fleet sensitivity range | 7.66 | 7.23 to 8.30 | CA | 8.4% |
+| Q2 excess mass at zero exclusion | 12.03 | 11.04 to 12.96 | NC | 8.3% |
+| Q3 large IOUs changing quartile, 2022 | 52.4% | 50.0% to 53.6% | AR | 4.5% |
+| Q4 share of the rise in the excluded part | 0.829 | 0.509 to 0.876 | FL | 38.6% |
+
+**Three survive comfortably.** Q1's sensitivity range, Q2's excess mass and Q3's
+ranking churn all move by under 8.4% no matter which state is removed, and the most
+influential state differs for each — California, North Carolina and Arkansas
+respectively — which is what you want to see. No single jurisdiction is carrying
+them.
+
+**Q4's share fails.** Removing Florida alone takes it from 0.829 to 0.509.
+Removing the whole hurricane-track group takes it to 0.405.
+
+The follow-up locates the problem precisely. Dropping the hurricane states moves
+the customer-weighted share from 0.829 to 0.405 but the unweighted share only
+from 0.814 to 0.743. The pattern is not absent outside the storm belt; a few very
+large storm-exposed utilities are dominating a customer-weighted aggregate.
+Meanwhile the everyday trend on the same panel goes from 3.08 min/yr
+(p = 0.008) to 2.72 (p = 0.006) — essentially untouched.
+
+**Q4 was rewritten rather than defended.** It now states two answers: a national
+and robust one about the everyday trend, and a non-national one about the
+excluded share, with the Gulf-coast dependence in the text and in the table
+rather than in a footnote. `storm_state_sensitivity()` in track 2 computes the
+comparison so it stays under the claims guard.
+
+This is the third time an attack has changed a writeup, and the second time the
+fix was to narrow a claim's scope rather than to drop it.
+
+---
+
 ## Attacks not run
 
 - Nothing attacks the undergrounding model, which is a parameter sweep rather
   than an estimate; its sensitivity to every input is the deliverable.
-- No placebo on Q4's trend. The geographic placebo in Q4 does related work, but a
-  proper temporal placebo needs the 2019-2021 filings.
-- No leave-one-state-out on Q6. Florida alone drives much of the exclusion mass,
-  so this is the most likely place another result is hiding. See ROADMAP.
+- No temporal placebo on Q4's trend. The geographic placebo does related work,
+  but a proper temporal one needs the 2019-2021 filings.
+- No leave-one-utility-out. A7 works at state granularity, and within Florida a
+  single utility is most of the mass, so the utility-level version would mostly
+  restate A7. Worth doing if Q4 is ever quoted at a utility level.

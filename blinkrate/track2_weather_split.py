@@ -272,6 +272,57 @@ def spike_geography(df: pd.DataFrame) -> dict:
     }
 
 
+def storm_state_sensitivity(df: pd.DataFrame) -> dict:
+    """How much of the national picture is a handful of storm-exposed utilities?
+
+    Attack A7 in track 8 jackknifes every headline by state and finds that only
+    one is state-dependent: the share of the reported rise sitting in the
+    excluded portion falls from 0.829 to 0.509 when Florida alone is removed.
+    This runs the cleaner version of that test by dropping the whole
+    hurricane-track group, and separates the two claims Q4 makes.
+
+    The distinction that matters is between the claim about the EVERYDAY series,
+    which is a trend, and the claim about the EXCLUDED portion, which is a share
+    of an aggregate. Trends are robust to dropping a group. Customer-weighted
+    shares of an aggregate are not, when a few very large utilities dominate the
+    numerator.
+    """
+    out = {}
+    for label, sub in (("all_states", df),
+                       ("hurricane_states_dropped",
+                        df[~df["state"].isin(HURRICANE_2017_STATES)])):
+        wu = within_utility_decomposition(sub, min(ALL_YEARS), 2022)
+        tt = trend_table(sub)["by_year"]
+        yrs = np.array([y for y in sorted(tt) if y in CONSECUTIVE])
+        everyday = np.array([tt[y]["saidi_without_cw"] for y in yrs])
+        gap = np.array([tt[y]["med_gap_cw"] for y in yrs])
+        fe, fg = stats.linregress(yrs, everyday), stats.linregress(yrs, gap)
+        out[label] = {
+            "n_utility_states": int(sub["utility_state"].nunique()),
+            "share_from_excluded_cw": wu["share_of_change_from_excluded_part"],
+            "share_from_excluded_unweighted": wu["unweighted_share_from_excluded"],
+            "everyday_slope": float(fe.slope), "everyday_p": float(fe.pvalue),
+            "everyday_r2": float(fe.rvalue ** 2),
+            "gap_slope": float(fg.slope), "gap_p": float(fg.pvalue),
+            "gap_r2": float(fg.rvalue ** 2),
+            "gap_2017": float(gap[-2]),
+        }
+    a, b = out["all_states"], out["hurricane_states_dropped"]
+    out["reading"] = {
+        "everyday_trend_survives": bool(b["everyday_p"] < 0.01
+                                        and b["everyday_r2"] > 0.8),
+        "excluded_share_survives": bool(b["share_from_excluded_cw"] > 0.6),
+        "excluded_share_drop": float(a["share_from_excluded_cw"]
+                                     - b["share_from_excluded_cw"]),
+        "unweighted_share_drop": float(a["share_from_excluded_unweighted"]
+                                       - b["share_from_excluded_unweighted"]),
+        "note": ("the customer-weighted share collapses while the unweighted one "
+                 "barely moves, which locates the effect precisely: a few very "
+                 "large storm-exposed utilities, not a broad pattern"),
+    }
+    return out
+
+
 def _fig(df: pd.DataFrame, tt: dict, step: dict) -> None:
     import matplotlib.pyplot as plt
     yrs = sorted(tt["by_year"])
@@ -362,6 +413,7 @@ def run(save: bool = True) -> dict:
             balanced_panel(CONSECUTIVE), 2013, 2018),
         "exclusion_entry": exclusion_entry(df),
         "spike_geography": spike_geography(df),
+        "storm_state_sensitivity": storm_state_sensitivity(df),
     }
     if save:
         _fig(df, tt, out["gradual_or_step"])

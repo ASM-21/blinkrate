@@ -138,12 +138,55 @@ reporting no exclusion at all falls **1.08** percentage points per year
 exclusion to reporting some, against 10.4% moving the other way. Switching from
 not applying the rule to applying it is a measurement change, not weather.
 
-Taken together, **82.9%** of the 2013-to-2022 rise in reported with-MED SAIDI
-sits in the excluded portion. That figure is specification-sensitive: 88.0% over
-the 2013-2018 consecutive window, 81.4% unweighted, and **59.5%** after trimming
-the top and bottom 1% of utility-years. The trim is not a neutral check here,
-since it removes the major events themselves, but the honest reading is a range
-of roughly 60% to 88% rather than a point estimate.
+**How much of the national rise sits in the excluded portion, and for whom.**
+Taken together, **82.9%** of the 2013-to-2022 rise in customer-weighted reported
+SAIDI sits in the excluded portion. That single number turned out to be the least
+robust thing in this repository, and the leave-one-state-out attack (A7) is what
+found it:
+
+| specification | share from the excluded part |
+|---|---|
+| headline, customer-weighted | 82.9% |
+| 2013-2018 consecutive window | 88.0% |
+| unweighted | 81.4% |
+| top and bottom 1% of utility-years trimmed | 59.5% |
+| **Florida alone removed** | **50.9%** |
+| all hurricane-track states removed | **40.5%** |
+
+Removing one state moves it 32 points. Removing the storm-exposed group halves
+it. Every other headline in this repository survives leave-one-state-out, moving
+by under 8.4% whichever state is dropped.
+
+**The diagnosis is precise, and it is the interesting part.** Dropping the
+hurricane states takes the *customer-weighted* share from 0.829 to 0.405 but the
+*unweighted* share only from 0.814 to 0.743. So this is not a case of the
+pattern being absent outside the storm belt. It is a case of a few very large
+storm-exposed utilities dominating a customer-weighted aggregate. Florida Power
+& Light alone files a 0.96 exclusion share on millions of customers.
+
+**What survives untouched is the trend.** On the same seven-year balanced panel,
+the everyday series rises **3.08** min/yr with all states (p = 0.008, R² = 0.860)
+and **2.72** min/yr with the hurricane states removed (p = 0.006, R² = 0.878).
+Dropping a fifth of the panel barely moves it. Trends are robust to dropping a
+group; customer-weighted shares of an aggregate are not, when a handful of
+utilities dominate the numerator.
+
+**So Q4 has two answers, and only one of them is national.**
+
+*National and solid:* everyday distribution reliability is deteriorating slowly
+and steadily, at roughly 2.7 to 3.2 minutes per year, and the exclusion hides it
+from the headline number.
+
+*Not national:* the claim that most of the reported deterioration sits in the
+excluded portion is true for the customer-weighted US fleet, and true mainly
+because of Florida and Texas. Outside the storm belt it is closer to a coin flip.
+"US reliability is getting worse because of major events" is, on this data,
+substantially a statement about the Gulf coast.
+
+That is itself worth reporting rather than patching over. **A national SAIDI
+average is not a national quantity.** It is a customer-weighted mean over a
+population whose tail is a few enormous hurricane-exposed utilities, and any
+benchmark built on it inherits that.
 
 ## Q5. Does capital deployment show up in reported reliability?
 

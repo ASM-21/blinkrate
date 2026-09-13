@@ -294,6 +294,91 @@ def a6_track1_power() -> dict:
     return out
 
 
+def a7_leave_one_state_out() -> dict:
+    """Drop each state in turn and recompute every headline. **The attack the
+    repository most needed and had not run.**
+
+    Florida is the specific worry. Florida Power & Light files a 0.96 exclusion
+    share on millions of customers, so any customer-weighted result could be a
+    Florida result wearing a national label. Hurricane states more broadly carry
+    most of the excluded minutes, and three of the four headlines here are
+    customer-weighted.
+
+    Four statistics are jackknifed, one per finding:
+      Q1  the fleet sensitivity range across beta
+      Q2  the excess mass at zero exclusion
+      Q3  the share of large IOUs changing quartile in 2022
+      Q4  the share of the 2013-2022 rise sitting in the excluded portion
+
+    A finding survives if no single state's removal moves it outside the range
+    the writeup claims. A finding fails if one state is carrying it.
+    """
+    df = ingest.analysis_sample()
+    states = sorted(df["state"].unique())
+
+    # Q4 works on the balanced panel; dropping a state leaves it balanced.
+    panel = track2_weather_split.balanced_panel(track2_weather_split.ALL_YEARS)
+
+    def stats_without(state: str | None) -> dict:
+        sub = df if state is None else df[df["state"] != state]
+        pan = panel if state is None else panel[panel["state"] != state]
+        out = {}
+
+        sens = track3_med_sensitivity.sensitivity(sub)
+        out["fleet_range_ratio"] = sens["fleet_range_ratio"]
+        out["fleet_saidi_at_2_5"] = sens["headline"]["beta_2.5"][
+            "fleet_saidi_without_med"]
+
+        try:
+            out["excess_mass"] = track3_med_sensitivity.excess_mass_at_zero_exclusion(
+                sub, n_boot=200)["excess_mass_ratio"]
+        except Exception:
+            out["excess_mass"] = np.nan
+
+        rk = track3_med_sensitivity.ranking_sensitivity(sub)
+        out["pct_changing_quartile_2022"] = rk["by_year"].get(2022, {}).get(
+            "pct_changing_quartile", np.nan)
+
+        if pan["utility_state"].nunique() > 50:
+            wu = track2_weather_split.within_utility_decomposition(pan, 2013, 2022)
+            out["share_from_excluded"] = wu["share_of_change_from_excluded_part"]
+        else:
+            out["share_from_excluded"] = np.nan
+        return out
+
+    base = stats_without(None)
+    per_state = {st: stats_without(st) for st in states}
+
+    summary = {}
+    for key, baseline in base.items():
+        vals = {st: v[key] for st, v in per_state.items()
+                if v[key] is not None and np.isfinite(v[key])}
+        if not vals:
+            continue
+        worst = max(vals, key=lambda k: abs(vals[k] - baseline))
+        summary[key] = {
+            "baseline": float(baseline),
+            "min_leaving_one_out": float(min(vals.values())),
+            "max_leaving_one_out": float(max(vals.values())),
+            "most_influential_state": worst,
+            "value_without_that_state": float(vals[worst]),
+            "max_abs_shift": float(abs(vals[worst] - baseline)),
+            "max_pct_shift": float(100 * abs(vals[worst] - baseline) / abs(baseline))
+            if baseline else np.nan,
+        }
+
+    return {
+        "n_states_dropped": len(states),
+        "baseline": {k: float(v) for k, v in base.items()},
+        "summary": summary,
+        "florida": {k: float(v) for k, v in per_state.get("FL", {}).items()
+                    if v is not None and np.isfinite(v)},
+        "verdict": ("a headline survives if dropping any single state leaves it "
+                    "inside the range the writeup claims; it fails if one state "
+                    "is carrying it"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -303,6 +388,7 @@ def run(save: bool = True) -> dict:
         "A4_track2_trimmed": a4_track2_trimmed(),
         "A5_ownership_large_only": a5_ownership_large_only(),
         "A6_track1_power": a6_track1_power(),
+        "A7_leave_one_state_out": a7_leave_one_state_out(),
     }
     if save:
         save_results("track8_falsification", out)

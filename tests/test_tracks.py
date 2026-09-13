@@ -384,3 +384,37 @@ def test_track2_separates_trend_from_spike():
     assert st["without_med_r2"] > 0.8
     assert st["gap_slope_p"] > 0.05, "if the gap trends cleanly, Q4 is rewritten"
     assert st["gap_r2"] < st["without_med_r2"]
+
+
+def test_track8_leave_one_state_out_only_bites_q4():
+    """A7, pinned. Three headlines must be state-robust and one must not be.
+
+    If a future change makes Q4's share state-robust, the rewrite that separates
+    a national trend from a Gulf-coast aggregate is wrong. If it makes any of the
+    other three state-dependent, they need the same treatment.
+    """
+    a7 = _results("track8_falsification")["A7_leave_one_state_out"]
+    assert a7["n_states_dropped"] > 45
+    robust = ["fleet_range_ratio", "excess_mass", "pct_changing_quartile_2022"]
+    for key in robust:
+        assert a7["summary"][key]["max_pct_shift"] < 10, (
+            f"{key} became state-dependent and needs scoping like Q4")
+    fragile = a7["summary"]["share_from_excluded"]
+    assert fragile["most_influential_state"] == "FL"
+    assert fragile["max_pct_shift"] > 30
+    assert a7["florida"]["share_from_excluded"] == pytest.approx(0.509, abs=0.005)
+
+
+def test_track2_storm_states_separate_trend_from_aggregate():
+    """The diagnosis behind Q4's rewrite: a customer-weighting effect, not an
+    absent pattern. The unweighted share must survive where the weighted one
+    does not, or the explanation in FINDINGS is wrong."""
+    ss = _results("track2_weather_split")["storm_state_sensitivity"]
+    a, b = ss["all_states"], ss["hurricane_states_dropped"]
+    assert b["share_from_excluded_cw"] < 0.5 < a["share_from_excluded_cw"]
+    assert b["share_from_excluded_unweighted"] > 0.7
+    assert ss["reading"]["excluded_share_survives"] is False
+    # the trend, by contrast, must barely move
+    assert ss["reading"]["everyday_trend_survives"] is True
+    assert abs(b["everyday_slope"] - a["everyday_slope"]) < 0.6
+    assert b["everyday_p"] < 0.01

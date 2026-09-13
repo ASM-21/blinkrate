@@ -107,13 +107,34 @@ def claims() -> list[tuple[str, float, float]]:
         100 * ee["stopped_excluding"], 0.2)
     add(f"**{100 * t2['within_utility']['share_of_change_from_excluded_part']:.1f}%** of the",
         100 * t2["within_utility"]["share_of_change_from_excluded_part"], 0.2)
-    add(f"{100 * t2['within_utility_consecutive']['share_of_change_from_excluded_part']:.1f}% over",
-        100 * t2["within_utility_consecutive"]["share_of_change_from_excluded_part"], 0.2)
     a4 = t8["A4_track2_trimmed"]
-    add(f"{100 * a4['unweighted_share_from_excluded']:.1f}% unweighted",
+    add(f"window | {100 * t2['within_utility_consecutive']['share_of_change_from_excluded_part']:.1f}%",
+        100 * t2["within_utility_consecutive"]["share_of_change_from_excluded_part"], 0.2)
+    add(f"unweighted | {100 * a4['unweighted_share_from_excluded']:.1f}%",
         100 * a4["unweighted_share_from_excluded"], 0.2)
-    add(f"**{100 * a4['trimmed_share_from_excluded']:.1f}%** after trimming",
+    add(f"trimmed | {100 * a4['trimmed_share_from_excluded']:.1f}%",
         100 * a4["trimmed_share_from_excluded"], 0.2)
+
+    # --- Q4 / A7: the state dependence that rewrote Q4 ----------------------
+    a7 = t8["A7_leave_one_state_out"]
+    ss = t2["storm_state_sensitivity"]
+    add(f"**{100 * a7['florida']['share_from_excluded']:.1f}%**",
+        100 * a7["florida"]["share_from_excluded"], 0.2)
+    add(f"**{100 * ss['hurricane_states_dropped']['share_from_excluded_cw']:.1f}%**",
+        100 * ss["hurricane_states_dropped"]["share_from_excluded_cw"], 0.2)
+    add(f"from {ss['all_states']['share_from_excluded_cw']:.3f} to "
+        f"{ss['hurricane_states_dropped']['share_from_excluded_cw']:.3f}",
+        ss["all_states"]["share_from_excluded_cw"], 0.002)
+    add(f"only\nfrom {ss['all_states']['share_from_excluded_unweighted']:.3f} to "
+        f"{ss['hurricane_states_dropped']['share_from_excluded_unweighted']:.3f}",
+        ss["all_states"]["share_from_excluded_unweighted"], 0.002)
+    add(f"**{ss['all_states']['everyday_slope']:.2f}** min/yr with all states",
+        ss["all_states"]["everyday_slope"], 0.02)
+    add(f"**{ss['hurricane_states_dropped']['everyday_slope']:.2f}** min/yr with the",
+        ss["hurricane_states_dropped"]["everyday_slope"], 0.02)
+    add(f"by under {max(v['max_pct_shift'] for k, v in a7['summary'].items() if k != 'share_from_excluded'):.1f}%",
+        max(v["max_pct_shift"] for k, v in a7["summary"].items()
+            if k != "share_from_excluded"), 0.6)
 
     # --- Q5: capital deployment --------------------------------------------
     wu = t1["within_utility"]
