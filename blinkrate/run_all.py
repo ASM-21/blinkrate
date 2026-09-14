@@ -5,8 +5,9 @@
 
 Order matters. The shared calibration is built first because tracks 3, 6 and 8
 invert it. Track 7 validates the engine, and is run before anything is believed
-rather than after. Track 8 runs last because it re-executes pieces of 1, 2, 3
-and 6 under alternative specifications.
+rather than after. Track 9 runs after track 3 because it reuses track 3's
+counterfactual. Track 8 runs last because it re-executes pieces of 1, 2, 3 and 6
+under alternative specifications.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import time
 
 from . import (track1_investment, track2_weather_split, track3_med_sensitivity,
                track4_cause_exclusions, track5_undergrounding, track6_ownership,
-               track7_validation, track8_falsification)
+               track7_validation, track8_falsification, track9_aggregation)
 from .shared import finite_sample
 
 TRACKS = {
@@ -27,9 +28,10 @@ TRACKS = {
     6: ("ownership stratification", track6_ownership),
     5: ("undergrounding breakeven", track5_undergrounding),
     4: ("cause-specific exclusions [track 4 blocked]", track4_cause_exclusions),
+    9: ("aggregation rule sensitivity", track9_aggregation),
     8: ("adversarial falsification", track8_falsification),
 }
-ORDER = [7, 1, 2, 3, 6, 5, 4, 8]
+ORDER = [7, 1, 2, 3, 6, 9, 5, 4, 8]
 
 
 def main() -> int:

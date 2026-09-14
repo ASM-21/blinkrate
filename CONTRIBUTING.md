@@ -42,6 +42,12 @@ data is unreachable, change the question and state the substitution at the top o
 the module and in the results payload. Do not proxy quietly. Track 1 and track 4
 are the worked examples.
 
+**Figure titles are prose.** `tools/check_claims.py` scans the string literals
+passed to `set_title`, `fig.text`, `ax.text` and `annotate` in every track for
+the same overclaiming patterns it enforces in the markdown. This exists because
+a track 9 figure once asserted something that track's own numbers contradicted
+and nothing caught it.
+
 **Hedge in the prose, not just the docstring.** `tools/check_claims.py` enforces
 a list of required hedges and a list of forbidden phrasings. If you find yourself
 wanting to delete one, that is the signal to weaken the claim instead.

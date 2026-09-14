@@ -418,3 +418,76 @@ def test_track2_storm_states_separate_trend_from_aggregate():
     assert ss["reading"]["everyday_trend_survives"] is True
     assert abs(b["everyday_slope"] - a["everyday_slope"]) < 0.6
     assert b["everyday_p"] < 0.01
+
+
+def test_track9_aggregator_spread():
+    """Q8: the averaging rule alone moves the national number."""
+    d = _results("track9_aggregation")
+    y = d["by_year"]["2022"]
+    assert y["with_med_spread_x"] == pytest.approx(2.07, abs=0.02)
+    assert y["without_med_spread_x"] == pytest.approx(1.44, abs=0.02)
+    # ordering must hold: the customer-weighted mean is tail-exposed, the
+    # median utility is not, so the gap between them is the whole point
+    assert y["with_med"]["customer_weighted_mean"] > y["with_med"]["median_utility"]
+    assert y["with_med"]["unweighted_mean"] > y["with_med"]["customer_weighted_median"]
+
+
+def test_track9_combined_space_exceeds_either_choice_alone():
+    """Threshold and aggregator compound. If the combined range ever collapses to
+    the threshold range alone, Q8's framing is wrong."""
+    d = _results("track9_aggregation")
+    combined = d["combined_space"]["range_x"]
+    threshold_only = _results("track3_med_sensitivity")["sensitivity"][
+        "fleet_range_ratio"]
+    assert combined > threshold_only
+    assert combined == pytest.approx(14.32, abs=0.1)
+    assert d["combined_space"]["standard_choice"] == pytest.approx(129.7, abs=0.3)
+
+
+def test_track9_national_total_is_concentrated():
+    c = _results("track9_aggregation")["concentration"]["2022"]
+    assert c["with_med"]["top_10_share"] > 0.3
+    assert c["with_med_gini"] > 0.8
+
+
+def test_track9_scopes_q4_trend_honestly():
+    """Q4's trend is directionally robust to the aggregator but not uniformly
+    significant. If a change makes all six significant, Q4's hedge is too weak
+    and should be strengthened; if any slope goes negative, Q4 is wrong."""
+    t = _results("track9_aggregation")["trend_by_aggregator"]
+    assert t["all_positive"] is True
+    assert t["all_significant_at_05"] is False
+    n_sig = sum(1 for v in t["fits"].values() if v["p"] < 0.05)
+    assert n_sig == 4
+    assert t["slope_range"][0] > 1.0
+
+
+def test_claims_guard_catches_an_overclaiming_figure_title():
+    """Figure titles are prose the reader sees.
+
+    A track 9 title once asserted the trend slope did not depend on the
+    aggregation rule, which that track's own numbers contradict. Nothing checked
+    figure text at the time. This proves the check now exists by planting an
+    overclaim in a temporary copy of the package.
+    """
+    import shutil
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        shutil.copytree(ROOT / "blinkrate", tmp / "blinkrate")
+        for name in ("README.md", "FINDINGS.md", "FALSIFICATION.md"):
+            shutil.copy(ROOT / name, tmp / name)
+        (tmp / "results").symlink_to(ROOT / "results", target_is_directory=True)
+        (tmp / "tools").mkdir()
+        shutil.copy(ROOT / "tools" / "check_claims.py", tmp / "tools")
+
+        target = tmp / "blinkrate" / "track9_aggregation.py"
+        body = target.read_text()
+        marker = 'ax2.set_title("Every rule slopes up. How steeply is another matter.",'
+        assert marker in body, "figure title moved; update this test"
+        target.write_text(body.replace(
+            marker, 'ax2.set_title("This proves the rule is irrelevant",'))
+
+        r = subprocess.run([sys.executable, str(tmp / "tools" / "check_claims.py")],
+                           cwd=tmp, capture_output=True, text=True)
+        assert r.returncode == 1, f"guard passed an overclaiming title:\n{r.stdout}"
+        assert "figure" in r.stdout.lower()

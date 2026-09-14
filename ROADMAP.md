@@ -34,11 +34,17 @@ that Q4's excluded-share headline is largely Florida. Within Florida a single
 utility is most of the mass, so the utility-level version would mostly restate
 A7 — but it becomes necessary the moment Q4 is quoted at a utility level.
 
-**Population weights for the national aggregate.** A7's real lesson is that a
-customer-weighted US SAIDI aggregate has a tail of a few enormous storm-exposed
-utilities and is not a national quantity. Reporting a trimmed or
-state-population-weighted alternative alongside it would make every
-cross-utility comparison in this repository more honest, not just Q4's.
+**A weighted aggregate keyed to something other than customer count.** Done in
+part: track 9 reports six aggregation rules and shows they span 2.07x for a
+single year, with threshold and aggregator together spanning 14.32x. What is
+still missing is a weight that is not derived from the filings themselves —
+state population, or customer-hours at risk — which would let the national
+figure be checked against something exogenous rather than only reweighted.
+
+**Leave-one-utility-out inside Florida.** A7 works at state granularity. Within
+Florida a single co-operative reported over nine days per customer after
+Hurricane Ian, so the utility-level jackknife is the natural next cut and
+becomes necessary the moment Q4 or Q8 is quoted at utility level.
 
 **Pre-2016 AMI deployment.** Done for 2016-2018, which was enough to rebuild Q5
 around a within-utility design and turn an underpowered null into a bounded one.

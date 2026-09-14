@@ -10,10 +10,12 @@ what that choice, and the discretion around it, is worth.
 
 **Short answer.** Re-evaluating the same filed outage records at other threshold
 values moves customer-weighted fleet SAIDI from 37 min/yr to 287 min/yr — a
-**7.66x range** — with no change to any underlying outage. The standard's own
-value lands at 115 min/yr. Nearly a third of filings report no major event days
-at all. And half the large-utility field changes quartile depending on which of
-the two published series someone chose to rank on.
+**7.66x range** — with no change to any underlying outage. Sweep the averaging
+rule as well, which is the second undocumented choice behind every national
+figure, and the space of defensible values for one year spans **14.32x**. Nearly
+a third of filings report no major event days at all, and half the large-utility
+field changes quartile depending on which of the two published series someone
+chose to rank on.
 
 Built on 6,245 utility-state-years of EIA-861 reliability filings, 2013-2018 and
 2022. Every headline number is regenerated from code and pinned by a test that
@@ -22,24 +24,25 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 56 tests
+pytest                           # 61 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "PPL" --figure
 ```
 
 ---
 
-## Seven questions
+## Eight questions
 
 | | Question | Answer | Confidence |
 |---|---|---|---|
 | Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | direction solid, **magnitude assumption-dependent** |
 | Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion — 12.0x excess mass — which is the unflattering direction | solid |
 | Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | solid |
-| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | trend **national and solid**; the excluded-share figure is **mostly the Gulf coast** |
+| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | trend **positive under every aggregator, significant under four of six**; the excluded-share figure is **mostly the Gulf coast** |
 | Q5 | Does capital deployment show up in reliability? | No — and unlike the first version, the design could have caught a 24% effect | **bounded null** |
 | Q6 | Does ownership predict exclusion? | Partly; one half of this was **retracted** when the panel doubled | weakened |
 | Q7 | Is the source data internally consistent? | CAIDI identity reproduces in 100.00% of 3,838 filings | solid |
+| Q8 | How much of the *national* number is the averaging rule? | 2.07x from the aggregator alone; **14.32x** once threshold and aggregator are swept together | solid |
 
 Full write-up with identification and caveats: **[FINDINGS.md](FINDINGS.md)**.
 What broke under attack: **[FALSIFICATION.md](FALSIFICATION.md)**.
@@ -81,7 +84,7 @@ years. Finding 2016-2018 nearly doubled it, retracted one published result at
 p = 0.026, turned another into a range, and let two questions be answered that
 were previously marked unanswerable. Nothing was re-tuned to keep an old number.
 
-**Claims cannot drift.** `tools/check_claims.py` pairs 59 figures quoted in the
+**Claims cannot drift.** `tools/check_claims.py` pairs 74 figures quoted in the
 prose with the code that recomputes them, including the numbers inside
 retraction blockquotes, and also fails on missing hedges and overclaiming
 language. A test feeds it a corrupted README to demonstrate that the guard can
@@ -117,7 +120,8 @@ blinkrate/
   track5_undergrounding.py      breakeven model, literature parameters
   track6_ownership.py           Q6 ownership stratification
   track7_validation.py          Q7 engine and source-data checks
-  track8_falsification.py       six attacks on the above
+  track9_aggregation.py         Q8 how much the averaging rule is worth
+  track8_falsification.py       seven attacks on the above
   run_all.py
 data/raw/                       vendored EIA-861 (US Gov, public domain)
 docs/derivation.md              the exclusion identity

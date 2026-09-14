@@ -40,6 +40,7 @@ def claims() -> list[tuple[str, float, float]]:
     t6 = load("track6_ownership")
     t7 = load("track7_validation")
     t8 = load("track8_falsification")
+    t9 = load("track9_aggregation")
 
     out: list[tuple[str, float, float]] = []
 
@@ -200,6 +201,36 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"survives\n{a3['n_specs_with_ci_lower_above_1']} of {a3['n_specifications']}",
         a3["n_specs_with_ci_lower_above_1"], 0.5)
 
+    # --- Q8: the aggregation rule ------------------------------------------
+    y22 = t9["by_year"]["2022"]
+    add(f"to {y22['with_med']['unweighted_mean']:.1f} min/yr with major event days",
+        y22["with_med"]["unweighted_mean"], 0.2)
+    add(f"from {y22['with_med']['median_utility']:.1f}",
+        y22["with_med"]["median_utility"], 0.2)
+    add(f"a {y22['with_med_spread_x']:.2f}x range",
+        y22["with_med_spread_x"], 0.02)
+    for k in ("customer_weighted_mean", "customer_weighted_median",
+              "trimmed_customer_weighted_mean",
+              "winsorized_customer_weighted_mean"):
+        add(f"| {y22['with_med'][k]:.1f} | {y22['without_med'][k]:.1f} |",
+            y22["with_med"][k], 0.2)
+    cc = t9["concentration"]["2022"]
+    add(f"**{100 * cc['with_med']['top_1_share']:.1f}%** of national",
+        100 * cc["with_med"]["top_1_share"], 0.2)
+    add(f"supply **{100 * cc['with_med']['top_10_share']:.1f}%**",
+        100 * cc["with_med"]["top_10_share"], 0.2)
+    add(f"is **{cc['with_med_gini']:.3f}**", cc["with_med_gini"], 0.002)
+    cs9 = t9["combined_space"]
+    add(f"**{cs9['min']:.1f}** to **{cs9['max']:.1f}** min/yr",
+        cs9["min"], 0.2)
+    add(f"a **{cs9['range_x']:.2f}x** range", cs9["range_x"], 0.02)
+    add(f"lands at {cs9['standard_choice']:.1f}", cs9["standard_choice"], 0.2)
+    tb = t9["trend_by_aggregator"]
+    add(f"from {tb['slope_range'][0]:.2f} to {tb['slope_range'][1]:.2f} min/yr",
+        tb["slope_range"][0], 0.02)
+    add(f"spans {tb['slope_range'][0]:.2f} to {tb['slope_range'][1]:.2f} minutes per year",
+        tb["slope_range"][0], 0.02)
+
     return out
 
 
@@ -302,6 +333,23 @@ def main() -> int:
     for token, why in REQUIRED_HEDGES:
         if token.lower() not in blob.lower():
             failures.append(f"required hedge missing ({token!r}): {why}")
+
+    # Figure titles and captions are prose the reader sees, and until a
+    # track 9 title claimed "the slope does not [depend on the rule]" — which
+    # that track's own numbers contradict — nothing checked them. Only the
+    # string literals inside the plotting helpers are scanned, so ordinary
+    # identifiers and comments do not trip it.
+    fig_text = []
+    for src in sorted((ROOT / "blinkrate").glob("track*.py")):
+        body = src.read_text()
+        for m in re.finditer(r"(?:set_title|fig\.text|ax\.text|annotate)\((.*?)\)",
+                             body, flags=re.DOTALL):
+            fig_text.append(f"{src.name}: {m.group(1)}")
+    fig_blob = _flatten("\n".join(fig_text))
+    for pattern, why in FORBIDDEN:
+        m = re.search(pattern, fig_blob, flags=re.IGNORECASE)
+        if m:
+            failures.append(f"forbidden phrasing in a figure: {m.group(0)!r} - {why}")
 
     for pattern, why in FORBIDDEN:
         for name, text in prose.items():

@@ -173,9 +173,13 @@ utilities dominate the numerator.
 
 **So Q4 has two answers, and only one of them is national.**
 
-*National and solid:* everyday distribution reliability is deteriorating slowly
-and steadily, at roughly 2.7 to 3.2 minutes per year, and the exclusion hides it
-from the headline number.
+*National, and robust in direction:* everyday distribution reliability is
+deteriorating, and the exclusion hides it from the headline number. Q8 tests this
+against the averaging rule as well as against dropping states: all six
+aggregators give a positive slope, but only four of six reach p < 0.05 and the
+magnitude spans 1.64 to 4.61 minutes per year. The direction is unanimous. The
+rate is not pinned down as tightly as the customer-weighted figure alone
+suggests.
 
 *Not national:* the claim that most of the reported deterioration sits in the
 excluded portion is true for the customer-weighted US fleet, and true mainly
@@ -269,6 +273,51 @@ utility-state-year filings in the 2014 source, kept at the larger customer count
 
 ---
 
+## Q8. How much of the *national* number is the averaging rule?
+
+**Enough that the aggregation choice rivals the threshold choice. Averaging the
+same 2022 filings five defensible ways gives national SAIDI anywhere from 173.7
+to 359.5 min/yr with major event days — a 2.07x range — before anyone touches
+the exclusion.**
+
+"US reliability" is not a utility number, it is an aggregate, and aggregating
+needs a second choice nobody writes down. Attack A7 forced the question by
+showing the customer-weighted figure is dominated by a few enormous storm-exposed
+utilities.
+
+| 2022 aggregator | with MED | without MED | the question it answers |
+|---|---|---|---|
+| unweighted mean | 359.5 | 146.3 | the average utility |
+| customer-weighted mean | 338.7 | 125.7 | total burden per customer |
+| winsorized cw mean | 319.1 | 125.4 | burden with catastrophe capped |
+| trimmed cw mean | 311.1 | 124.6 | burden with catastrophe dropped |
+| customer-weighted median | 215.6 | 101.4 | what the median *customer* saw |
+| median utility | 173.7 | 103.0 | the typical utility |
+
+All six are defensible and they answer different questions. The customer-weighted
+mean, the one in general use, is the most exposed to the tail — and the tail is
+extreme. One utility-state supplies **13.1%** of national customer-outage-minutes
+with major event days included; the top ten supply **38.6%**; the Gini across
+filings is **0.863**.
+
+**The two choices compound.** A national SAIDI figure requires picking a
+threshold *and* picking an aggregator, and in most places the number appears
+neither is stated. Sweeping both over defensible values gives 2022 national SAIDI
+anywhere from **27.2** to **388.8** min/yr — a **14.32x** range. The conventional
+pair of choices lands at 129.7.
+
+**What this does to Q4.** It scopes it, in the direction of honesty. Q4's
+everyday deterioration trend was robust to dropping any state. Tested against the
+averaging rule it is robust in *direction* — all six aggregators give a positive
+slope — but only four of six reach p < 0.05, and the slope ranges from 1.64 to
+4.61 min/yr. The two that miss significance are the unweighted mean and the
+customer-weighted median, which are the two most resistant to the tail. That is
+consistent with the deterioration being real but concentrated rather than uniform.
+
+**The practical implication is narrow and checkable.** Any published national
+reliability figure should state its averaging rule alongside its exclusion rule.
+Neither is a detail, and together they span more than an order of magnitude.
+
 ## Two smaller results
 
 **Cause-specific exclusions stack.** 88.4% of IEEE-standard filers also report a
@@ -303,6 +352,9 @@ under moves their number more than ownership does. Two carve-outs stack to remov
 41% of median outage minutes. And the one thing that should move the number —
 capital deployment — cannot be detected inside a utility even when the rollout is
 observed directly.
+
+And the aggregation rule adds a second order of magnitude on top of the first:
+threshold and averaging together span 14.32x for a single year.
 
 The everyday series is the exception that makes the point. Strip the exclusions away
 and what remains is a slow, boring, highly significant 3.21 minutes per year of
