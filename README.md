@@ -3,6 +3,13 @@
 **How much of a US utility's reported reliability number is the measurement rule
 rather than the grid?**
 
+> **Independent personal project.** Not affiliated with, reviewed by, or
+> produced on behalf of PPL Electric Utilities or any employer, and not produced
+> on employer time or systems. It uses only public data: EIA Form 861, which is
+> a US federal government work in the public domain, plus published literature
+> parameters. It contains no non-public, proprietary, customer, or
+> utility-internal data of any kind.
+
 IEEE 1366 lets utilities remove "major event days" from reported SAIDI, using a
 threshold set 2.5 standard deviations up a log-normal fit to their own daily
 outage history. Nobody chose 2.5 by measuring anything. This repository works out
@@ -24,12 +31,29 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 61 tests
+pytest                           # 65 tests
 python tools/check_claims.py     # every quoted figure recomputed
-python tools/utility_profile.py --name "PPL" --figure
+python tools/utility_profile.py --name "Duke Energy" --figure
 ```
 
 ---
+
+## Standing on prior work
+
+The critique of IEEE 1366's 2.5-beta exclusion is not new here. The method's
+threshold instability was identified in the IEEE literature by 2013, LBNL
+evaluated alternative major-event definitions and found none uniformly reduces
+year-to-year variability, and LBNL's earlier survey of 123 utilities documented
+that state commissions were already using incompatible major-event definitions.
+Q1 and Q2 below are national-scale **corroboration** of an established critique,
+not a discovery.
+
+What the literature search did not turn up, and what this repository therefore
+contributes, is the closed-form inversion that makes the threshold sweep
+possible from published annual aggregates, a quantification of rank reversal
+between the two published series, the aggregation-rule spread, and the
+geographic placebo separating weather from methodology. Full record of what was
+searched and what it changed: **[LITERATURE.md](LITERATURE.md)**.
 
 ## Eight questions
 
@@ -45,6 +69,7 @@ python tools/utility_profile.py --name "PPL" --figure
 | Q8 | How much of the *national* number is the averaging rule? | 2.07x from the aggregator alone; **14.32x** once threshold and aggregator are swept together | solid |
 
 Full write-up with identification and caveats: **[FINDINGS.md](FINDINGS.md)**.
+Prior art and what the literature search changed: **[LITERATURE.md](LITERATURE.md)**.
 What broke under attack: **[FALSIFICATION.md](FALSIFICATION.md)**.
 
 ## The method, in one paragraph
@@ -136,4 +161,6 @@ EIA Form 861, filing years 2013 through 2018 and 2022. US federal government
 work, public domain, retrieved through GitHub mirrors because eia.gov is
 unreachable from the build environment. Mirror attribution in [NOTICE](NOTICE).
 
-MIT licensed. Citation in [CITATION.cff](CITATION.cff).
+Apache-2.0. Bundled EIA-861 data is a US federal government work in the public
+domain; mirror provenance and licences are in [NOTICE](NOTICE). Citation in
+[CITATION.cff](CITATION.cff).

@@ -3,10 +3,14 @@ title: "blinkrate: measurement rules and reported electric distribution reliabil
 message: "If you use these findings or this code, please cite it."
 type: software
 authors:
-  - given-names: Andrew
+  - family-names: Morrissey
+    given-names: Andrew
+    orcid: "https://orcid.org/0009-0004-8758-2687"
+repository-code: "https://github.com/ASM-21/blinkrate"
+url: "https://github.com/ASM-21/blinkrate"
 version: 1.0.0
 date-released: 2026-09-09
-license: MIT
+license: Apache-2.0
 keywords:
   - SAIDI
   - IEEE 1366

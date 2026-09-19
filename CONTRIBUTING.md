@@ -1,5 +1,48 @@
 # Contributing
 
+## Good first contributions
+
+Ordered by how much each would change a conclusion. Each names a finish line and
+a starting file.
+
+**1. Attack the uncorroborated numbers.** Four results were not found in the
+literature search (LITERATURE.md), which makes them the most likely to be wrong:
+the closed-form inversion `r = Phi(beta - sigma)`, the 40-57% rank reversal, the
+2.07x aggregation spread, and the hurricane-track placebo. *Finish line:* an
+issue showing any of them fails under a specification the repository does not
+already test. *Start at:* `blinkrate/shared/reliability_metrics.py` and
+`blinkrate/track8_falsification.py`.
+
+**2. Run the engine on real daily SAIDI.** Q1's sweep is model-implied because
+no daily series is public at national scale. Some state commissions require
+daily outage logs in annual reliability filings. One utility's five-year daily
+series replaces the inversion with a measurement and settles attack A1 outright.
+*Finish line:* `simulate_med_exclusion()` run on real daily data, with the
+realized retained share compared against what the inversion predicts from that
+utility's published annual pair. *Start at:*
+`blinkrate/shared/reliability_metrics.py`.
+
+**3. Supply the 2019-2021 filings.** The panel jumps 2018 to 2022, so no
+movement after 2018 can be dated. If a GitHub mirror of those years exists,
+adding it is a three-line change to `_HEADER_ROWS` and `YEARS_AVAILABLE`.
+*Finish line:* seven becomes ten filing years and every test still passes.
+*Start at:* `blinkrate/shared/ingest.py` and `docs/DATA_ACCESS.md`.
+
+**4. Supply FERC Form 1.** The only genuinely blocked track. With a capex
+series, Q5 gets a spending variable and the vegetation-management question stops
+being marked BLOCKED. *Finish line:* `track4_cause_exclusions.py` loses its
+BLOCKED status. *Start at:* `docs/DATA_ACCESS.md` for the search record.
+
+**5. Leave-one-utility-out inside Florida.** Attack A7 works at state
+granularity, and within Florida a single co-operative dominates. *Finish line:*
+a utility-level jackknife in `track8_falsification.py` reporting whether Q4 and
+Q8 survive it.
+
+**6. An exogenous aggregation weight.** Track 9 reweights the national figure
+six ways, all derived from the filings themselves. A weight from outside the
+data, such as state population, would let the national figure be checked rather
+than only reweighted. *Start at:* `blinkrate/track9_aggregation.py`.
+
 ## The bar for a new number
 
 Anything quoted in README.md, FINDINGS.md or FALSIFICATION.md must be:

@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
-PROSE = ["README.md", "FINDINGS.md", "FALSIFICATION.md"]
+PROSE = ["README.md", "FINDINGS.md", "FALSIFICATION.md", "LITERATURE.md"]
 
 
 def load(name: str) -> dict:
@@ -234,6 +234,30 @@ def claims() -> list[tuple[str, float, float]]:
     return out
 
 
+# Phrases that must survive in the prose. Each exists because deleting it would
+# make a true statement into a false one, and nothing else would notice.
+REQUIRED_DISCLAIMER = [
+    "Independent personal project",
+    "not affiliated with, reviewed by, or",
+    "produced on behalf of PPL Electric Utilities",
+    "no non-public, proprietary, customer, or",
+]
+
+REQUIRED_PRIOR_ART = [
+    ("LITERATURE.md", "the literature record must stay linked from the prose"),
+    ("corroboration", "Q1 and Q2 are corroboration of an established critique; "
+                      "saying otherwise overstates the contribution"),
+    ("LBNL", "LBNL's prior work on major-event definitions must stay cited"),
+    ("2013", "the IEEE 2013 threshold-instability letter must stay cited"),
+    ("APPA", "the APPA customer-weighting convention must stay cited for Q8"),
+]
+
+# Novelty language. The critique here is not new and the prose must not imply it.
+FORBIDDEN_NOVELTY = [
+    r"\bnovel\b", r"for the first time", r"we discovered", r"\bunprecedented\b",
+    r"\bnever before\b", r"\bfirst to (?:show|find|measure|document)\b",
+]
+
 REQUIRED_HEDGES = [
     # track 3 must never be described as a measurement
     ("model-implied", "track 3's sensitivity is model-implied, not measured; "
@@ -330,6 +354,31 @@ def main() -> int:
                 continue
         failures.append(f"claim not found in prose: {text!r} (computed {value})")
 
+    # The disclaimer is a wrapped markdown blockquote, so its phrases span line
+    # breaks and "> " prefixes. blob is already whitespace-normalised and
+    # blockquote-stripped, which is the only reason a substring check works.
+    readme = _flatten(re.sub(r"^>\s?", "", (ROOT / "README.md").read_text(),
+                             flags=re.MULTILINE))
+    for phrase in REQUIRED_DISCLAIMER:
+        if phrase.lower() not in readme.lower():
+            failures.append(
+                f"independence disclaimer missing or altered: {phrase!r}")
+
+    lit = ROOT / "LITERATURE.md"
+    if not lit.exists():
+        failures.append("LITERATURE.md is missing; the prior-art record is "
+                        "part of the claim, not an optional extra")
+    for token, why in REQUIRED_PRIOR_ART:
+        if token.lower() not in blob.lower():
+            failures.append(f"prior-art attribution missing ({token!r}): {why}")
+
+    for pattern in FORBIDDEN_NOVELTY:
+        m = re.search(pattern, blob, flags=re.IGNORECASE)
+        if m:
+            failures.append(
+                f"novelty language: {m.group(0)!r} - the 2.5-beta critique is "
+                "established prior work (see LITERATURE.md)")
+
     for token, why in REQUIRED_HEDGES:
         if token.lower() not in blob.lower():
             failures.append(f"required hedge missing ({token!r}): {why}")
@@ -367,7 +416,9 @@ def main() -> int:
         return 1
     print(f"OK: {n_claims} claims match the results, "
           f"{len(REQUIRED_HEDGES)} hedges present, "
-          f"{len(FORBIDDEN)} overclaim patterns absent")
+          f"{len(REQUIRED_DISCLAIMER)} disclaimer phrases intact, "
+          f"{len(REQUIRED_PRIOR_ART)} prior-art attributions present, "
+          f"{len(FORBIDDEN) + len(FORBIDDEN_NOVELTY)} overclaim patterns absent")
     return 0
 
 

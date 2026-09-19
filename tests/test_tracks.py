@@ -21,6 +21,7 @@ from blinkrate import (track1_investment, track2_weather_split,
 from blinkrate.shared import ingest
 
 ROOT = Path(__file__).resolve().parents[1]
+PROSE_FILES = ("README.md", "FINDINGS.md", "FALSIFICATION.md", "LITERATURE.md")
 
 
 def _results(name: str) -> dict:
@@ -270,9 +271,10 @@ def test_claims_guard_passes_on_the_real_prose():
 def test_claims_guard_catches_corrupted_prose(corruption, expect, tmp_path):
     """The guard is only worth having if it can fail. Feed it a broken copy of
     the real prose and require a non-zero exit."""
-    for name in ("README.md", "FINDINGS.md", "FALSIFICATION.md"):
+    for name in PROSE_FILES:
         (tmp_path / name).write_text(corruption((ROOT / name).read_text()))
     (tmp_path / "results").symlink_to(ROOT / "results", target_is_directory=True)
+    (tmp_path / "blinkrate").symlink_to(ROOT / "blinkrate", target_is_directory=True)
 
     # the guard resolves paths from its own location, so run a copy rooted here
     src = (ROOT / "tools" / "check_claims.py").read_text()
@@ -474,7 +476,7 @@ def test_claims_guard_catches_an_overclaiming_figure_title():
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         shutil.copytree(ROOT / "blinkrate", tmp / "blinkrate")
-        for name in ("README.md", "FINDINGS.md", "FALSIFICATION.md"):
+        for name in PROSE_FILES:
             shutil.copy(ROOT / name, tmp / name)
         (tmp / "results").symlink_to(ROOT / "results", target_is_directory=True)
         (tmp / "tools").mkdir()
@@ -491,3 +493,46 @@ def test_claims_guard_catches_an_overclaiming_figure_title():
                            cwd=tmp, capture_output=True, text=True)
         assert r.returncode == 1, f"guard passed an overclaiming title:\n{r.stdout}"
         assert "figure" in r.stdout.lower()
+
+
+@pytest.mark.parametrize("corruption,expect", [
+    (lambda t: t.replace("Independent personal project", "Personal project"),
+     "disclaimer"),
+    (lambda t: t.replace("corroboration", "a discovery"), "prior-art"),
+    (lambda t: t.replace("national-scale", "a novel"), "novelty"),
+])
+def test_claims_guard_protects_disclaimer_and_prior_art(corruption, expect,
+                                                        tmp_path):
+    """The independence disclaimer and the prior-art framing are load-bearing.
+
+    Deleting either turns a true statement into a false one and nothing else in
+    the build would notice, so the guard has to fail on both.
+    """
+    for name in PROSE_FILES:
+        (tmp_path / name).write_text(corruption((ROOT / name).read_text()))
+    (tmp_path / "results").symlink_to(ROOT / "results", target_is_directory=True)
+    (tmp_path / "blinkrate").symlink_to(ROOT / "blinkrate", target_is_directory=True)
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools" / "check_claims.py").write_text(
+        (ROOT / "tools" / "check_claims.py").read_text())
+
+    r = subprocess.run([sys.executable, str(tmp_path / "tools" / "check_claims.py")],
+                       cwd=tmp_path, capture_output=True, text=True)
+    assert r.returncode == 1, f"guard passed corrupted prose:\n{r.stdout}"
+    assert expect in r.stdout.lower()
+
+
+def test_employer_is_not_a_worked_example():
+    """A repository that disclaims employer affiliation must not use that
+    employer as its headline example. Caught in a sibling repo where the
+    employer was named five times in exactly that position."""
+    import re
+    for name in PROSE_FILES:
+        # "ppl" is a substring of "supply", so match the name with word
+        # boundaries rather than counting letters. The first version of this
+        # test counted substrings and failed on the word "supply".
+        hits = len(re.findall(r"\bPPL\b", (ROOT / name).read_text()))
+        if name == "README.md":
+            assert hits == 1, "PPL should appear only in the independence disclaimer"
+        else:
+            assert hits == 0, f"{name} names the employer"
