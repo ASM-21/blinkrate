@@ -1,157 +1,157 @@
 {
   "breakeven": {
     "case_study_high|cost_central|voll_central": {
-      "breakeven_saidi_min_per_yr": 1633.1690352270969,
+      "breakeven_saidi_min_per_yr": 1633.16903523,
       "n_above": 22,
-      "share_of_2022_utilities_above": 0.024858757062146894
+      "share_of_2022_utilities_above": 0.0248587570621
     },
     "case_study_high|cost_central|voll_high": {
-      "breakeven_saidi_min_per_yr": 755.748971051339,
+      "breakeven_saidi_min_per_yr": 755.748971051,
       "n_above": 86,
-      "share_of_2022_utilities_above": 0.09717514124293786
+      "share_of_2022_utilities_above": 0.0971751412429
     },
     "case_study_high|cost_central|voll_low": {
-      "breakeven_saidi_min_per_yr": 4030.6611789404747,
+      "breakeven_saidi_min_per_yr": 4030.66117894,
       "n_above": 6,
-      "share_of_2022_utilities_above": 0.006779661016949152
+      "share_of_2022_utilities_above": 0.00677966101695
     },
     "case_study_high|cost_high|voll_central": {
-      "breakeven_saidi_min_per_yr": 5587.15722577691,
+      "breakeven_saidi_min_per_yr": 5587.15722578,
       "n_above": 5,
-      "share_of_2022_utilities_above": 0.005649717514124294
+      "share_of_2022_utilities_above": 0.00564971751412
     },
     "case_study_high|cost_high|voll_high": {
-      "breakeven_saidi_min_per_yr": 2585.4570062282655,
+      "breakeven_saidi_min_per_yr": 2585.45700623,
       "n_above": 9,
-      "share_of_2022_utilities_above": 0.010169491525423728
+      "share_of_2022_utilities_above": 0.0101694915254
     },
     "case_study_high|cost_high|voll_low": {
-      "breakeven_saidi_min_per_yr": 13789.104033217414,
+      "breakeven_saidi_min_per_yr": 13789.1040332,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "case_study_high|cost_low|voll_central": {
-      "breakeven_saidi_min_per_yr": 257.8687950358574,
+      "breakeven_saidi_min_per_yr": 257.868795036,
       "n_above": 317,
-      "share_of_2022_utilities_above": 0.3581920903954802
+      "share_of_2022_utilities_above": 0.358192090395
     },
     "case_study_high|cost_low|voll_high": {
-      "breakeven_saidi_min_per_yr": 119.328784902843,
+      "breakeven_saidi_min_per_yr": 119.328784903,
       "n_above": 570,
-      "share_of_2022_utilities_above": 0.6440677966101694
+      "share_of_2022_utilities_above": 0.64406779661
     },
     "case_study_high|cost_low|voll_low": {
-      "breakeven_saidi_min_per_yr": 636.420186148496,
+      "breakeven_saidi_min_per_yr": 636.420186148,
       "n_above": 116,
-      "share_of_2022_utilities_above": 0.1310734463276836
+      "share_of_2022_utilities_above": 0.131073446328
     },
     "case_study_low|cost_central|voll_central": {
-      "breakeven_saidi_min_per_yr": 2228.268985049573,
+      "breakeven_saidi_min_per_yr": 2228.26898505,
       "n_above": 11,
-      "share_of_2022_utilities_above": 0.012429378531073447
+      "share_of_2022_utilities_above": 0.0124293785311
     },
     "case_study_low|cost_central|voll_high": {
-      "breakeven_saidi_min_per_yr": 1031.13147283169,
+      "breakeven_saidi_min_per_yr": 1031.13147283,
       "n_above": 52,
-      "share_of_2022_utilities_above": 0.05875706214689266
+      "share_of_2022_utilities_above": 0.0587570621469
     },
     "case_study_low|cost_central|voll_low": {
-      "breakeven_saidi_min_per_yr": 5499.367855102348,
+      "breakeven_saidi_min_per_yr": 5499.3678551,
       "n_above": 5,
-      "share_of_2022_utilities_above": 0.005649717514124294
+      "share_of_2022_utilities_above": 0.00564971751412
     },
     "case_study_low|cost_high|voll_central": {
-      "breakeven_saidi_min_per_yr": 7623.025475169594,
+      "breakeven_saidi_min_per_yr": 7623.02547517,
       "n_above": 4,
-      "share_of_2022_utilities_above": 0.004519774011299435
+      "share_of_2022_utilities_above": 0.0045197740113
     },
     "case_study_low|cost_high|voll_high": {
-      "breakeven_saidi_min_per_yr": 3527.5550386347295,
+      "breakeven_saidi_min_per_yr": 3527.55503863,
       "n_above": 7,
-      "share_of_2022_utilities_above": 0.007909604519774011
+      "share_of_2022_utilities_above": 0.00790960451977
     },
     "case_study_low|cost_high|voll_low": {
-      "breakeven_saidi_min_per_yr": 18813.626872718556,
+      "breakeven_saidi_min_per_yr": 18813.6268727,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "case_study_low|cost_low|voll_central": {
-      "breakeven_saidi_min_per_yr": 351.83194500782736,
+      "breakeven_saidi_min_per_yr": 351.831945008,
       "n_above": 227,
-      "share_of_2022_utilities_above": 0.25649717514124293
+      "share_of_2022_utilities_above": 0.256497175141
     },
     "case_study_low|cost_low|voll_high": {
-      "breakeven_saidi_min_per_yr": 162.81023255237213,
+      "breakeven_saidi_min_per_yr": 162.810232552,
       "n_above": 463,
-      "share_of_2022_utilities_above": 0.5231638418079096
+      "share_of_2022_utilities_above": 0.523163841808
     },
     "case_study_low|cost_low|voll_low": {
-      "breakeven_saidi_min_per_yr": 868.321240279318,
+      "breakeven_saidi_min_per_yr": 868.321240279,
       "n_above": 69,
-      "share_of_2022_utilities_above": 0.07796610169491526
+      "share_of_2022_utilities_above": 0.0779661016949
     },
     "econometric|cost_central|voll_central": {
-      "breakeven_saidi_min_per_yr": 16266.363590861885,
+      "breakeven_saidi_min_per_yr": 16266.3635909,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "econometric|cost_central|voll_high": {
-      "breakeven_saidi_min_per_yr": 7527.259751671338,
+      "breakeven_saidi_min_per_yr": 7527.25975167,
       "n_above": 4,
-      "share_of_2022_utilities_above": 0.004519774011299435
+      "share_of_2022_utilities_above": 0.0045197740113
     },
     "econometric|cost_central|voll_low": {
-      "breakeven_saidi_min_per_yr": 40145.38534224713,
+      "breakeven_saidi_min_per_yr": 40145.3853422,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "econometric|cost_high|voll_central": {
-      "breakeven_saidi_min_per_yr": 55648.085968738036,
+      "breakeven_saidi_min_per_yr": 55648.0859687,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "econometric|cost_high|voll_high": {
-      "breakeven_saidi_min_per_yr": 25751.151782033525,
+      "breakeven_saidi_min_per_yr": 25751.151782,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "econometric|cost_high|voll_low": {
-      "breakeven_saidi_min_per_yr": 137339.47617084545,
+      "breakeven_saidi_min_per_yr": 137339.476171,
       "n_above": 0,
       "share_of_2022_utilities_above": 0.0
     },
     "econometric|cost_low|voll_central": {
-      "breakeven_saidi_min_per_yr": 2568.37319855714,
+      "breakeven_saidi_min_per_yr": 2568.37319856,
       "n_above": 10,
-      "share_of_2022_utilities_above": 0.011299435028248588
+      "share_of_2022_utilities_above": 0.0112994350282
     },
     "econometric|cost_low|voll_high": {
-      "breakeven_saidi_min_per_yr": 1188.5146976323163,
+      "breakeven_saidi_min_per_yr": 1188.51469763,
       "n_above": 39,
-      "share_of_2022_utilities_above": 0.04406779661016949
+      "share_of_2022_utilities_above": 0.0440677966102
     },
     "econometric|cost_low|voll_low": {
-      "breakeven_saidi_min_per_yr": 6338.74505403902,
+      "breakeven_saidi_min_per_yr": 6338.74505404,
       "n_above": 5,
-      "share_of_2022_utilities_above": 0.005649717514124294
+      "share_of_2022_utilities_above": 0.00564971751412
     }
   },
   "customers_per_mile": {
     "line_miles": 5500000,
-    "national_customers_per_mile": 30.511933636363636,
+    "national_customers_per_mile": 30.5119336364,
     "total_us_customers_2022": 167815635.0
   },
   "density_sweep": {
     "case_study_high": {
       "breakeven_saidi_min_per_yr": [
-        9966.229043962641,
-        4983.114521981321,
-        2491.5572609906603,
-        1845.5979711041932,
-        996.6229043962642,
-        498.3114521981321,
-        249.15572609906604,
-        124.57786304953302
+        9966.22904396,
+        4983.11452198,
+        2491.55726099,
+        1845.5979711,
+        996.622904396,
+        498.311452198,
+        249.155726099,
+        124.57786305
       ],
       "customers_per_mile": [
         5,
@@ -167,14 +167,14 @@
     },
     "case_study_low": {
       "breakeven_saidi_min_per_yr": [
-        13597.759079159987,
-        6798.879539579993,
-        3399.4397697899967,
-        2518.1035331777757,
-        1359.775907915999,
-        679.8879539579995,
-        339.94397697899973,
-        169.97198848949986
+        13597.7590792,
+        6798.87953958,
+        3399.43976979,
+        2518.10353318,
+        1359.77590792,
+        679.887953958,
+        339.943976979,
+        169.971988489
       ],
       "customers_per_mile": [
         5,
@@ -190,14 +190,14 @@
     },
     "econometric": {
       "breakeven_saidi_min_per_yr": [
-        99263.64127786791,
-        49631.820638933954,
-        24815.910319466977,
-        18382.15579219776,
-        9926.36412778679,
-        4963.182063893395,
-        2481.5910319466975,
-        1240.7955159733488
+        99263.6412779,
+        49631.8206389,
+        24815.9103195,
+        18382.1557922,
+        9926.36412779,
+        4963.18206389,
+        2481.59103195,
+        1240.79551597
       ],
       "customers_per_mile": [
         5,
@@ -212,7 +212,7 @@
       "reduction_used": "econometric"
     }
   },
-  "headline_ratio_case_vs_econometric": 7.300000000000001,
+  "headline_ratio_case_vs_econometric": 7.3,
   "observed_median_saidi_with_2022": 173.655,
   "params": {
     "asset_life_years": {

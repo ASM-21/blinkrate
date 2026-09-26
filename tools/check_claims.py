@@ -20,7 +20,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
-PROSE = ["README.md", "FINDINGS.md", "FALSIFICATION.md", "LITERATURE.md"]
+PROSE = ["README.md", "FINDINGS.md", "FALSIFICATION.md", "LITERATURE.md",
+         "CHANGELOG.md"]
 
 
 def load(name: str) -> dict:
@@ -376,6 +377,25 @@ def main() -> int:
                 failures.append(
                     f"drift: prose says {quoted} in {text!r}, code says "
                     f"{value:.4f} (tolerance {tol})")
+            # The exact string being present somewhere is not enough. The same
+            # figure is often quoted in two files, and a stale second copy
+            # would otherwise pass forever because the first copy satisfies the
+            # match. So every occurrence of the claim's context is checked, but
+            # only when the context is distinctive: a claim whose only context
+            # is a unit ("37 min/yr") matches every other figure in that unit,
+            # which the first version of this check did 1,847 times.
+            context = re.sub(r"[*_|`]", "", text.replace(nums[0], "", 1)).strip()
+            if len(context) < 12 or len(re.findall(r"[A-Za-z]{2,}", context)) < 2:
+                continue
+            pattern = re.escape(text).replace(
+                re.escape(nums[0]),
+                r"(?<![\d.])(-?\d[\d,]*\.?\d*)(?![\d])", 1)
+            for m in re.finditer(pattern, blob):
+                other = float(m.group(1).replace(",", ""))
+                if abs(other - value) > tol:
+                    failures.append(
+                        f"stale copy: prose also says {other} in "
+                        f"{m.group(0)!r}, code says {value:.4f}")
             continue
 
         # The exact string is absent. Distinguish an edited NUMBER from a deleted
@@ -455,6 +475,22 @@ def main() -> int:
             m = re.search(pattern, stripped, flags=re.IGNORECASE)
             if m:
                 failures.append(f"forbidden phrasing in {name}: {m.group(0)!r} - {why}")
+
+    # House style: no em dashes anywhere in shipped prose. Checked on the raw
+    # files, blockquotes included, since style applies to quoted text too.
+    for name, text in prose.items():
+        if "\u2014" in text:
+            n = text.count("\u2014")
+            failures.append(f"style: {n} em dash(es) in {name}; use a colon, "
+                            "comma or parentheses")
+
+    # Every figure the README embeds must exist, or the landing page ships with
+    # broken images.
+    for img in re.findall(r"!\[[^\]]*\]\(([^)]+)\)", prose["README.md"]):
+        if img.startswith(("http://", "https://")):
+            continue  # remote badges are checked by GitHub, not by this guard
+        if not (ROOT / img).exists():
+            failures.append(f"README embeds a missing figure: {img}")
 
     n_claims = len(claims())
     if failures:

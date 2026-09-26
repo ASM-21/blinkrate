@@ -18,15 +18,15 @@ daily data is unavailable, plus two quantifications not found in the search.
 "Investigation of 2.5 Beta Methodology" and "Major event day segmentation"
 identified fundamental problems with the method, specifically how large SAIDI
 days in the right tail of the fitted log-normal distort the threshold. The
-follow-up letter "2.5 Beta Methodology — Impact of 'Zero SAIDI' Days" (IEEE,
+follow-up letter "2.5 Beta Methodology: Impact of 'Zero SAIDI' Days" (IEEE,
 2013, DOI 10.1109/TPWRD.2013.2243918) shows that variation in the number of
 zero-SAIDI days materially moves the threshold across 24 utility units, and
 notes that catastrophic events cause "an unsuitable increase in the threshold
 for future years."
 
 *What this does to Q1 and Q2.* Both are corroboration, not discovery. The
-self-referential property Q1 describes — a utility's exclusion allowance is set
-by its own history, so a bad year buys a larger allowance later — is the same
+self-referential property Q1 describes (a utility's exclusion allowance is set
+by its own history, so a bad year buys a larger allowance later) is the same
 mechanism that letter identifies. Q2's zero-exclusion mass point is the national
 counterpart of a threshold effect that paper measured on 24 units.
 
@@ -39,7 +39,7 @@ for some utilities, it also increases it for other utilities (sometimes
 dramatically)."
 
 *What this does to Q1.* It is the closest prior work to Q1's sweep and it
-reaches a compatible conclusion by a different route — they varied the method
+reaches a compatible conclusion by a different route: they varied the method
 and measured variability, this repository varies one parameter and measures the
 level. Q1's contribution is the magnitude at national scale and the closed form
 that makes the sweep possible without daily data.
@@ -119,7 +119,7 @@ further.
 
 ## Sources
 
-- "2.5 Beta Methodology — Impact of 'Zero SAIDI' Days," *IEEE Transactions on
+- "2.5 Beta Methodology: Impact of 'Zero SAIDI' Days," *IEEE Transactions on
   Power Delivery*, 2013. DOI 10.1109/TPWRD.2013.2243918
 - "Investigation of 2.5 Beta Methodology" and "Major event day segmentation,"
   IEEE PES

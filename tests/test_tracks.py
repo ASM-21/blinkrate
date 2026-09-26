@@ -21,7 +21,22 @@ from blinkrate import (track1_investment, track2_weather_split,
 from blinkrate.shared import ingest
 
 ROOT = Path(__file__).resolve().parents[1]
-PROSE_FILES = ("README.md", "FINDINGS.md", "FALSIFICATION.md", "LITERATURE.md")
+def _guard_prose_files() -> tuple[str, ...]:
+    """The prose list, read from the guard itself.
+
+    Tests used to keep their own copy of this list, and it fell out of step with
+    the guard twice (once when LITERATURE.md was added, once for CHANGELOG.md),
+    failing every corruption test for the wrong reason. Single source of truth.
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "check_claims", ROOT / "tools" / "check_claims.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return tuple(mod.PROSE)
+
+
+PROSE_FILES = _guard_prose_files()
 
 
 def _results(name: str) -> dict:
@@ -635,3 +650,59 @@ def test_unconditional_headline_cannot_return():
         unquoted = re.sub(r"^>.*$", "", text, flags=re.MULTILINE)
         assert not re.search(r"more than the whole\s+industry spans", unquoted), (
             f"{name} states the A10-rescoped headline without its condition")
+
+
+def _guard_on(tmp_path, edit: dict) -> subprocess.CompletedProcess:
+    """Run the guard against a copy of the prose with `edit` applied.
+
+    `edit` maps a prose file name to a function transforming its text.
+    """
+    for name in PROSE_FILES:
+        text = (ROOT / name).read_text()
+        (tmp_path / name).write_text(edit.get(name, lambda t: t)(text))
+    (tmp_path / "results").symlink_to(ROOT / "results", target_is_directory=True)
+    (tmp_path / "blinkrate").symlink_to(ROOT / "blinkrate", target_is_directory=True)
+    (tmp_path / "figures").symlink_to(ROOT / "figures", target_is_directory=True)
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools" / "check_claims.py").write_text(
+        (ROOT / "tools" / "check_claims.py").read_text())
+    return subprocess.run([sys.executable, str(tmp_path / "tools" / "check_claims.py")],
+                          cwd=tmp_path, capture_output=True, text=True)
+
+
+def test_guard_catches_a_stale_second_copy(tmp_path):
+    """A figure quoted in two files must be right in both.
+
+    The guard used to pass as soon as the exact claim appeared anywhere, so a
+    stale copy in a second file survived indefinitely. Corrupt only the
+    FALSIFICATION copy of a number FINDINGS also quotes, and require a failure.
+    """
+    import re
+    findings = re.sub(r"\s+", " ", re.sub(r"^>\s?", "", (
+        ROOT / "FINDINGS.md").read_text(), flags=re.MULTILINE))
+    # FINDINGS wraps this figure across a line inside a blockquote, so check it
+    # the way the guard reads prose: blockquote markers stripped, whitespace
+    # collapsed.
+    assert "3.6 points at p = 0.199" in findings
+    assert "3.6 points at p = 0.199" in (ROOT / "FALSIFICATION.md").read_text()
+    r = _guard_on(tmp_path, {"FALSIFICATION.md": lambda t: t.replace(
+        "3.6 points at p = 0.199", "4.1 points at p = 0.199")})
+    assert r.returncode == 1, r.stdout
+    assert "stale copy" in r.stdout
+
+
+def test_guard_enforces_no_em_dashes(tmp_path):
+    r = _guard_on(tmp_path, {"README.md": lambda t: t.replace(
+        "Short answer.", "Short answer \u2014 in brief.", 1)})
+    assert r.returncode == 1, r.stdout
+    assert "em dash" in r.stdout
+
+
+def test_stored_results_are_rounded_for_reproducibility():
+    """Results are rounded to 12 significant figures so they are byte-identical
+    across supported library versions; CI's git diff on results/ depends on it."""
+    from blinkrate.shared import io
+    assert io.SIG_FIGS == 12
+    assert io._round_floats(0.12935628322404175) == io._round_floats(
+        0.12935628322404166)
+    assert io._round_floats({"x": [1.0, float("nan")]}) == {"x": [1.0, None]}

@@ -11,7 +11,7 @@ result that four years of data had supported at p = 0.026.**
 
 ---
 
-## A1 — the log-normal assumption. **Landed. Scopes Q1's magnitude.**
+## A1: the log-normal assumption. **Landed. Scopes Q1's magnitude.**
 
 Q1 recovers the dispersion of a utility's daily SAIDI by inverting
 `r = Phi(beta - sigma)`, then sweeps beta. That inversion assumes daily SAIDI is
@@ -46,7 +46,7 @@ t-distributed daily logs with five degrees of freedom.
 
 **Also does not survive: the cliff.** Under log-normality the mechanism switches
 off between beta 2.90 and 2.95, because a 365-day year rarely contains a
-3-sigma day. Under heavy tails it does not switch off at all — r(3.0) is 0.58 to
+3-sigma day. Under heavy tails it does not switch off at all: r(3.0) is 0.58 to
 0.74 rather than 1.00, because heavy tails keep putting days past the threshold.
 The cliff is a property of the log-normal, not of the rule.
 
@@ -55,7 +55,7 @@ README and FINDINGS, and `tools/check_claims.py` fails the build if it is
 deleted. Fixing this properly needs daily SAIDI from a utility willing to publish
 it.
 
-## A2 — median versus mean in the calibration. **Survived.**
+## A2: median versus mean in the calibration. **Survived.**
 
 The calibration surface stores the *median* realized retained share at each
 (sigma, beta) and the tracks invert that. The mean is the obvious alternative.
@@ -66,11 +66,11 @@ and in the minority of draws where that day lands below the threshold the
 realized retained share jumps to 1, dragging the mean but not the median.
 
 A filed utility-year is one realization, so the median is the right target for a
-method-of-moments inversion. The gap is small over the range the data implies —
-the 10th to 90th percentile of implied sigma is 1.37 to 4.72 — so the choice does
+method-of-moments inversion. The gap is small over the range the data implies
+(the 10th to 90th percentile of implied sigma is 1.37 to 4.72), so the choice does
 not carry any headline. Pinned by `test_calibration_is_median_not_mean`.
 
-## A3 — the bunching estimator's specification. **Survived, 33 of 36.**
+## A3: the bunching estimator's specification. **Survived, 33 of 36.**
 
 Excess mass at zero exclusion, across every combination of polynomial degree
 (3, 4, 5, 7), bunching window (0.02, 0.05, 0.10) and fit-range floor
@@ -84,11 +84,11 @@ Excess mass at zero exclusion, across every combination of polynomial degree
 Every failure combines the widest window with the most flexible polynomial,
 which is the expected failure mode rather than a surprise: a degree-7
 counterfactual fitted next to a 0.10-wide window can bend up into it and explain
-the mass away. The headline uses degree 5, window 0.05, floor 0.30 — the middle
+the mass away. The headline uses degree 5, window 0.05, floor 0.30: the middle
 of the grid, not a favourable corner. On the seven-year panel the estimator got
 more robust, not less: the minimum across specifications rose from 0.88 to 1.60.
 
-## A4 — Q4's decomposition, trimmed. **Landed. Turns a point into a range.**
+## A4: Q4's decomposition, trimmed. **Landed. Turns a point into a range.**
 
 Q4 attributes 82.9% of the 2013-to-2022 rise in customer-weighted reported SAIDI
 to the excluded portion. Three alternative specifications:
@@ -113,7 +113,7 @@ fixed: it kept a utility if *any* of its years was in range, which dropped nobod
 and passed vacuously. Caught because `n_trimmed` came back equal to
 `n_baseline`.
 
-## A5 — Q6's ownership gap. **Landed, and a claim was retracted.**
+## A5: Q6's ownership gap. **Landed, and a claim was retracted.**
 
 Pooled, investor-owned utilities have a median retained share 0.097 below
 co-ops. IOUs are also roughly fifteen times larger by customer count, so the
@@ -141,7 +141,7 @@ retraction in a blockquote, and the guard checks the retracted numbers too, so
 the one paragraph most likely to go stale is not the one paragraph nothing
 watches.
 
-## A6 — Q5's null. **Survived, and this is the attack that changed the design.**
+## A6: Q5's null. **Survived, and this is the attack that changed the design.**
 
 On four filing years, Q5 was a 2022 cross-section reporting no detectable effect
 of AMI deployment. A6 pointed out that a null is only informative if the design
@@ -167,7 +167,7 @@ The null is now bounded rather than uninformative.
 
 ---
 
-## A7 — leave one state out. **Landed on exactly one finding.**
+## A7: leave one state out. **Landed on exactly one finding.**
 
 The attack this repository most needed and had gone without. Three of its four
 main headlines are customer-weighted, and Florida Power & Light files a 0.96
@@ -186,8 +186,8 @@ headline recomputed.
 
 **Three survive comfortably.** Q1's sensitivity range, Q2's excess mass and Q3's
 ranking churn all move by under 8.4% no matter which state is removed, and the most
-influential state differs for each — California, North Carolina and Arkansas
-respectively — which is what you want to see. No single jurisdiction is carrying
+influential state differs for each (California, North Carolina and Arkansas
+respectively), which is what you want to see. No single jurisdiction is carrying
 them.
 
 **Q4's share fails.** Removing Florida alone takes it from 0.829 to 0.509.
@@ -198,7 +198,7 @@ the customer-weighted share from 0.829 to 0.405 but the unweighted share only
 from 0.814 to 0.743. The pattern is not absent outside the storm belt; a few very
 large storm-exposed utilities are dominating a customer-weighted aggregate.
 Meanwhile the everyday trend on the same panel goes from 3.08 min/yr
-(p = 0.008) to 2.72 (p = 0.006) — essentially untouched.
+(p = 0.008) to 2.72 (p = 0.006): essentially untouched.
 
 **Q4 was rewritten rather than defended.** It now states two answers: a national
 and robust one about the everyday trend, and a non-national one about the
@@ -211,7 +211,7 @@ fix was to narrow a claim's scope rather than to drop it.
 
 ---
 
-## A8 — the criterion this repository commits to. **Both halves hold.**
+## A8: the criterion this repository commits to. **Both halves hold.**
 
 FINDINGS states a falsification criterion for the whole repository. A criterion
 nobody runs is decoration, so this runs it, on large investor-owned utilities in
@@ -251,7 +251,7 @@ move does fall from 18 pooled to 5-7 within strata, but that is mechanical: a
 smaller field has fewer ranks to move through. Quartile change is the statistic
 that compares across strata, and it is flat to rising.
 
-## A9 — leave one utility out. **Q8 survives.**
+## A9: leave one utility out. **Q8 survives.**
 
 Named in this file as an attack not run, so it was run. A7 works at state
 granularity and Q4 and Q8 both lean on Florida; within Florida one utility

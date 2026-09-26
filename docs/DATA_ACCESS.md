@@ -82,9 +82,9 @@ header-based read keeps one and drops the other without complaint.
 ## Genuinely missing
 
 **FERC Form 1 (track 1 capex, track 4 vegetation management).** `ferc.gov` is
-blocked. The three Form 1 repositories on GitHub —
-`catalyst-cooperative/ferc1-data-release`, `catalyst-cooperative/rmi-ferc1-eia`,
-`doig007/Form1Analysis` — were cloned and inspected. They contain extraction
+blocked. The three Form 1 repositories on GitHub
+(`catalyst-cooperative/ferc1-data-release`, `catalyst-cooperative/rmi-ferc1-eia`,
+`doig007/Form1Analysis`) were cloned and inspected. They contain extraction
 scripts, schema documentation and blank form PDFs. All three download the data
 from ferc.gov at runtime. Catalyst's PUDL distributes processed Form 1 through
 Zenodo and S3, both blocked.
@@ -100,7 +100,7 @@ found.
 **Weather severity (track 2).** NOAA is blocked and no mirrored storm-severity
 panel keyed to utility service territories was found. Track 2 therefore uses the
 major-event-day gap as an internal indicator and cannot separate "more severe
-weather" from "more days classified as major events" — which is precisely the
+weather" from "more days classified as major events", which is precisely the
 distinction the track was scoped to make. Stated in the module and in FINDINGS.
 
 **Daily SAIDI series (track 3).** Not a proxy problem, a publication problem:

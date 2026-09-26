@@ -1,10 +1,10 @@
 {
   "bunching": {
     "ci95": [
-      7.589599289484503,
-      26.154912800467336
+      7.58959928948,
+      26.1549128005
     ],
-    "excess_mass_ratio": 12.03049163602419,
+    "excess_mass_ratio": 12.030491636,
     "fit_range_lo": 0.3,
     "n_bootstrap_effective": 2000,
     "n_clusters": 1129,
@@ -14,30 +14,30 @@
   },
   "coverage": {
     "implied_sigma_quantiles": {
-      "10": 1.366678110323293,
-      "25": 1.9336513116672873,
-      "50": 2.6763200998030507,
-      "75": 3.562592799747014,
-      "90": 4.724183683922461
+      "10": 1.36667811032,
+      "25": 1.93365131167,
+      "50": 2.6763200998,
+      "75": 3.56259279975,
+      "90": 4.72418368392
     },
     "n": 6245,
     "n_admissible": 4197,
     "n_exactly_zero_exclusion": 1859,
     "n_too_clean": 1923,
     "n_too_excluded": 125,
-    "r_max_modelable": 0.9936750551202856,
-    "r_min_modelable": 0.027665468935336623,
-    "share_admissible": 0.6720576461168936,
-    "share_exactly_zero_exclusion": 0.2976781425140112,
-    "share_too_clean": 0.30792634107285827,
-    "share_too_excluded": 0.020016012810248198
+    "r_max_modelable": 0.99367505512,
+    "r_min_modelable": 0.0276654689353,
+    "share_admissible": 0.672057646117,
+    "share_exactly_zero_exclusion": 0.297678142514,
+    "share_too_clean": 0.307926341073,
+    "share_too_excluded": 0.0200160128102
   },
   "elasticity": {
-    "analytic_at_r_half": 0.3989422804014327,
-    "corr_analytic_vs_numeric": 0.9218976920530133,
-    "max_analytic_dr_dbeta": 0.3989422804014327,
-    "median_analytic": 0.3424976826389453,
-    "median_numeric_finite_sample": 0.48002612292499636,
+    "analytic_at_r_half": 0.398942280401,
+    "corr_analytic_vs_numeric": 0.921897692053,
+    "max_analytic_dr_dbeta": 0.398942280401,
+    "median_analytic": 0.342497682639,
+    "median_numeric_finite_sample": 0.480026122925,
     "n": 4143,
     "note": "analytic is the closed-form identity, numeric differentiates the finite-sample surface; they agree in shape, not in level"
   },
@@ -46,107 +46,107 @@
       "2013": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.34632034632034636,
-          0.9268632132688109
+          0.34632034632,
+          0.926863213269
         ],
         "max_rank_move": 87.0,
         "median_rank_move": 14.0,
-        "median_rank_move_pct_of_field": 12.844036697247706,
+        "median_rank_move_pct_of_field": 12.8440366972,
         "n": 109,
-        "pct_changing_quartile": 53.21100917431193,
-        "pct_entering_or_leaving_best_quartile": 14.678899082568808,
-        "spearman": 0.6760703053259223
+        "pct_changing_quartile": 53.2110091743,
+        "pct_entering_or_leaving_best_quartile": 14.6788990826,
+        "spearman": 0.676070305326
       },
       "2014": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.3308270676691729,
+          0.330827067669,
           1.0
         ],
         "max_rank_move": 82.0,
         "median_rank_move": 12.0,
-        "median_rank_move_pct_of_field": 10.81081081081081,
+        "median_rank_move_pct_of_field": 10.8108108108,
         "n": 111,
-        "pct_changing_quartile": 47.74774774774775,
-        "pct_entering_or_leaving_best_quartile": 17.117117117117118,
-        "spearman": 0.7507316259938792
+        "pct_changing_quartile": 47.7477477477,
+        "pct_entering_or_leaving_best_quartile": 17.1171171171,
+        "spearman": 0.750731625994
       },
       "2015": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.3120630474778263,
+          0.312063047478,
           1.0
         ],
         "max_rank_move": 86.0,
         "median_rank_move": 11.0,
-        "median_rank_move_pct_of_field": 9.322033898305085,
+        "median_rank_move_pct_of_field": 9.32203389831,
         "n": 118,
-        "pct_changing_quartile": 39.83050847457627,
-        "pct_entering_or_leaving_best_quartile": 13.559322033898304,
-        "spearman": 0.7668734958070548
+        "pct_changing_quartile": 39.8305084746,
+        "pct_entering_or_leaving_best_quartile": 13.5593220339,
+        "spearman": 0.766873495807
       },
       "2016": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.2991380083312329,
-          0.9651681537405628
+          0.299138008331,
+          0.965168153741
         ],
         "max_rank_move": 101.0,
         "median_rank_move": 15.0,
-        "median_rank_move_pct_of_field": 12.096774193548388,
+        "median_rank_move_pct_of_field": 12.0967741935,
         "n": 124,
-        "pct_changing_quartile": 42.74193548387097,
-        "pct_entering_or_leaving_best_quartile": 14.516129032258066,
-        "spearman": 0.7197671728887122
+        "pct_changing_quartile": 42.7419354839,
+        "pct_entering_or_leaving_best_quartile": 14.5161290323,
+        "spearman": 0.719767172889
       },
       "2017": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.40811788558496637,
-          0.9851177932844578
+          0.408117885585,
+          0.985117793284
         ],
         "max_rank_move": 112.0,
         "median_rank_move": 16.0,
-        "median_rank_move_pct_of_field": 12.903225806451612,
+        "median_rank_move_pct_of_field": 12.9032258065,
         "n": 124,
-        "pct_changing_quartile": 45.96774193548387,
-        "pct_entering_or_leaving_best_quartile": 17.741935483870968,
-        "spearman": 0.6444426261011492
+        "pct_changing_quartile": 45.9677419355,
+        "pct_entering_or_leaving_best_quartile": 17.7419354839,
+        "spearman": 0.644442626101
       },
       "2018": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.4494283201407212,
+          0.449428320141,
           1.0
         ],
         "max_rank_move": 88.0,
         "median_rank_move": 19.0,
-        "median_rank_move_pct_of_field": 15.447154471544716,
+        "median_rank_move_pct_of_field": 15.4471544715,
         "n": 123,
-        "pct_changing_quartile": 56.91056910569105,
-        "pct_entering_or_leaving_best_quartile": 27.64227642276423,
-        "spearman": 0.6100760345928377
+        "pct_changing_quartile": 56.9105691057,
+        "pct_entering_or_leaving_best_quartile": 27.6422764228,
+        "spearman": 0.610076034593
       },
       "2022": {
         "excluded_share_p0_p50_p100": [
           0.0,
-          0.4080806638258294,
-          0.9582199817478597
+          0.408080663826,
+          0.958219981748
         ],
         "max_rank_move": 116.0,
         "median_rank_move": 18.5,
-        "median_rank_move_pct_of_field": 14.682539682539682,
+        "median_rank_move_pct_of_field": 14.6825396825,
         "n": 126,
-        "pct_changing_quartile": 52.38095238095239,
-        "pct_entering_or_leaving_best_quartile": 25.396825396825395,
-        "spearman": 0.6551511061117361
+        "pct_changing_quartile": 52.380952381,
+        "pct_entering_or_leaving_best_quartile": 25.3968253968,
+        "spearman": 0.655151106112
       }
     },
     "largest_gains_latest_year": {
       "n": 126,
       "utilities": [
         {
-          "excluded_share": 0.9582199817478597,
+          "excluded_share": 0.958219981748,
           "name": "Florida Power & Light Co",
           "rank_with": 123,
           "rank_without": 7,
@@ -155,7 +155,7 @@
           "state": "FL"
         },
         {
-          "excluded_share": 0.9348946911883668,
+          "excluded_share": 0.934894691188,
           "name": "Tampa Electric Co",
           "rank_with": 122,
           "rank_without": 15,
@@ -164,7 +164,7 @@
           "state": "FL"
         },
         {
-          "excluded_share": 0.8756586219107816,
+          "excluded_share": 0.875658621911,
           "name": "Northern States Power Co - Minnesota",
           "rank_with": 99,
           "rank_without": 12,
@@ -173,7 +173,7 @@
           "state": "SD"
         },
         {
-          "excluded_share": 0.8572980804056501,
+          "excluded_share": 0.857298080406,
           "name": "Public Service Co of NH",
           "rank_with": 107,
           "rank_without": 27,
@@ -182,7 +182,7 @@
           "state": "NH"
         },
         {
-          "excluded_share": 0.8916202525842902,
+          "excluded_share": 0.891620252584,
           "name": "Duke Energy Florida, LLC",
           "rank_with": 120,
           "rank_without": 44,
@@ -197,12 +197,12 @@
     "note": "a large rank gain is not evidence of anything improper. Gulf-coast utilities have genuine hurricane days and the exclusion exists to remove them. The point is that the two series answer different questions, so a benchmark that picks one without saying which has made a decision, not a measurement",
     "ownership": "IOU",
     "pct_changing_quartile_range": [
-      39.83050847457627,
-      56.91056910569105
+      39.8305084746,
+      56.9105691057
     ],
     "spearman_range": [
-      0.6100760345928377,
-      0.7668734958070548
+      0.610076034593,
+      0.766873495807
     ]
   },
   "sensitivity": {
@@ -250,115 +250,115 @@
       3.5
     ],
     "customer_weighted": true,
-    "fleet_range_ratio": 7.656579147293274,
+    "fleet_range_ratio": 7.65657914729,
     "fleet_saidi_without_med": [
-      37.470846490681474,
-      39.839480984794825,
-      42.360543957055185,
-      44.995579766311295,
-      47.675477675177696,
-      50.566288975456054,
-      53.59480323866361,
-      56.74751871327721,
-      60.090354885213,
-      63.564135733953115,
-      67.17347552544545,
-      71.04013124574963,
-      75.00346761825247,
-      79.33329506797972,
-      83.5212366354602,
-      88.38840781478302,
-      93.34417649442625,
-      98.49390881089808,
-      103.89651447655068,
-      109.5647429196735,
-      115.45659941815734,
-      122.14248915948608,
-      128.97221831383698,
-      136.32550735440634,
-      144.4652360337206,
-      153.09957864639114,
-      162.14078384956528,
-      173.74835710042643,
-      197.91228994455938,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914,
-      286.89850187197914
+      37.4708464907,
+      39.8394809848,
+      42.3605439571,
+      44.9955797663,
+      47.6754776752,
+      50.5662889755,
+      53.5948032387,
+      56.7475187133,
+      60.0903548852,
+      63.564135734,
+      67.1734755254,
+      71.0401312457,
+      75.0034676183,
+      79.333295068,
+      83.5212366355,
+      88.3884078148,
+      93.3441764944,
+      98.4939088109,
+      103.896514477,
+      109.56474292,
+      115.456599418,
+      122.142489159,
+      128.972218314,
+      136.325507354,
+      144.465236034,
+      153.099578646,
+      162.14078385,
+      173.7483571,
+      197.912289945,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872,
+      286.898501872
     ],
     "headline": {
       "beta_1.5": {
-        "expected_med_days_per_year": 24.3846284631332,
-        "fleet_saidi_without_med": 37.470846490681474,
-        "median_retained_share": 0.16193563329513952,
-        "pct_change_vs_2_5": -67.54551348340803,
-        "unweighted_mean_saidi_without_med": 48.255633131057515
+        "expected_med_days_per_year": 24.3846284631,
+        "fleet_saidi_without_med": 37.4708464907,
+        "median_retained_share": 0.161935633295,
+        "pct_change_vs_2_5": -67.5455134834,
+        "unweighted_mean_saidi_without_med": 48.2556331311
       },
       "beta_2.0": {
-        "expected_med_days_per_year": 8.30379816108541,
-        "fleet_saidi_without_med": 67.17347552544545,
-        "median_retained_share": 0.3313246833961324,
-        "pct_change_vs_2_5": -41.81928459354799,
-        "unweighted_mean_saidi_without_med": 83.25379715116296
+        "expected_med_days_per_year": 8.30379816109,
+        "fleet_saidi_without_med": 67.1734755254,
+        "median_retained_share": 0.331324683396,
+        "pct_change_vs_2_5": -41.8192845935,
+        "unweighted_mean_saidi_without_med": 83.2537971512
       },
       "beta_2.5": {
-        "expected_med_days_per_year": 2.266527843908298,
-        "fleet_saidi_without_med": 115.45659941815734,
-        "median_retained_share": 0.5688538583578311,
+        "expected_med_days_per_year": 2.26652784391,
+        "fleet_saidi_without_med": 115.456599418,
+        "median_retained_share": 0.568853858358,
         "pct_change_vs_2_5": 0.0,
-        "unweighted_mean_saidi_without_med": 140.59640729358975
+        "unweighted_mean_saidi_without_med": 140.596407294
       },
       "beta_3.0": {
-        "expected_med_days_per_year": 0.49271278154498777,
-        "fleet_saidi_without_med": 286.89850187197914,
+        "expected_med_days_per_year": 0.492712781545,
+        "fleet_saidi_without_med": 286.898501872,
         "median_retained_share": 1.0,
-        "pct_change_vs_2_5": 148.4903446990488,
-        "unweighted_mean_saidi_without_med": 361.04630974505636
+        "pct_change_vs_2_5": 148.490344699,
+        "unweighted_mean_saidi_without_med": 361.046309745
       },
       "beta_3.5": {
-        "expected_med_days_per_year": 0.08490961384797213,
-        "fleet_saidi_without_med": 286.89850187197914,
+        "expected_med_days_per_year": 0.084909613848,
+        "fleet_saidi_without_med": 286.898501872,
         "median_retained_share": 1.0,
-        "pct_change_vs_2_5": 148.4903446990488,
-        "unweighted_mean_saidi_without_med": 361.04630974505636
+        "pct_change_vs_2_5": 148.490344699,
+        "unweighted_mean_saidi_without_med": 361.046309745
       }
     },
     "n_admissible_rows": 4197
   },
   "standard_choice": {
     "IEEE": {
-      "mean_retained_share": 0.6635378358415772,
-      "median_retained_share": 0.6998538687007039,
-      "median_saidi_with": 157.01999999999998,
+      "mean_retained_share": 0.663537835842,
+      "median_retained_share": 0.699853868701,
+      "median_saidi_with": 157.02,
       "median_saidi_without": 98.119,
       "n": 4446,
-      "share_zero_exclusion": 0.25303643724696356
+      "share_zero_exclusion": 0.253036437247
     },
     "Other": {
-      "mean_retained_share": 0.7246311685382771,
-      "median_retained_share": 0.8833627450980391,
+      "mean_retained_share": 0.724631168538,
+      "median_retained_share": 0.883362745098,
       "median_saidi_with": 108.0,
       "median_saidi_without": 75.74,
       "n": 1799,
-      "share_zero_exclusion": 0.40800444691495275
+      "share_zero_exclusion": 0.408004446915
     },
     "switchers": {
       "n_switched_standard": 188,
       "n_utility_states": 1129,
-      "share_switched": 0.16651904340124005
+      "share_switched": 0.166519043401
     },
     "test": {
       "mannwhitney_u": 3416072.5,
       "note": "utility-state-years are not independent across filing years; treat the p-value as descriptive, the effect size is the point",
-      "p_value": 5.2457744035905627e-20
+      "p_value": 5.24577440359e-20
     }
   }
 }

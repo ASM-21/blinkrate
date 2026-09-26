@@ -86,7 +86,7 @@ moves customer-weighted fleet SAIDI over a 7.66x range.**
 |---|---|---|---|
 | 1.5 | 37 min/yr | -68% | 24.4 |
 | 2.0 | 67 min/yr | -43% | 8.3 |
-| **2.5 (IEEE 1366)** | **115 min/yr** | — | **2.27 qualifying days** |
+| **2.5 (IEEE 1366)** | **115 min/yr** | baseline | **2.27 qualifying days** |
 | 3.0 | 287 min/yr | +150% | 0.5 |
 
 The standard's value also sits close to a cliff. Under log-normality the median
@@ -101,8 +101,8 @@ it without daily data.
 
 **How this is identified.** EIA-861 publishes annual aggregates, never daily
 SAIDI, so no threshold can be recomputed directly. But the exclusion has a
-closed form. If daily SAIDI is log-normal — the distribution IEEE 1366 itself
-assumes — the share of annual outage minutes surviving exclusion is
+closed form. If daily SAIDI is log-normal (the distribution IEEE 1366 itself
+assumes), the share of annual outage minutes surviving exclusion is
 `r = Phi(beta - sigma)`, which depends on the dispersion of daily SAIDI and on
 nothing else: not the level, not utility size. Two published numbers therefore
 pin the one latent parameter, and the sweep runs on that. Derivation in
@@ -113,8 +113,8 @@ surface instead, validated in Q7.
 **What would overturn it.** The log-normal assumption, and this is not a
 footnote. Attack A1 re-runs the whole inversion with heavier-tailed daily
 outages, matched so every distribution reproduces the same observed exclusion
-share. The direction survives everywhere — a lower threshold always excludes
-more — but the sweep ratio spans **3.03x** across distributions and the cliff
+share. The direction survives everywhere (a lower threshold always excludes
+more), but the sweep ratio spans **3.03x** across distributions and the cliff
 disappears entirely. **The direction is a property of the rule. The magnitude is
 a property of the log-normal.** Daily SAIDI series from any utility would settle
 it.
@@ -137,8 +137,8 @@ at zero daily dispersion, still excludes 0.6% of its minutes, because a
 continuous distribution always puts some mass above a finite threshold. Only
 **67.2%** of filings fall inside what the model can produce.
 
-A Chetty-style excess-mass estimator — fifth-degree counterfactual fitted
-outside the bunching window, bootstrapped over utility-state clusters — puts the
+A Chetty-style excess-mass estimator (fifth-degree counterfactual fitted
+outside the bunching window, bootstrapped over utility-state clusters) puts the
 mass at **12.0x** the counterfactual density (95% CI 7.6 to 26.2). It survives
 33 of 36 alternative specifications; the three failures all widen the window to
 0.10 with a flexible polynomial that can bend into it.
@@ -172,7 +172,7 @@ between them runs **0.610** to **0.767**, and the median utility moves 11 to 19
 places in a field of roughly 120.
 
 The extremes are large. Florida Power & Light files 1,150.5 min/yr with major
-event days and 48.1 without, moving it from 123rd of 126 to 7th — a **116-place**
+event days and 48.1 without, moving it from 123rd of 126 to 7th: a **116-place**
 swing. Tampa Electric moves 122nd to 15th.
 
 **This is not an accusation and reading it as one gets it backwards.** Gulf-coast
@@ -197,15 +197,15 @@ apart:
 **3.21 min/yr** across 2013-2018 (p = 0.006, R² = 0.879). Slow, steady
 deterioration in everyday distribution performance.
 
-**The excluded portion does not trend — it spikes.** Its linear slope is large
+**The excluded portion does not trend: it spikes.** Its linear slope is large
 but not statistically distinguishable from noise (p = 0.129, R² = 0.476),
 because the series is dominated by 2017, where the customer-weighted gap is over
 three times its 2015 level and then falls back the following year.
 
 **The spikes are where the storms were.** This is the closest thing to a weather
 test available without a severity index, and it is a placebo design: a list of
-states is fixed from the 2017 Atlantic hurricane tracks — Harvey, Irma, Maria,
-Nate — and applied unchanged to every year transition, so 2017 has to
+states is fixed from the 2017 Atlantic hurricane tracks (Harvey, Irma, Maria,
+Nate) and applied unchanged to every year transition, so 2017 has to
 distinguish itself rather than be selected. It does. Between 2016 and 2017 the
 customer-weighted excluded minutes rose **655.9** minutes inside those states
 against **107.7** elsewhere, a gap of **548.2** minutes; the next largest gap in
@@ -280,8 +280,8 @@ benchmark built on it inherits that.
 **No, and this version of the answer is worth something because the design could
 have seen it.**
 
-There is no spending variable anywhere in this repository — FERC Form 1 is
-unreachable — so the regressor is physical deployment: AMI share of customers.
+There is no spending variable anywhere in this repository (FERC Form 1 is
+unreachable), so the regressor is physical deployment: AMI share of customers.
 
 An earlier version ran a 2022 cross-section, found nothing and called it a null.
 That was an artefact of timing: by 2022 the interquartile range of AMI share is
@@ -290,7 +290,7 @@ spread cannot detect anything.
 
 The 2016-2018 filings fix it. In 2016 the interquartile range is 0.04 to 1.00.
 589 utility-states are observed in all three years and **53** move their AMI
-share by more than 0.5 inside that window — a rollout observed within the same
+share by more than 0.5 inside that window: a rollout observed within the same
 utility.
 
 | design | coefficient on AMI share | 95% CI | detectable at 80% power |
@@ -307,7 +307,7 @@ which is economically small and statistically nowhere.
 **What this does and does not say.** It says that within a utility, converting
 the meter fleet to AMI is not followed by a detectable change in reported
 everyday reliability, in a design that could have caught a 24% effect. It does
-not say distribution capital has no effect — AMI is a metering technology whose
+not say distribution capital has no effect: AMI is a metering technology whose
 reliability benefit runs through outage detection and restoration speed, and no
 spending variable was available to test anything broader.
 
@@ -333,7 +333,7 @@ investor-owned, 0.740 cooperative, **0.901** municipal.
 
 What survives conditioning is the intensive margin, not the extensive one. With
 log customers, state and year controlled, investor ownership is associated with a
-retained share **0.045** lower than cooperatives (p = 0.023) — IOUs exclude
+retained share **0.045** lower than cooperatives (p = 0.023): IOUs exclude
 *more* when they exclude. Whether a utility excludes at all is explained by size,
 not ownership.
 
@@ -366,7 +366,7 @@ utility-state-year filings in the 2014 source, kept at the larger customer count
 
 **Enough that the aggregation choice rivals the threshold choice. Averaging the
 same 2022 filings five defensible ways gives national SAIDI anywhere from 173.7
-to 359.5 min/yr with major event days — a 2.07x range — before anyone touches
+to 359.5 min/yr with major event days (a 2.07x range) before anyone touches
 the exclusion.**
 
 **Prior work.** The comparability problem is recognised and has a convention:
@@ -389,7 +389,7 @@ utilities.
 | median utility | 173.7 | 103.0 | the typical utility |
 
 All six are defensible and they answer different questions. The customer-weighted
-mean, the one in general use, is the most exposed to the tail — and the tail is
+mean, the one in general use, is the most exposed to the tail, and the tail is
 extreme. One utility-state supplies **13.1%** of national customer-outage-minutes
 with major event days included; the top ten supply **38.6%**; the Gini across
 filings is **0.863**.
@@ -397,13 +397,13 @@ filings is **0.863**.
 **The two choices compound.** A national SAIDI figure requires picking a
 threshold *and* picking an aggregator, and in most places the number appears
 neither is stated. Sweeping both over defensible values gives 2022 national SAIDI
-anywhere from **27.2** to **388.8** min/yr — a **14.32x** range. The conventional
+anywhere from **27.2** to **388.8** min/yr: a **14.32x** range. The conventional
 pair of choices lands at 129.7.
 
 **What this does to Q4.** It scopes it, in the direction of honesty. Q4's
 everyday deterioration trend was robust to dropping any state. Tested against the
-averaging rule it is robust in *direction* — all six aggregators give a positive
-slope — but only four of six reach p < 0.05, and the slope ranges from 1.64 to
+averaging rule it is robust in *direction* (all six aggregators give a positive
+slope), but only four of six reach p < 0.05, and the slope ranges from 1.64 to
 4.61 min/yr. The two that miss significance are the unweighted mean and the
 customer-weighted median, which are the two most resistant to the tail. That is
 consistent with the deterioration being real but concentrated rather than uniform.
@@ -426,7 +426,7 @@ national average of **30.5 customers per** line mile, $3.8M per circuit mile,
 $370.2 per customer-hour, 30-year life at 7%, and the *most favourable* published
 reliability benefit (99.6%), the baseline SAIDI needed to break even is
 **1,633 min/yr**. The median 2022 utility reports 173.7. Substituting the
-econometric estimate for the case-study one moves breakeven by 7.3x — the two
+econometric estimate for the case-study one moves breakeven by 7.3x: the two
 literatures disagree by more than any parameter in the model. Density decides it:
 at 400 customers per mile breakeven falls to 125 min/yr, below the national
 median, which is consistent with undergrounding being justified in dense urban
@@ -443,8 +443,8 @@ The threshold parameter moves fleet SAIDI 7.66x. Half the large-IOU field
 changes quartile depending on which published series you rank on. Nearly a third
 of utilities do not apply the exclusion rule at all, and which standard they file
 under moves their number more than ownership does. Two carve-outs stack to remove
-41% of median outage minutes. And the one thing that should move the number —
-capital deployment — cannot be detected inside a utility even when the rollout is
+41% of median outage minutes. And the one thing that should move the number
+(capital deployment) cannot be detected inside a utility even when the rollout is
 observed directly.
 
 And the aggregation rule adds a second order of magnitude on top of the first:

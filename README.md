@@ -1,5 +1,7 @@
 # blinkrate
 
+[![ci](https://github.com/ASM-21/blinkrate/actions/workflows/ci.yml/badge.svg)](https://github.com/ASM-21/blinkrate/actions/workflows/ci.yml)
+
 **How much of a US utility's reported reliability number is the measurement rule
 rather than the grid?**
 
@@ -47,7 +49,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 71 tests
+pytest                           # 74 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 ```
@@ -76,10 +78,10 @@ searched and what it changed: **[LITERATURE.md](LITERATURE.md)**.
 | | Question | Answer | Basis | Confidence |
 |---|---|---|---|---|
 | Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | model-implied | direction solid, **magnitude assumption-dependent** |
-| Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion — 12.0x excess mass — which is the unflattering direction | filed data | solid |
+| Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion (12.0x excess mass), which is the unflattering direction | filed data | solid |
 | Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | filed data | solid |
 | Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | filed data | trend **positive under every aggregator, significant under four of six**; the excluded-share figure is **mostly the Gulf coast** |
-| Q5 | Does capital deployment show up in reliability? | No — and unlike the first version, the design could have caught a 24% effect | filed data | **bounded null** |
+| Q5 | Does capital deployment show up in reliability? | No, and unlike the first version, the design could have caught a 24% effect | filed data | **bounded null** |
 | Q6 | Does ownership predict exclusion? | Partly; one half of this was **retracted** when the panel doubled | filed data | weakened |
 | Q7 | Is the source data internally consistent? | CAIDI identity reproduces in 100.00% of 3,838 filings | filed data | solid |
 | Q8 | How much of the *national* number is the averaging rule? | 2.07x from the aggregator alone; **14.32x** once threshold and aggregator are swept together | filed data; combined space model-implied | solid |
@@ -88,12 +90,33 @@ Full write-up with identification and caveats: **[FINDINGS.md](FINDINGS.md)**.
 Prior art and what the literature search changed: **[LITERATURE.md](LITERATURE.md)**.
 What broke under attack: **[FALSIFICATION.md](FALSIFICATION.md)**.
 
+## Three figures
+
+**The threshold sweep** (Q1, model-implied). The same filed outage records,
+re-evaluated at other values of the major-event-day parameter. The flat region
+past 2.95 is a property of the log-normal assumption and disappears under
+heavier tails; see attack A10 before quoting the magnitude.
+
+![Fleet SAIDI as a function of the major-event-day threshold parameter](figures/track3_sensitivity_curve.png)
+
+**The geographic placebo** (Q4, filed data). A state list fixed from the 2017
+hurricane tracks and applied to every year transition. Excluded minutes spike
+where the storms were and give it back the next year, while the everyday series
+in the same states does not move.
+
+![Change in excluded and everyday SAIDI in hurricane-track states versus elsewhere, by year transition](figures/track2_hurricane_placebo.png)
+
+**The averaging rule** (Q8, filed data). Six defensible ways to turn the same
+filings into one national number, and the trend under each.
+
+![National SAIDI under six aggregation rules, and the trend under each](figures/track9_aggregation.png)
+
 ## The method, in one paragraph
 
 EIA-861 publishes annual SAIDI with and without major event days, never the daily
 series, so no threshold can be recomputed directly. But the exclusion has a
-closed form: if daily SAIDI is log-normal — the distribution IEEE 1366 itself
-assumes — the share of annual outage minutes surviving exclusion is
+closed form: if daily SAIDI is log-normal (the distribution IEEE 1366 itself
+assumes), the share of annual outage minutes surviving exclusion is
 `r = Phi(beta - sigma)`, which depends on the dispersion of daily SAIDI and on
 nothing else. Not the level, not utility size. So the two published numbers pin
 the one latent parameter, and the threshold can be swept on data containing no
@@ -119,7 +142,7 @@ regression result was retracted outright when the panel grew. Q1's magnitude was
 scoped to its distributional assumption, and the guard fails the build if that
 qualifier is deleted. Leave-one-state-out found that Q4's headline share falls
 from 0.829 to 0.509 when Florida alone is removed, while every other headline
-moves by under 8.4% whichever state is dropped — so Q4 was rewritten to separate
+moves by under 8.4% whichever state is dropped, so Q4 was rewritten to separate
 a national trend from a Gulf-coast aggregate.
 
 **More data was allowed to break things.** The panel started at four filing

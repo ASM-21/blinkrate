@@ -32,13 +32,13 @@ is a single later observation rather than a continuation and no movement after
 **Leave-one-utility-out.** Leave-one-state-out is now attack A7 and it found
 that Q4's excluded-share headline is largely Florida. Within Florida a single
 utility is most of the mass, so the utility-level version would mostly restate
-A7 — but it becomes necessary the moment Q4 is quoted at a utility level.
+A7, but it becomes necessary the moment Q4 is quoted at a utility level.
 
 **A weighted aggregate keyed to something other than customer count.** Done in
 part: track 9 reports six aggregation rules and shows they span 2.07x for a
 single year, with threshold and aggregator together spanning 14.32x. What is
-still missing is a weight that is not derived from the filings themselves —
-state population, or customer-hours at risk — which would let the national
+still missing is a weight that is not derived from the filings themselves
+(state population, or customer-hours at risk), which would let the national
 figure be checked against something exogenous rather than only reweighted.
 
 **Leave-one-utility-out inside Florida.** A7 works at state granularity. Within

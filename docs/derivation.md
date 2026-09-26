@@ -14,7 +14,7 @@ of daily SAIDI over a five-year history, and $\beta = 2.5$ in the published
 standard. Days above $T_{MED}$ are removed from the reported "without major event
 days" figure.
 
-Let daily SAIDI $D_t$ be log-normal with parameters $\mu, \sigma$ — the
+Let daily SAIDI $D_t$ be log-normal with parameters $\mu, \sigma$: the
 distribution the standard itself assumes when it fits logs and takes a
 $\beta$-sigma point.
 
@@ -34,8 +34,8 @@ Substituting $\ln T = \mu + \beta\sigma$, the argument collapses:
 $$\frac{\ln T - \mu - \sigma^2}{\sigma}
 = \frac{\beta\sigma - \sigma^2}{\sigma} = \beta - \sigma.$$
 
-So the **retained share** — the fraction of annual outage minutes that survives
-exclusion — is
+So the **retained share** (the fraction of annual outage minutes that survives
+exclusion) is
 
 $$r(\beta) = \frac{\mathbb{E}\left[\text{SAIDI without MED}\right]}
                   {\mathbb{E}\left[\text{SAIDI with MED}\right]}
@@ -77,7 +77,7 @@ $\varphi(0) = 0.3989$: a utility excluding half its outage minutes moves about
 At $\sigma = 0$, equation (1) gives $r = \Phi(2.5) = 0.99379$. A perfectly
 uniform utility still excludes 0.6% of its minutes, because a continuous
 distribution always puts some mass above a finite threshold. So **a reported
-retained share above 0.99379 is outside the model** — most sharply, a reported
+retained share above 0.99379 is outside the model**: most sharply, a reported
 $r$ of exactly 1.
 
 At the other end the model runs out of room too, though the bound is set by the
@@ -89,7 +89,7 @@ that the annual total is a single day.
 
 Equation (1) is a ratio of expectations. A filed utility-year is one realization
 of 365 days, and its reported retained share is a ratio of realized sums. For
-heavy-tailed daily SAIDI those differ substantially — at $\sigma = 2.5$ the
+heavy-tailed daily SAIDI those differ substantially: at $\sigma = 2.5$ the
 closed form says 0.500 while simulating the 1366 procedure on 365-day years
 gives a median of 0.610.
 
