@@ -231,6 +231,35 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"spans {tb['slope_range'][0]:.2f} to {tb['slope_range'][1]:.2f} minutes per year",
         tb["slope_range"][0], 0.02)
 
+    # --- A8 / A9: the stated criterion, and the utility-level jackknife -----
+    a8 = t8["A8_stated_falsification_criterion"]
+    p1 = a8["part1_rule_vs_cross_utility_spread"]
+    strat = a8["part2_reversal_within_exposure"]["by_stratum"]
+    add(f"median of **{p1['own_sweep_median_x']:.2f}x**",
+        p1["own_sweep_median_x"], 0.02)
+    add(f"range {p1['own_sweep_iqr_x'][0]:.2f}x to {p1['own_sweep_iqr_x'][1]:.2f}x",
+        p1["own_sweep_iqr_x"][0], 0.02)
+    add(f"is **{p1['cross_utility_spread_x']['p90_over_p10']:.2f}x**",
+        p1["cross_utility_spread_x"]["p90_over_p10"], 0.02)
+    add(f"and {p1['cross_utility_spread_x']['p75_over_p25']:.2f}x across",
+        p1["cross_utility_spread_x"]["p75_over_p25"], 0.02)
+    add(f"**{p1['ratio_rule_to_spread']:.2f}** times the whole",
+        p1["ratio_rule_to_spread"], 0.02)
+    add(f"quartile change runs {strat['low_pre_exposure']['pct_changing_quartile']:.0f}%, "
+        f"{strat['mid_pre_exposure']['pct_changing_quartile']:.0f}% and "
+        f"{strat['high_pre_exposure']['pct_changing_quartile']:.0f}%",
+        strat["low_pre_exposure"]["pct_changing_quartile"], 0.6)
+    add(f"and {strat['non_hurricane_states']['pct_changing_quartile']:.0f}% within "
+        "non-hurricane states",
+        strat["non_hurricane_states"]["pct_changing_quartile"], 0.6)
+
+    a9 = t8["A9_leave_one_utility_out"]
+    add(f"supplies {100 * a9['largest_contributor']['share_of_national_customer_minutes']:.1f}% "
+        "of national",
+        100 * a9["largest_contributor"]["share_of_national_customer_minutes"], 0.2)
+    add(f"{a9['by_drop']['drop_top_10']['spread_x']:.2f}x after",
+        a9["by_drop"]["drop_top_10"]["spread_x"], 0.02)
+
     return out
 
 

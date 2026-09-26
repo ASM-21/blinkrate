@@ -536,3 +536,59 @@ def test_employer_is_not_a_worked_example():
             assert hits == 1, "PPL should appear only in the independence disclaimer"
         else:
             assert hits == 0, f"{name} names the employer"
+
+
+def test_stated_falsification_criterion_is_actually_run():
+    """FINDINGS commits to a criterion. A criterion nobody runs is decoration.
+
+    Asserts the attack exists, reports both halves, and that the repository
+    still passes its own test. If a future change makes either half fail, the
+    central claim in README and FINDINGS is overstated and has to be rewritten
+    rather than left standing.
+    """
+    a8 = _results("track8_falsification")["A8_stated_falsification_criterion"]
+    p1 = a8["part1_rule_vs_cross_utility_spread"]
+    p2 = a8["part2_reversal_within_exposure"]
+
+    assert p1["rule_exceeds_p10_p90_spread"] is True
+    assert p1["own_sweep_median_x"] == pytest.approx(6.18, abs=0.05)
+    assert p1["cross_utility_spread_x"]["p90_over_p10"] == pytest.approx(
+        3.92, abs=0.05)
+    assert p1["ratio_rule_to_spread"] > 1.0
+
+    assert p2["survives"] is True
+    assert p2["min_within_stratum"] > 0.6 * p2["pooled_pct_changing_quartile"]
+    for key in ("low_pre_exposure", "mid_pre_exposure", "high_pre_exposure",
+                "non_hurricane_states"):
+        assert p2["by_stratum"][key] is not None
+        assert p2["by_stratum"][key]["pct_changing_quartile"] > 35
+
+    assert a8["criterion_met"] is True
+
+
+def test_exposure_stratifier_is_out_of_sample():
+    """Part two only means something if the stratifier is not the outcome.
+
+    Exposure is the mean exclusion share over 2013-2018, applied to 2022. If a
+    future change stratifies on the same year being tested the result becomes
+    circular, and this test is the only thing that would catch it.
+    """
+    src = (ROOT / "blinkrate" / "track8_falsification.py").read_text()
+    block = src[src.index("def a8_stated_falsification_criterion"):
+                src.index("def a9_leave_one_utility_out")]
+    assert 'df["year"].between(2013, 2018)' in block
+    assert "pre_exposure" in block
+
+
+def test_q8_spread_survives_leave_one_utility_out():
+    """A9: Q8's finding is about the gap between aggregation rules, which must
+    not be a single-utility artefact even though the level plainly is."""
+    a9 = _results("track8_falsification")["A9_leave_one_utility_out"]
+    assert a9["spread_survives_dropping_top_1"] is True
+    assert a9["spread_survives_dropping_top_10"] is True
+    drops = a9["by_drop"]
+    assert drops["drop_top_10"]["spread_x"] == pytest.approx(2.00, abs=0.05)
+    # the level falls sharply while the spread holds; that contrast is the point
+    assert (drops["drop_top_10"]["customer_weighted_mean"]
+            < 0.8 * drops["drop_top_0"]["customer_weighted_mean"])
+    assert a9["largest_contributor"]["share_of_national_customer_minutes"] > 0.1

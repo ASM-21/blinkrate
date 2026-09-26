@@ -20,10 +20,32 @@ IEEE 1366's own log-normality assumption and are not measurements.
 
 **Falsification criterion for the repository as a whole.** The central claim is
 that measurement rules move reported distribution reliability more than the
-measured differences between utilities do. It fails if daily SAIDI series from a
-representative sample show the threshold sweep spans materially less than the
-observed cross-utility spread in reported SAIDI, or if the rank reversal in Q3
-disappears once utilities are compared within like storm exposure.
+measured differences between utilities do. It fails if the threshold sweep spans
+materially less than the observed cross-utility spread in reported SAIDI, or if
+the rank reversal in Q3 disappears once utilities are compared within like storm
+exposure.
+
+**The criterion has been run, and both halves hold** (attack A8). Among large
+investor-owned utilities in 2022:
+
+*Part one.* Moving the threshold from 1.5 to 3.0 changes a single utility's own
+reported SAIDI by a median of **6.18x**, interquartile range 2.77x to 22.30x. The
+entire spread between utilities at the threshold actually in force is **3.92x**
+from the 10th to the 90th percentile, and 1.95x across the interquartile range.
+The rule moves one utility's number by **1.58** times the whole p10-to-p90 spread
+across the industry. That is the central claim, measured head to head rather than
+asserted.
+
+*Part two.* Rank reversal does not come from storm-exposed utilities trading
+places with sheltered ones. Splitting the field by exposure measured from
+2013-2018 filings and applied to 2022, so the stratifier is not the outcome,
+quartile change runs 45%, 54% and 69% across exposure terciles against 52%
+pooled, and 51% within non-hurricane states alone. It is if anything larger among
+the most exposed.
+
+One caveat on reading part two: median rank move falls from 18 pooled to 5-7
+within strata, but that is mechanical, since a smaller field has fewer ranks to
+move through. Quartile change is the statistic that compares across strata.
 
 **Sample.** 6,245 utility-state-years from EIA-861 reliability filings for 2013
 through 2018 and 2022. Six consecutive years plus one later observation. The

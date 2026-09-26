@@ -33,10 +33,13 @@ series, Q5 gets a spending variable and the vegetation-management question stops
 being marked BLOCKED. *Finish line:* `track4_cause_exclusions.py` loses its
 BLOCKED status. *Start at:* `docs/DATA_ACCESS.md` for the search record.
 
-**5. Leave-one-utility-out inside Florida.** Attack A7 works at state
-granularity, and within Florida a single co-operative dominates. *Finish line:*
-a utility-level jackknife in `track8_falsification.py` reporting whether Q4 and
-Q8 survive it.
+**5. Break attack A8's part one.** It compares a model-implied sweep against
+observed spread, so it inherits A1's log-normality dependence: under
+heavier-tailed daily outages the sweep narrows and the ratio of 1.58 falls. Work
+out how heavy the tail has to be before the criterion fails, and whether real
+daily data is anywhere near that. *Finish line:* the breaking point stated as a
+number. *Start at:* `a1b_heavy_tail_matched` and
+`a8_stated_falsification_criterion` in `blinkrate/track8_falsification.py`.
 
 **6. An exogenous aggregation weight.** Track 9 reweights the national figure
 six ways, all derived from the filings themselves. A weight from outside the

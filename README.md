@@ -24,6 +24,12 @@ a third of filings report no major event days at all, and half the large-utility
 field changes quartile depending on which of the two published series someone
 chose to rank on.
 
+Put the two side by side and the thesis is measurable rather than rhetorical:
+moving the threshold changes one large utility's own reported SAIDI by a median
+of **6.18x**, while the entire spread between large utilities is **3.92x** from
+the 10th to the 90th percentile. **The measurement rule moves a single utility's
+number by more than the whole industry spans.**
+
 Built on 6,245 utility-state-years of EIA-861 reliability filings, 2013-2018 and
 2022. Every headline number is regenerated from code and pinned by a test that
 fails on drift.
@@ -31,7 +37,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 65 tests
+pytest                           # 68 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 ```

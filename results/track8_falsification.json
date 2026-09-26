@@ -642,5 +642,116 @@
       }
     },
     "verdict": "a headline survives if dropping any single state leaves it inside the range the writeup claims; it fails if one state is carrying it"
+  },
+  "A8_stated_falsification_criterion": {
+    "criterion_met": true,
+    "min_customers": 100000,
+    "part1_rule_vs_cross_utility_spread": {
+      "cross_utility_spread_x": {
+        "p75_over_p25": 1.9534007297960156,
+        "p90_over_p10": 3.919898595943838,
+        "p95_over_p5": 7.260386250704369
+      },
+      "n": 126,
+      "n_admissible": 117,
+      "own_sweep_iqr_x": [
+        2.7746130972647562,
+        22.297540123991762
+      ],
+      "own_sweep_median_x": 6.176223168980166,
+      "ratio_rule_to_spread": 1.5756078933702742,
+      "rule_exceeds_p10_p90_spread": true
+    },
+    "part2_reversal_within_exposure": {
+      "by_stratum": {
+        "high_pre_exposure": {
+          "median_rank_move": 7.0,
+          "n": 42,
+          "pct_changing_quartile": 69.04761904761905,
+          "spearman": 0.6988898792642412
+        },
+        "hurricane_track_states": {
+          "median_rank_move": 6.5,
+          "n": 26,
+          "pct_changing_quartile": 76.92307692307693,
+          "spearman": 0.23145299145299145
+        },
+        "low_pre_exposure": {
+          "median_rank_move": 5.0,
+          "n": 42,
+          "pct_changing_quartile": 45.23809523809524,
+          "spearman": 0.643951057450774
+        },
+        "mid_pre_exposure": {
+          "median_rank_move": 6.0,
+          "n": 41,
+          "pct_changing_quartile": 53.65853658536586,
+          "spearman": 0.6337979094076656
+        },
+        "non_hurricane_states": {
+          "median_rank_move": 11.5,
+          "n": 100,
+          "pct_changing_quartile": 51.0,
+          "spearman": 0.744038403840384
+        },
+        "pooled": {
+          "median_rank_move": 18.5,
+          "n": 126,
+          "pct_changing_quartile": 52.38095238095239,
+          "spearman": 0.6551511061117361
+        }
+      },
+      "max_within_stratum": 76.92307692307693,
+      "min_within_stratum": 45.23809523809524,
+      "pooled_pct_changing_quartile": 52.38095238095239,
+      "statistic_note": "quartile change is the comparable statistic across strata; median rank move is not, because it scales with the size of the field and falls mechanically when a stratum is smaller",
+      "survives": true
+    },
+    "verdict": "the criterion FINDINGS commits to; both halves must hold or the repository's central claim is overstated",
+    "year": 2022
+  },
+  "A9_leave_one_utility_out": {
+    "by_drop": {
+      "drop_top_0": {
+        "customer_weighted_mean": 338.7467130471018,
+        "median_utility": 173.655,
+        "n": 885,
+        "spread_x": 2.0699291389984067
+      },
+      "drop_top_1": {
+        "customer_weighted_mean": 306.15097376872893,
+        "median_utility": 173.4375,
+        "n": 884,
+        "spread_x": 2.0673651265745385
+      },
+      "drop_top_10": {
+        "customer_weighted_mean": 254.50642517491653,
+        "median_utility": 171.0,
+        "n": 875,
+        "spread_x": 2.00188857861446
+      },
+      "drop_top_3": {
+        "customer_weighted_mean": 282.9179307511714,
+        "median_utility": 173.0635,
+        "n": 882,
+        "spread_x": 1.9873236926189
+      },
+      "drop_top_5": {
+        "customer_weighted_mean": 269.3613429063033,
+        "median_utility": 172.4935,
+        "n": 880,
+        "spread_x": 1.9888272733333563
+      }
+    },
+    "largest_contributor": {
+      "customers": 5764583,
+      "saidi_with": 1150.55,
+      "share_of_national_customer_minutes": 0.13111232492679725,
+      "state": "FL"
+    },
+    "note": "the utility is identified by state and size rather than name, since the point is the concentration, not the utility",
+    "spread_survives_dropping_top_1": true,
+    "spread_survives_dropping_top_10": true,
+    "year": 2022
   }
 }

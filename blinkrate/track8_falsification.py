@@ -379,6 +379,163 @@ def a7_leave_one_state_out() -> dict:
     }
 
 
+HURRICANE_STATES = track2_weather_split.HURRICANE_2017_STATES
+
+
+def a8_stated_falsification_criterion(year: int = 2022,
+                                      min_customers: int = 100_000) -> dict:
+    """Run the criterion FINDINGS commits to, rather than leaving it rhetorical.
+
+    FINDINGS states the repository's central claim as: measurement rules move
+    reported distribution reliability more than the measured differences between
+    utilities do. It names two ways that fails. Both are tested here.
+
+    **Part 1.** Does the threshold sweep span materially less than the observed
+    cross-utility spread in reported SAIDI? The comparison has to be
+    like-for-like: one utility's own sweep across beta, against the spread
+    between utilities at the threshold actually in force. If utilities differ
+    from each other by more than the rule moves any one of them, the claim is
+    backwards.
+
+    **Part 2.** Does Q3's rank reversal disappear once utilities are compared
+    within like storm exposure? If reversal is just storm-exposed utilities
+    trading places with sheltered ones, it says nothing about measurement rules.
+
+    Exposure is measured from 2013-2018 filings and applied to a later year, so
+    the stratifier is not the outcome it is being used to explain.
+    """
+    df = ingest.analysis_sample()
+    d = df[(df["year"] == year) & (df["ownership_class"] == "IOU")
+           & (df["customers"] >= min_customers)].copy()
+
+    betas = np.array([1.5, 2.5, 3.0])
+    curve = fs.sensitivity_curve_fs(d["retained_share"].to_numpy(), betas)
+    ok = np.isfinite(curve).all(axis=1)
+    saidi_with = d["saidi_with"].to_numpy()
+    own_sweep = ((saidi_with[ok] * curve[ok, 2])
+                 / (saidi_with[ok] * curve[ok, 0]))
+    reported = d["saidi_without"].to_numpy()
+    spread = {f"p{hi}_over_p{lo}": float(np.percentile(reported, hi)
+                                         / np.percentile(reported, lo))
+              for lo, hi in ((10, 90), (25, 75), (5, 95))}
+    part1 = {
+        "n": int(len(d)), "n_admissible": int(ok.sum()),
+        "own_sweep_median_x": float(np.median(own_sweep)),
+        "own_sweep_iqr_x": [float(np.percentile(own_sweep, 25)),
+                            float(np.percentile(own_sweep, 75))],
+        "cross_utility_spread_x": spread,
+        "rule_exceeds_p10_p90_spread": bool(
+            np.median(own_sweep) > spread["p90_over_p10"]),
+        "ratio_rule_to_spread": float(np.median(own_sweep)
+                                      / spread["p90_over_p10"]),
+    }
+
+    pre = (df[df["year"].between(2013, 2018)]
+           .groupby("utility_state")["excluded_share"].mean())
+    d["pre_exposure"] = d["utility_state"].map(pre)
+
+    def reversal(sub: pd.DataFrame):
+        if len(sub) < 20:
+            return None
+        q_with = pd.qcut(sub["saidi_with"], 4, labels=False, duplicates="drop")
+        q_without = pd.qcut(sub["saidi_without"], 4, labels=False,
+                            duplicates="drop")
+        rank_with = stats.rankdata(sub["saidi_with"])
+        rank_without = stats.rankdata(sub["saidi_without"])
+        return {
+            "n": int(len(sub)),
+            "spearman": float(stats.spearmanr(sub["saidi_with"],
+                                              sub["saidi_without"]).statistic),
+            "pct_changing_quartile": float(100 * (q_with != q_without).mean()),
+            "median_rank_move": float(np.median(np.abs(rank_with - rank_without))),
+        }
+
+    cuts = d["pre_exposure"].quantile([1 / 3, 2 / 3]).values
+    strata = {
+        "pooled": d,
+        "hurricane_track_states": d[d["state"].isin(HURRICANE_STATES)],
+        "non_hurricane_states": d[~d["state"].isin(HURRICANE_STATES)],
+        "low_pre_exposure": d[d["pre_exposure"] <= cuts[0]],
+        "mid_pre_exposure": d[(d["pre_exposure"] > cuts[0])
+                              & (d["pre_exposure"] <= cuts[1])],
+        "high_pre_exposure": d[d["pre_exposure"] > cuts[1]],
+    }
+    by_stratum = {k: reversal(v) for k, v in strata.items()}
+    usable = {k: v for k, v in by_stratum.items()
+              if v is not None and k != "pooled"}
+    base = by_stratum["pooled"]["pct_changing_quartile"]
+    part2 = {
+        "by_stratum": by_stratum,
+        "pooled_pct_changing_quartile": base,
+        "min_within_stratum": float(min(v["pct_changing_quartile"]
+                                        for v in usable.values())),
+        "max_within_stratum": float(max(v["pct_changing_quartile"]
+                                        for v in usable.values())),
+        "survives": bool(min(v["pct_changing_quartile"]
+                             for v in usable.values()) > 0.6 * base),
+        "statistic_note": (
+            "quartile change is the comparable statistic across strata; median "
+            "rank move is not, because it scales with the size of the field and "
+            "falls mechanically when a stratum is smaller"),
+    }
+
+    return {
+        "year": year, "min_customers": min_customers,
+        "part1_rule_vs_cross_utility_spread": part1,
+        "part2_reversal_within_exposure": part2,
+        "criterion_met": bool(part1["rule_exceeds_p10_p90_spread"]
+                              and part2["survives"]),
+        "verdict": ("the criterion FINDINGS commits to; both halves must hold "
+                    "or the repository's central claim is overstated"),
+    }
+
+
+def a9_leave_one_utility_out(year: int = 2022) -> dict:
+    """Named in FALSIFICATION as not run, so run it.
+
+    A7 works at state granularity. Q4 and Q8 both lean on Florida, and inside
+    Florida a single co-operative reported over nine days of outage per customer
+    after Hurricane Ian. Drop the largest single contributors to national
+    customer-outage-minutes and recompute Q8's aggregation spread.
+    """
+    from . import track9_aggregation as t9
+
+    df = ingest.analysis_sample()
+    d = df[df["year"] == year].copy()
+    d["contribution"] = d["saidi_with"] * d["customers"]
+    ordered = d.sort_values("contribution", ascending=False)
+
+    rows = {}
+    for k in (0, 1, 3, 5, 10):
+        sub = d if k == 0 else d[~d.index.isin(ordered.index[:k])]
+        agg = t9.aggregators(sub["saidi_with"].to_numpy(),
+                             sub["customers"].to_numpy())
+        rows[f"drop_top_{k}"] = {
+            "n": int(len(sub)),
+            "spread_x": float(max(agg.values()) / min(agg.values())),
+            "customer_weighted_mean": agg["customer_weighted_mean"],
+            "median_utility": agg["median_utility"],
+        }
+    top = ordered.iloc[0]
+    return {
+        "year": year,
+        "largest_contributor": {
+            "state": top["state"],
+            "saidi_with": float(top["saidi_with"]),
+            "customers": int(top["customers"]),
+            "share_of_national_customer_minutes": float(
+                top["contribution"] / d["contribution"].sum()),
+        },
+        "by_drop": rows,
+        "spread_survives_dropping_top_1": bool(
+            rows["drop_top_1"]["spread_x"] > 1.5),
+        "spread_survives_dropping_top_10": bool(
+            rows["drop_top_10"]["spread_x"] > 1.5),
+        "note": ("the utility is identified by state and size rather than name, "
+                 "since the point is the concentration, not the utility"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -389,6 +546,8 @@ def run(save: bool = True) -> dict:
         "A5_ownership_large_only": a5_ownership_large_only(),
         "A6_track1_power": a6_track1_power(),
         "A7_leave_one_state_out": a7_leave_one_state_out(),
+        "A8_stated_falsification_criterion": a8_stated_falsification_criterion(),
+        "A9_leave_one_utility_out": a9_leave_one_utility_out(),
     }
     if save:
         save_results("track8_falsification", out)

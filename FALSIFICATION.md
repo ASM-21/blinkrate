@@ -5,8 +5,8 @@ Track 8 attacks the other tracks. Six attacks, run in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Four landed. Two of them landed only after the panel grew from four filing
-years to seven, which is worth stating plainly: **more data retracted a
+Nine attacks now, four of which landed. Two landed only after the panel grew
+from four filing years to seven, which is worth stating plainly: **more data retracted a
 result that four years of data had supported at p = 0.026.**
 
 ---
@@ -211,12 +211,75 @@ fix was to narrow a claim's scope rather than to drop it.
 
 ---
 
+## A8 — the criterion this repository commits to. **Both halves hold.**
+
+FINDINGS states a falsification criterion for the whole repository. A criterion
+nobody runs is decoration, so this runs it, on large investor-owned utilities in
+2022.
+
+**Part one: is the rule bigger than the differences between utilities?** The
+comparison has to be like for like, one utility's own sweep across beta against
+the spread between utilities at the threshold actually in force.
+
+| quantity | value |
+|---|---|
+| one utility's own sweep, beta 1.5 to 3.0 (median) | 6.18x |
+| the same, interquartile range | 2.77x to 22.30x |
+| spread between utilities, p90 / p10 | 3.92x |
+| spread between utilities, p75 / p25 | 1.95x |
+| ratio of rule to p10-p90 spread | 1.58 |
+
+Had this come out below 1, the repository's framing would have been wrong and the
+headline would have had to become "the rule matters, but less than who you are."
+
+**Part two: does rank reversal survive within like storm exposure?** If reversal
+were storm-exposed utilities trading places with sheltered ones it would say
+nothing about measurement rules. Exposure is the mean exclusion share over
+2013-2018 applied to 2022, so the stratifier is not the outcome it explains.
+
+| stratum | n | Spearman | quartile change |
+|---|---|---|---|
+| pooled | 126 | 0.655 | 52% |
+| non-hurricane states | 100 | 0.744 | 51% |
+| hurricane-track states | 26 | 0.231 | 77% |
+| low pre-2019 exposure | 42 | 0.644 | 45% |
+| mid pre-2019 exposure | 41 | 0.634 | 54% |
+| high pre-2019 exposure | 42 | 0.699 | 69% |
+
+Reversal survives everywhere and is largest among the most exposed. Median rank
+move does fall from 18 pooled to 5-7 within strata, but that is mechanical: a
+smaller field has fewer ranks to move through. Quartile change is the statistic
+that compares across strata, and it is flat to rising.
+
+## A9 — leave one utility out. **Q8 survives.**
+
+Named in this file as an attack not run, so it was run. A7 works at state
+granularity and Q4 and Q8 both lean on Florida; within Florida one utility
+supplies 13.1% of national customer-outage-minutes on its own.
+
+| dropped | n | aggregation spread | customer-weighted mean |
+|---|---|---|---|
+| nothing | 885 | 2.07x | 338.7 |
+| top 1 contributor | 884 | 2.07x | 306.2 |
+| top 3 | 882 | 1.99x | 282.9 |
+| top 5 | 880 | 1.99x | 269.4 |
+| top 10 | 875 | 2.00x | 254.5 |
+
+The customer-weighted mean falls by a quarter as the largest contributors go,
+which is A7's point restated at utility granularity. Q8's finding is about the
+*gap between aggregation rules*, and that barely moves: 2.07x to 2.00x after
+removing the ten largest contributors to the national total. The aggregation
+spread is not a tail artefact.
+
+---
+
 ## Attacks not run
 
 - Nothing attacks the undergrounding model, which is a parameter sweep rather
   than an estimate; its sensitivity to every input is the deliverable.
 - No temporal placebo on Q4's trend. The geographic placebo does related work,
   but a proper temporal one needs the 2019-2021 filings.
-- No leave-one-utility-out. A7 works at state granularity, and within Florida a
-  single utility is most of the mass, so the utility-level version would mostly
-  restate A7. Worth doing if Q4 is ever quoted at a utility level.
+- Part one of A8 compares the model-implied sweep against observed spread, so it
+  inherits attack A1's log-normality dependence. Under heavier-tailed daily
+  outages the sweep narrows and the ratio of 1.58 would fall. Daily SAIDI series
+  would settle both at once.
