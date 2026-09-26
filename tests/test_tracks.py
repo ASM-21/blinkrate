@@ -592,3 +592,46 @@ def test_q8_spread_survives_leave_one_utility_out():
     assert (drops["drop_top_10"]["customer_weighted_mean"]
             < 0.8 * drops["drop_top_0"]["customer_weighted_mean"])
     assert a9["largest_contributor"]["share_of_national_customer_minutes"] > 0.1
+
+
+def test_a10_breaking_point_is_pinned():
+    """A10: the central comparison is conditional on daily outage tails.
+
+    If a future change makes the claim hold under heavy tails, the rescope in
+    README and FINDINGS is too cautious and should be revisited. If it makes the
+    claim fail even under log-normality, the repository has no headline
+    comparison left and the README needs rewriting, not a tweak.
+    """
+    a10 = _results("track8_falsification")["A10_tail_breaking_point"]
+    bt = a10["by_tail"]
+    assert bt["lognormal"]["claim_holds"] is True
+    assert bt["t_nu30"]["claim_holds"] is True
+    assert bt["t_nu15"]["claim_holds"] is False
+    assert a10["breaking_point_nu_between"] == [15.0, 30.0]
+    # monotone: heavier tails always shrink the sweep
+    order = ["lognormal", "t_nu30", "t_nu15", "t_nu10", "t_nu7", "t_nu5", "t_nu3"]
+    sweeps = [bt[k]["median_own_sweep_x"] for k in order]
+    assert all(a > b for a, b in zip(sweeps, sweeps[1:]))
+    # the spread compared against is observed data, identical across tails
+    assert a10["cross_utility_spread_p90_p10"] == pytest.approx(3.92, abs=0.02)
+
+
+def test_a10_lognormal_row_reproduces_a8():
+    """A10 rebuilds its own surfaces at lower resolution. Its log-normal row must
+    reproduce A8's figure closely, or the breaking point is measured on a
+    different instrument than the claim it breaks."""
+    t8 = _results("track8_falsification")
+    a8 = t8["A8_stated_falsification_criterion"]["part1_rule_vs_cross_utility_spread"]
+    a10 = t8["A10_tail_breaking_point"]["by_tail"]["lognormal"]
+    assert a10["median_own_sweep_x"] == pytest.approx(a8["own_sweep_median_x"],
+                                                       rel=0.05)
+
+
+def test_unconditional_headline_cannot_return():
+    """The rescoped sentence may only appear as a quoted, superseded claim."""
+    import re
+    for name in PROSE_FILES:
+        text = (ROOT / name).read_text()
+        unquoted = re.sub(r"^>.*$", "", text, flags=re.MULTILINE)
+        assert not re.search(r"more than the whole\s+industry spans", unquoted), (
+            f"{name} states the A10-rescoped headline without its condition")

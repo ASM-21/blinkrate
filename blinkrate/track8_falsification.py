@@ -536,6 +536,100 @@ def a9_leave_one_utility_out(year: int = 2022) -> dict:
     }
 
 
+def _tail_surface(nu: float | None, sigma_grid: np.ndarray, betas: np.ndarray,
+                  n_sims: int, rng: np.random.Generator) -> np.ndarray:
+    """Median realized retained share on a (sigma, beta) grid.
+
+    nu=None is the log-normal IEEE 1366 assumes. Otherwise daily log-SAIDI is a
+    Student-t with nu degrees of freedom, rescaled so its standard deviation is
+    still sigma. Either way the utility follows the standard: it fits a
+    log-normal to five years of logs and excludes days above
+    exp(mu_hat + beta * sigma_hat). Only reality changes, never the procedure.
+    """
+    days, window = rm.DAYS_PER_YEAR, rm.DAYS_PER_YEAR * 5
+    out = np.empty((sigma_grid.size, betas.size))
+    for i, sigma in enumerate(sigma_grid):
+        if nu is None:
+            z = rng.standard_normal((n_sims, window))
+        else:
+            z = rng.standard_t(nu, (n_sims, window)) / np.sqrt(nu / (nu - 2))
+        logs = z * sigma
+        mu_hat = logs.mean(axis=1, keepdims=True)
+        sd_hat = logs.std(axis=1, ddof=1, keepdims=True)
+        year = np.exp(logs[:, :days])
+        total = year.sum(axis=1)
+        for j, b in enumerate(betas):
+            kept = np.where(logs[:, :days] <= mu_hat + b * sd_hat, year, 0.0)
+            out[i, j] = np.median(kept.sum(axis=1) / total)
+    return np.minimum.accumulate(out, axis=0)  # r is non-increasing in sigma
+
+
+def a10_tail_breaking_point(year: int = 2022, min_customers: int = 100_000,
+                            n_sims: int = 250, seed: int = 110) -> dict:
+    """How heavy do daily outage tails have to be before A8 part one fails?
+
+    A8 found the threshold moves one large utility's own reported SAIDI by a
+    median of 6.18x, against a 3.92x spread between utilities. But the 6.18x is
+    model-implied under log-normal daily SAIDI, and A1 showed the sweep narrows
+    under heavier tails. So the central claim has a breaking point, and this
+    finds it.
+
+    Fair version, as in A1b: for each tail weight, every utility's dispersion is
+    re-inverted so that the model reproduces the retained share that utility
+    actually filed at beta = 2.5. Only then is its own sweep from beta 1.5 to 3.0
+    computed. The cross-utility spread it is compared against is observed data
+    and does not change with the model.
+    """
+    rng = np.random.default_rng(seed)
+    df = ingest.analysis_sample()
+    d = df[(df["year"] == year) & (df["ownership_class"] == "IOU")
+           & (df["customers"] >= min_customers)]
+    r_obs = d["retained_share"].to_numpy()
+    reported = d["saidi_without"].to_numpy()
+    spread = float(np.percentile(reported, 90) / np.percentile(reported, 10))
+
+    betas = np.array([1.5, 2.5, 3.0])
+    sigma_grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+    rows = {}
+    for label, nu in (("lognormal", None), ("t_nu30", 30.0), ("t_nu15", 15.0),
+                      ("t_nu10", 10.0), ("t_nu7", 7.0), ("t_nu5", 5.0),
+                      ("t_nu3", 3.0)):
+        surf = _tail_surface(nu, sigma_grid, betas, n_sims, rng)
+        r25 = surf[:, 1]
+        order = np.argsort(r25)
+        inside = (r_obs >= r25.min()) & (r_obs <= r25.max())
+        sig = np.interp(r_obs[inside], r25[order], sigma_grid[order])
+        r15 = np.interp(sig, sigma_grid, surf[:, 0])
+        r30 = np.interp(sig, sigma_grid, surf[:, 2])
+        sweep = r30 / np.clip(r15, 1e-9, None)
+        rows[label] = {
+            "nu": nu,
+            "n_representable": int(inside.sum()),
+            "median_own_sweep_x": float(np.median(sweep)),
+            "ratio_to_cross_utility_spread": float(np.median(sweep) / spread),
+            "claim_holds": bool(np.median(sweep) > spread),
+        }
+
+    holds = [k for k, v in rows.items() if v["claim_holds"]]
+    fails = [k for k, v in rows.items() if not v["claim_holds"]]
+    heaviest_holding = min((rows[k]["nu"] for k in holds if rows[k]["nu"]),
+                           default=None)
+    lightest_failing = max((rows[k]["nu"] for k in fails if rows[k]["nu"]),
+                           default=None)
+    return {
+        "year": year,
+        "cross_utility_spread_p90_p10": spread,
+        "by_tail": rows,
+        "holds_under": holds,
+        "fails_under": fails,
+        "breaking_point_nu_between": [lightest_failing, heaviest_holding],
+        "reading": ("the central claim is conditional on daily outage tails; "
+                    "it holds for tails no heavier than the breaking point and "
+                    "fails beyond it. Which side reality is on needs daily "
+                    "SAIDI, which is not public at national scale"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -548,6 +642,7 @@ def run(save: bool = True) -> dict:
         "A7_leave_one_state_out": a7_leave_one_state_out(),
         "A8_stated_falsification_criterion": a8_stated_falsification_criterion(),
         "A9_leave_one_utility_out": a9_leave_one_utility_out(),
+        "A10_tail_breaking_point": a10_tail_breaking_point(),
     }
     if save:
         save_results("track8_falsification", out)

@@ -15,20 +15,30 @@ threshold set 2.5 standard deviations up a log-normal fit to their own daily
 outage history. Nobody chose 2.5 by measuring anything. This repository works out
 what that choice, and the discretion around it, is worth.
 
-**Short answer.** Re-evaluating the same filed outage records at other threshold
-values moves customer-weighted fleet SAIDI from 37 min/yr to 287 min/yr — a
-**7.66x range** — with no change to any underlying outage. Sweep the averaging
+**Short answer.** Under IEEE 1366's own log-normal model, re-evaluating the same
+filed outage records at other threshold values moves customer-weighted fleet
+SAIDI from 37 min/yr to 287 min/yr, a **7.66x range**, with no change to any
+underlying outage. That magnitude is model-implied and narrows under heavier
+tails; the direction does not. Sweep the averaging
 rule as well, which is the second undocumented choice behind every national
 figure, and the space of defensible values for one year spans **14.32x**. Nearly
 a third of filings report no major event days at all, and half the large-utility
 field changes quartile depending on which of the two published series someone
 chose to rank on.
 
-Put the two side by side and the thesis is measurable rather than rhetorical:
-moving the threshold changes one large utility's own reported SAIDI by a median
-of **6.18x**, while the entire spread between large utilities is **3.92x** from
-the 10th to the 90th percentile. **The measurement rule moves a single utility's
-number by more than the whole industry spans.**
+Put the two side by side and the thesis becomes a measurement, with a condition
+attached. Under IEEE 1366's own log-normal assumption, moving the threshold
+changes one large utility's reported SAIDI by a median of **6.18x**, while the
+whole spread between large utilities is **3.92x** from the 10th to the 90th
+percentile. **That comparison is conditional on the tails of daily outages.** It
+breaks if daily log-SAIDI is even mildly heavier-tailed than normal, somewhere
+between a Student-t with 30 and with 15 degrees of freedom, and the IEEE
+literature on the method points at heavy right tails as its core problem.
+
+What holds regardless is everything measured directly from the filings rather
+than through the model: the zero-exclusion mass point, the rank reversal between
+the two published series, the everyday deterioration trend, and the spread across
+aggregation rules.
 
 Built on 6,245 utility-state-years of EIA-861 reliability filings, 2013-2018 and
 2022. Every headline number is regenerated from code and pinned by a test that
@@ -37,7 +47,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 68 tests
+pytest                           # 71 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 ```
@@ -63,16 +73,16 @@ searched and what it changed: **[LITERATURE.md](LITERATURE.md)**.
 
 ## Eight questions
 
-| | Question | Answer | Confidence |
-|---|---|---|---|
-| Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | direction solid, **magnitude assumption-dependent** |
-| Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion — 12.0x excess mass — which is the unflattering direction | solid |
-| Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | solid |
-| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | trend **positive under every aggregator, significant under four of six**; the excluded-share figure is **mostly the Gulf coast** |
-| Q5 | Does capital deployment show up in reliability? | No — and unlike the first version, the design could have caught a 24% effect | **bounded null** |
-| Q6 | Does ownership predict exclusion? | Partly; one half of this was **retracted** when the panel doubled | weakened |
-| Q7 | Is the source data internally consistent? | CAIDI identity reproduces in 100.00% of 3,838 filings | solid |
-| Q8 | How much of the *national* number is the averaging rule? | 2.07x from the aggregator alone; **14.32x** once threshold and aggregator are swept together | solid |
+| | Question | Answer | Basis | Confidence |
+|---|---|---|---|---|
+| Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | model-implied | direction solid, **magnitude assumption-dependent** |
+| Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion — 12.0x excess mass — which is the unflattering direction | filed data | solid |
+| Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | filed data | solid |
+| Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | filed data | trend **positive under every aggregator, significant under four of six**; the excluded-share figure is **mostly the Gulf coast** |
+| Q5 | Does capital deployment show up in reliability? | No — and unlike the first version, the design could have caught a 24% effect | filed data | **bounded null** |
+| Q6 | Does ownership predict exclusion? | Partly; one half of this was **retracted** when the panel doubled | filed data | weakened |
+| Q7 | Is the source data internally consistent? | CAIDI identity reproduces in 100.00% of 3,838 filings | filed data | solid |
+| Q8 | How much of the *national* number is the averaging rule? | 2.07x from the aggregator alone; **14.32x** once threshold and aggregator are swept together | filed data; combined space model-implied | solid |
 
 Full write-up with identification and caveats: **[FINDINGS.md](FINDINGS.md)**.
 Prior art and what the literature search changed: **[LITERATURE.md](LITERATURE.md)**.
@@ -102,7 +112,9 @@ and rebuilds bit-identically in about 20 seconds.
 against SAIDI/SAIFI in the source, checks the closed form against the procedural
 simulator, and round-trips the inversion.
 
-**Falsification is a track, not an appendix.** Four attacks landed. Q6's
+**Falsification is a track, not an appendix.** Five of ten attacks landed.
+The most recent found that the repository's own headline comparison breaks under
+mildly heavy-tailed daily outages, and it was rescoped the same day. Q6's
 regression result was retracted outright when the panel grew. Q1's magnitude was
 scoped to its distributional assumption, and the guard fails the build if that
 qualifier is deleted. Leave-one-state-out found that Q4's headline share falls

@@ -45,6 +45,9 @@ def claims() -> list[tuple[str, float, float]]:
     out: list[tuple[str, float, float]] = []
 
     def add(text: str, value: float, tol: float = 0.5) -> None:
+        # The checked value is the FIRST number in `text`. A claim string that
+        # opens with an identifier containing digits ("A10's row gives 6.04x")
+        # compares the wrong number; lead with the value or with plain words.
         out.append((text, value, tol))
 
     # --- Q1: the threshold sweep -------------------------------------------
@@ -260,6 +263,15 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"{a9['by_drop']['drop_top_10']['spread_x']:.2f}x after",
         a9["by_drop"]["drop_top_10"]["spread_x"], 0.02)
 
+    # --- A10: the breaking point that made the headline conditional ----------
+    a10 = t8["A10_tail_breaking_point"]["by_tail"]
+    add(f"where the ratio is {a10['t_nu30']['ratio_to_cross_utility_spread']:.2f}",
+        a10["t_nu30"]["ratio_to_cross_utility_spread"], 0.02)
+    add(f"where it is\n{a10['t_nu15']['ratio_to_cross_utility_spread']:.2f}",
+        a10["t_nu15"]["ratio_to_cross_utility_spread"], 0.02)
+    add(f"row gives {a10['lognormal']['median_own_sweep_x']:.2f}x against",
+        a10["lognormal"]["median_own_sweep_x"], 0.02)
+
     return out
 
 
@@ -300,6 +312,10 @@ REQUIRED_HEDGES = [
     ("deployment", "track 1 regresses physical deployment, not spending; the "
                    "substitution must remain visible"),
     ("FERC Form 1", "the missing capex source must be named"),
+    ("conditional on the tails of daily outages",
+     "A10 found the headline comparison breaks under mildly heavy tails; the "
+     "README must say so where it makes the comparison"),
+    ("Basis: model-implied", "FINDINGS must label model-implied answers as such"),
 ]
 
 FORBIDDEN = [
@@ -311,6 +327,9 @@ FORBIDDEN = [
     (r"\ball utilities\b", "universal quantifier; the sample is 3,427 "
                            "utility-state-years across 4 filing years"),
     (r"\bmeasured\s+sensitivity\b", "the sensitivity is model-implied"),
+    (r"more than the whole\s+industry spans",
+     "A10 showed this holds only under near-log-normal tails; state it as "
+     "conditional or quote it in a blockquote as superseded"),
 ]
 
 

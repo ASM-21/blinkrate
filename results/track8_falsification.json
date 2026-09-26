@@ -1,4 +1,75 @@
 {
+  "A10_tail_breaking_point": {
+    "breaking_point_nu_between": [
+      15.0,
+      30.0
+    ],
+    "by_tail": {
+      "lognormal": {
+        "claim_holds": true,
+        "median_own_sweep_x": 6.040276254681715,
+        "n_representable": 115,
+        "nu": null,
+        "ratio_to_cross_utility_spread": 1.5409266609426997
+      },
+      "t_nu10": {
+        "claim_holds": false,
+        "median_own_sweep_x": 2.4804738827833863,
+        "n_representable": 117,
+        "nu": 10.0,
+        "ratio_to_cross_utility_spread": 0.6327903189511296
+      },
+      "t_nu15": {
+        "claim_holds": false,
+        "median_own_sweep_x": 2.7755768178928006,
+        "n_representable": 117,
+        "nu": 15.0,
+        "ratio_to_cross_utility_spread": 0.7080736274057859
+      },
+      "t_nu3": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.308945421126011,
+        "n_representable": 117,
+        "nu": 3.0,
+        "ratio_to_cross_utility_spread": 0.33392328630145124
+      },
+      "t_nu30": {
+        "claim_holds": true,
+        "median_own_sweep_x": 4.239329805602196,
+        "n_representable": 117,
+        "nu": 30.0,
+        "ratio_to_cross_utility_spread": 1.081489661489941
+      },
+      "t_nu5": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.6758390226348434,
+        "n_representable": 117,
+        "nu": 5.0,
+        "ratio_to_cross_utility_spread": 0.42752101403055115
+      },
+      "t_nu7": {
+        "claim_holds": false,
+        "median_own_sweep_x": 2.035249337707595,
+        "n_representable": 117,
+        "nu": 7.0,
+        "ratio_to_cross_utility_spread": 0.5192096907337331
+      }
+    },
+    "cross_utility_spread_p90_p10": 3.919898595943838,
+    "fails_under": [
+      "t_nu15",
+      "t_nu10",
+      "t_nu7",
+      "t_nu5",
+      "t_nu3"
+    ],
+    "holds_under": [
+      "lognormal",
+      "t_nu30"
+    ],
+    "reading": "the central claim is conditional on daily outage tails; it holds for tails no heavier than the breaking point and fails beyond it. Which side reality is on needs daily SAIDI, which is not public at national scale",
+    "year": 2022
+  },
   "A1_heavy_tail": {
     "by_case": {
       "nu10_sigma1.0": {

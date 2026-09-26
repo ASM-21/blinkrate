@@ -5,7 +5,7 @@ Track 8 attacks the other tracks. Six attacks, run in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Nine attacks now, four of which landed. Two landed only after the panel grew
+Ten attacks now, five of which landed. Two landed only after the panel grew
 from four filing years to seven, which is worth stating plainly: **more data retracted a
 result that four years of data had supported at p = 0.026.**
 
@@ -273,13 +273,63 @@ spread is not a tail artefact.
 
 ---
 
+## A10: how heavy do the tails have to be? **Landed. The central claim is conditional.**
+
+A8 part one found the threshold moves one large utility's own reported SAIDI by
+more than the whole spread between large utilities. That comparison uses a
+model-implied sweep, and A1 showed the sweep narrows under heavier tails. So the
+central claim has a breaking point, and this attack finds it.
+
+Fair version, as in A1b: for each tail weight every utility's dispersion is
+re-inverted so the model reproduces the retained share that utility actually
+filed. Only then is its own sweep from beta 1.5 to 3.0 computed. The
+cross-utility spread it is compared against, 3.92x, is observed data and does not
+move with the model.
+
+| daily log-SAIDI distribution | median own sweep | ratio to spread | claim |
+|---|---|---|---|
+| lognormal | 6.04x | 1.54 | holds |
+| t, nu=10 | 2.48x | 0.63 | **fails** |
+| t, nu=15 | 2.78x | 0.71 | **fails** |
+| t, nu=3 | 1.31x | 0.33 | **fails** |
+| t, nu=30 | 4.24x | 1.08 | holds |
+| t, nu=5 | 1.68x | 0.43 | **fails** |
+| t, nu=7 | 2.04x | 0.52 | **fails** |
+
+**The claim breaks between nu = 15 and nu = 30.** A Student-t with 15 degrees of
+freedom is only mildly heavier-tailed than a normal. And the prior work in
+LITERATURE.md cuts the wrong way for this repository: the IEEE letters on the
+2.5-beta method identify the *right tail* of daily SAIDI as the method's problem,
+which is what heavier-than-log-normal tails look like.
+
+**What this does.** This sentence was the README's headline for one session:
+
+> The measurement rule moves a single utility's number by more than the whole
+> industry spans.
+
+It is true under IEEE 1366's own log-normal assumption and false under tails the
+literature suggests are realistic, so it has been rescoped in place. README and
+FINDINGS now state it as conditional and name the breaking point, and the claims
+guard fails the build if the unconditional form reappears anywhere outside a
+blockquote like this one.
+
+**What does not depend on it.** Everything measured directly from filings rather
+than through the inversion: the zero-exclusion mass point (Q2), rank reversal
+between the two published series (Q3), the everyday trend and the geographic
+placebo (Q4), and the aggregation spread on filed values (Q8). FINDINGS now
+labels every answer by basis so the reader can tell which kind they are reading.
+
+A consistency check on the machinery: A10's log-normal row gives 6.04x against
+A8's 6.18x. The gap is resolution, since A10 builds its surfaces with 250
+simulations on a coarser grid than the committed calibration's 1,500. It is small
+next to the effect being measured.
+
 ## Attacks not run
 
 - Nothing attacks the undergrounding model, which is a parameter sweep rather
   than an estimate; its sensitivity to every input is the deliverable.
 - No temporal placebo on Q4's trend. The geographic placebo does related work,
   but a proper temporal one needs the 2019-2021 filings.
-- Part one of A8 compares the model-implied sweep against observed spread, so it
-  inherits attack A1's log-normality dependence. Under heavier-tailed daily
-  outages the sweep narrows and the ratio of 1.58 would fall. Daily SAIDI series
-  would settle both at once.
+- Nothing yet estimates the tail weight of real daily SAIDI. A10 locates the
+  breaking point between nu = 15 and nu = 30; which side reality falls on needs
+  daily series, which no public source provides at national scale.

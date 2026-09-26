@@ -33,8 +33,16 @@ reported SAIDI by a median of **6.18x**, interquartile range 2.77x to 22.30x. Th
 entire spread between utilities at the threshold actually in force is **3.92x**
 from the 10th to the 90th percentile, and 1.95x across the interquartile range.
 The rule moves one utility's number by **1.58** times the whole p10-to-p90 spread
-across the industry. That is the central claim, measured head to head rather than
-asserted.
+across the industry.
+
+**That result is conditional, and the condition may not hold.** It uses the
+model-implied sweep, so it inherits the log-normality assumption. Attack A10
+re-runs it under heavier-tailed daily outages and it fails between a Student-t
+with 30 degrees of freedom, where the ratio is 1.08, and one with 15, where it is
+0.71. The IEEE letters on the 2.5-beta method identify heavy right tails in daily
+SAIDI as the method's central problem, which would put reality on the failing
+side. Part one therefore stands as a statement about IEEE 1366's own model, not
+about the grid.
 
 *Part two.* Rank reversal does not come from storm-exposed utilities trading
 places with sheltered ones. Splitting the field by exposure measured from
@@ -46,6 +54,13 @@ the most exposed.
 One caveat on reading part two: median rank move falls from 18 pooled to 5-7
 within strata, but that is mechanical, since a smaller field has fewer ranks to
 move through. Quartile change is the statistic that compares across strata.
+
+**Two kinds of answer.** Each question below is labelled by basis. *Filed data*
+answers are computed directly from what utilities reported and depend on no
+distributional assumption. *Model-implied* answers pass through the exclusion
+identity in `docs/derivation.md` and inherit IEEE 1366's log-normal assumption;
+attack A10 shows the central model-implied comparison breaks under mildly
+heavier tails. Weight them accordingly.
 
 **Sample.** 6,245 utility-state-years from EIA-861 reliability filings for 2013
 through 2018 and 2022. Six consecutive years plus one later observation. The
@@ -61,6 +76,8 @@ that choice, and the surrounding discretion, is worth.
 ---
 
 ## Q1. How much of a reported SAIDI is the threshold parameter?
+
+*Basis: model-implied.*
 
 **A lot. Re-evaluating the same filed outage records at other threshold values
 moves customer-weighted fleet SAIDI over a 7.66x range.**
@@ -104,6 +121,8 @@ it.
 
 ## Q2. Do utilities cluster anywhere the rule would reward?
 
+*Basis: filed data. The 67.2% admissibility figure is model-implied; the 29.8% mass point is not.*
+
 **There is one large mass point, and it is not where a gaming story would put
 it. 29.8% of filings report no major event days at all.**
 
@@ -138,6 +157,8 @@ least once across the seven years.
 
 ## Q3. Does the exclusion change *who* looks reliable?
 
+*Basis: filed data.*
+
 **Yes, for about half the field. Among large investor-owned utilities, 40 to 57%
 change quartile depending on which of the two published series you rank on.**
 
@@ -162,6 +183,8 @@ with-MED asks how long your customers were actually out. Both are legitimate.
 Publishing one and calling it "reliability" is a decision, not a measurement.
 
 ## Q4. Is the decade's deterioration weather, or is it classification?
+
+*Basis: filed data.*
 
 **Both, and the seven-year panel separates them. The year-to-year swings are
 weather. The slow drift into using the exclusion at all is methodology.**
@@ -252,6 +275,8 @@ benchmark built on it inherits that.
 
 ## Q5. Does capital deployment show up in reported reliability?
 
+*Basis: filed data.*
+
 **No, and this version of the answer is worth something because the design could
 have seen it.**
 
@@ -292,6 +317,8 @@ effect and 41% is year-to-year shock.
 
 ## Q6. Does ownership structure predict exclusion?
 
+*Basis: filed data.*
+
 **Partly, and one half of this finding was retracted when the panel doubled.**
 
 > **Retracted.** The four-year version of this repository reported that investor
@@ -318,6 +345,8 @@ explanation both predict exactly this pattern. Attack A5 shrinks the raw gap fro
 
 ## Q7. Is the source data internally consistent?
 
+*Basis: filed data.*
+
 **Yes, to nine significant figures.**
 
 CAIDI is definitionally SAIDI / SAIFI, and EIA-861 collects all three
@@ -332,6 +361,8 @@ utility-state-year filings in the 2014 source, kept at the larger customer count
 ---
 
 ## Q8. How much of the *national* number is the averaging rule?
+
+*Basis: filed data for the 2.07x spread; the 14.32x combined space is model-implied.*
 
 **Enough that the aggregation choice rivals the threshold choice. Averaging the
 same 2022 filings five defensible ways gives national SAIDI anywhere from 173.7
