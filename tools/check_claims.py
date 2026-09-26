@@ -273,6 +273,21 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"row gives {a10['lognormal']['median_own_sweep_x']:.2f}x against",
         a10["lognormal"]["median_own_sweep_x"], 0.02)
 
+    # --- A11: the threshold window, the second condition on the same claim --
+    a11 = t8["A11_threshold_window"]
+    add(f"about **{a11['lognormal_break_even_med_days_low_edge']:.1f}** major event days",
+        a11["lognormal_break_even_med_days_low_edge"], 0.1)
+    add(f"declare **{a11['lognormal_break_even_med_days_low_edge']:.1f}** major event days",
+        a11["lognormal_break_even_med_days_low_edge"], 0.1)
+    add(f"window must reach about ±{a11['break_even_half_width']['lognormal']:.2f}",
+        a11["break_even_half_width"]["lognormal"], 0.01)
+    add(f"to ±{a11['break_even_half_width']['t_nu15']:.2f} at 15 degrees",
+        a11["break_even_half_width"]["t_nu15"], 0.01)
+    worst_half = max(v["h_0.5"]["ratio_to_spread"] for v in a11["grid"].values())
+    add(f"never exceeds **{worst_half:.2f}**", worst_half, 0.01)
+    add(f"running from\n{a11['med_days_per_year']['at_2.0']:.1f} major event days",
+        a11["med_days_per_year"]["at_2.0"], 0.1)
+
     return out
 
 
@@ -317,6 +332,10 @@ REQUIRED_HEDGES = [
      "A10 found the headline comparison breaks under mildly heavy tails; the "
      "README must say so where it makes the comparison"),
     ("Basis: model-implied", "FINDINGS must label model-implied answers as such"),
+    ("rests on two analyst choices",
+     "A11 found the headline comparison also depends on the threshold window, "
+     "holding only at about +/-0.75 or wider even under log-normal tails; the "
+     "prose must keep both conditions, not just the tail one"),
 ]
 
 FORBIDDEN = [
@@ -325,8 +344,8 @@ FORBIDDEN = [
      "'gaming' asserts intent this data cannot establish; use the hedged form"),
     (r"utilities manipulate", "asserts intent the data cannot establish"),
     (r"\bcauses?\s+lower\s+SAIDI\b", "track 1 is a cross-section, not causal"),
-    (r"\ball utilities\b", "universal quantifier; the sample is 3,427 "
-                           "utility-state-years across 4 filing years"),
+    (r"\ball utilities\b", "universal quantifier; the sample is 6,245 "
+                           "utility-state-years across 7 filing years"),
     (r"\bmeasured\s+sensitivity\b", "the sensitivity is model-implied"),
     (r"more than the whole\s+industry spans",
      "A10 showed this holds only under near-log-normal tails; state it as "

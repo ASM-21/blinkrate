@@ -1,4 +1,50 @@
 {
+  "_provenance": {
+    "blocks": {
+      "balanced_panel_utility_states": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "blocker": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "exclusion_entry": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "gradual_or_step": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "spike_geography": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "storm_state_sensitivity": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "trend": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "within_utility": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "within_utility_consecutive": {
+        "default": "filed_data",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "balanced_panel_utility_states": 568,
   "blocker": "no external weather severity index: NOAA blocked, no mirrored storm panel keyed to service territories found. A widening major-event gap cannot be split into weather severity versus classification.",
   "exclusion_entry": {

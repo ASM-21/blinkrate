@@ -1,5 +1,44 @@
 # Changelog
 
+## v1.1.0 (2026-09)
+
+A second condition on the central comparison, and filed data separated from
+model-implied numbers in the results themselves rather than only in the prose.
+
+### Rescoped
+
+- **The central comparison rests on two analyst choices, not one** (attack
+  A11). v1.0.0 stated it as conditional on the tails of daily outages, with the
+  threshold window held at 1.5 to 3.0. Varied symmetrically around 2.5, the
+  window turns out to matter as much as the tails. Under log-normal tails the
+  comparison holds only at about ±0.75 or wider, where the
+  standard's own model would declare 14.7
+  major event days a year at the loose end. At ±0.5 the ratio never exceeds
+  0.72 under any tail tested, log-normal included. Windows are stated in
+  major event days per year because that is the unit IEEE's working group judged
+  2.5 on.
+- **A10's breaking point is window-dependent.** Between 30 and 15 degrees of
+  freedom with the 1.5 to 3.0 window; between 15 and 7 with a ±1.0 window. A10's
+  table is left as run and scoped by a note in FALSIFICATION.md.
+
+### Added
+
+- **Schema-level provenance.** Every results file carries a `_provenance` block
+  labelling each result `filed_data`, `model_implied`, `literature_model` or
+  `meta`, with named exceptions where a block mixes the two. A result key that
+  has not been declared refuses to save, so a new number cannot be published
+  without someone deciding which kind it is. Tests hold the schema to the
+  "Basis:" labels in FINDINGS and to the README's list of what holds regardless.
+- `UPLOAD.md`: exact steps to publish, and what to check before and after.
+
+### Fixed
+
+- Stale attack counts: the README layout block still said seven attacks and the
+  Zenodo metadata said ten. Both are now derived from the results by a test.
+- FALSIFICATION.md opened by saying six attacks and then, two lines later, ten.
+- An error message inside the claims guard still described the sample as 3,427
+  utility-state-years across four filing years.
+
 ## v1.0.0 (2026-09)
 
 First public release.

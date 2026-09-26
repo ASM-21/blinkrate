@@ -1,4 +1,48 @@
 {
+  "_provenance": {
+    "blocks": {
+      "bunching": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "coverage": {
+        "default": "filed_data",
+        "exceptions": {
+          "implied_sigma_quantiles": "model_implied",
+          "n_admissible": "model_implied",
+          "n_too_clean": "model_implied",
+          "n_too_excluded": "model_implied",
+          "r_max_modelable": "model_implied",
+          "r_min_modelable": "model_implied",
+          "share_admissible": "model_implied",
+          "share_too_clean": "model_implied",
+          "share_too_excluded": "model_implied"
+        }
+      },
+      "elasticity": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "ranking": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "sensitivity": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "standard_choice": {
+        "default": "filed_data",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "bunching": {
     "ci95": [
       7.58959928948,

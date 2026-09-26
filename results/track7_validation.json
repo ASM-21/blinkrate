@@ -1,4 +1,38 @@
 {
+  "_provenance": {
+    "blocks": {
+      "caidi_identity": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "closed_form_vs_procedure": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "duplicate_filings": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "hand_checks": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "rejected_rows": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "round_trip": {
+        "default": "model_implied",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "caidi_identity": {
     "tolerance": 0.01,
     "with_med": {

@@ -1,4 +1,38 @@
 {
+  "_provenance": {
+    "blocks": {
+      "breakeven": {
+        "default": "literature_model",
+        "exceptions": {}
+      },
+      "customers_per_mile": {
+        "default": "literature_model",
+        "exceptions": {}
+      },
+      "density_sweep": {
+        "default": "literature_model",
+        "exceptions": {}
+      },
+      "headline_ratio_case_vs_econometric": {
+        "default": "literature_model",
+        "exceptions": {}
+      },
+      "observed_median_saidi_with_2022": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "params": {
+        "default": "literature_model",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "breakeven": {
     "case_study_high|cost_central|voll_central": {
       "breakeven_saidi_min_per_yr": 1633.16903523,

@@ -44,6 +44,27 @@ SAIDI as the method's central problem, which would put reality on the failing
 side. Part one therefore stands as a statement about IEEE 1366's own model, not
 about the grid.
 
+**And the tails are only one of two analyst choices it rests on** (attack A11).
+The sweep above runs from beta 1.5 to 3.0, and nothing argued for that window over
+any other. Varied symmetrically around the standard's 2.5 and jointly with the
+tail weight, the comparison holds only when both choices sit in one corner. Under
+log-normal tails the window must reach about ±0.75, to beta
+1.75, where the standard's own fitted model
+would declare **14.7** major event days a year, roughly one every three
+and a half weeks. At ±0.5, a window running from 8.3 major event days a
+year down to 0.5, the ratio never exceeds **0.72** under any tail
+tested. Heavier tails push the break-even wider: to ±0.94 at 15 degrees
+of freedom, and beyond ±1.0 at 7.
+
+Expressing the window in major event days per year is deliberate. It is the unit
+IEEE's working group judged 2.5 on, "not too many or too few major event days",
+so a reader can decide on the standard's own terms whether a threshold that
+declares a major event every few weeks is a defensible alternative. This
+repository does not think it obviously is, and stating the claim as though it
+held in general would overstate it. It also means A10's breaking point is itself
+window-dependent: under a ±1.0 window the tail at which the claim fails moves
+from between 30 and 15 degrees of freedom to between 15 and 7.
+
 *Part two.* Rank reversal does not come from storm-exposed utilities trading
 places with sheltered ones. Splitting the field by exposure measured from
 2013-2018 filings and applied to 2022, so the stratifier is not the outcome,

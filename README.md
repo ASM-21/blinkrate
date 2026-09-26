@@ -30,14 +30,19 @@ a third of filings report no major event days at all, and half the large-utility
 field changes quartile depending on which of the two published series someone
 chose to rank on.
 
-Put the two side by side and the thesis becomes a measurement, with a condition
-attached. Under IEEE 1366's own log-normal assumption, moving the threshold
-changes one large utility's reported SAIDI by a median of **6.18x**, while the
-whole spread between large utilities is **3.92x** from the 10th to the 90th
-percentile. **That comparison is conditional on the tails of daily outages.** It
-breaks if daily log-SAIDI is even mildly heavier-tailed than normal, somewhere
-between a Student-t with 30 and with 15 degrees of freedom, and the IEEE
-literature on the method points at heavy right tails as its core problem.
+Put the two side by side and the thesis becomes a measurement, with conditions
+attached. Under IEEE 1366's own log-normal assumption, moving the threshold from
+1.5 to 3.0 changes one large utility's reported SAIDI by a median of **6.18x**,
+while the whole spread between large utilities is **3.92x** from the 10th to the
+90th percentile. **That comparison rests on two analyst choices, and it holds only
+in one corner of them.** It is conditional on the tails of daily outages: it
+needs them close to log-normal, and the IEEE literature on the method identifies
+heavy right tails as its central problem. It also needs a threshold window wide enough that, at its loose end, the
+standard's own model would declare about **14.7** major event days a
+year. Within half a unit of the standard's 2.5, a window running from
+8.3 major event days a year down to 0.5, the rule moves one
+utility by less than the industry spans under every tail tested, log-normal
+included.
 
 What holds regardless is everything measured directly from the filings rather
 than through the model: the zero-exclusion mass point, the rank reversal between
@@ -51,7 +56,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 78 tests
+pytest                           # 99 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 python tools/utility_profile.py --pair 200 120 --tails   # any filed pair
@@ -91,6 +96,7 @@ searched and what it changed: **[LITERATURE.md](LITERATURE.md)**.
 
 Full write-up with identification and caveats: **[FINDINGS.md](FINDINGS.md)**.
 Prior art and what the literature search changed: **[LITERATURE.md](LITERATURE.md)**.
+How to publish it, and what was checked first: **[UPLOAD.md](UPLOAD.md)**.
 What broke under attack: **[FALSIFICATION.md](FALSIFICATION.md)**.
 
 ## Three figures
@@ -138,9 +144,16 @@ and rebuilds bit-identically in about 20 seconds.
 against SAIDI/SAIFI in the source, checks the closed form against the procedural
 simulator, and round-trips the inversion.
 
-**Falsification is a track, not an appendix.** Five of ten attacks landed.
-The most recent found that the repository's own headline comparison breaks under
-mildly heavy-tailed daily outages, and it was rescoped the same day. Q6's
+**Filed data and model output are separated in the data, not just the prose.**
+Every results file labels each number `filed_data` (computed straight from
+EIA-861) or `model_implied` (depends on the log-normal inversion), and a result
+that has not been declared refuses to save. Tests hold those labels to the
+"Basis:" line on each answer in FINDINGS, so the two cannot drift apart.
+
+**Falsification is a track, not an appendix.** Six of eleven attacks landed.
+The two most recent found that the repository's own headline comparison rests on
+two analyst choices, the tails of daily outages and the width of the threshold
+window, and holds only in one corner of them. It was rescoped both times. Q6's
 regression result was retracted outright when the panel grew. Q1's magnitude was
 scoped to its distributional assumption, and the guard fails the build if that
 qualifier is deleted. Leave-one-state-out found that Q4's headline share falls
@@ -182,6 +195,7 @@ blinkrate/
   shared/ingest.py              EIA-861 harmonised across three file layouts
   shared/reliability_metrics.py MED engine, tunable beta, closed form
   shared/finite_sample.py       simulated median-realization calibration
+  shared/provenance.py          filed_data vs model_implied, declared per result
   track1_investment.py          Q5 capital deployment, three designs
   track2_weather_split.py       Q4 weather vs classification + geographic placebo
   track3_med_sensitivity.py     Q1-Q3 threshold sweep, bunching, ranking
@@ -190,7 +204,7 @@ blinkrate/
   track6_ownership.py           Q6 ownership stratification
   track7_validation.py          Q7 engine and source-data checks
   track9_aggregation.py         Q8 how much the averaging rule is worth
-  track8_falsification.py       seven attacks on the above
+  track8_falsification.py       eleven attacks on the above
   run_all.py
 data/raw/                       vendored EIA-861 (US Gov, public domain)
 docs/derivation.md              the exclusion identity

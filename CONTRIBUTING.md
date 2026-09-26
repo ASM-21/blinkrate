@@ -58,7 +58,9 @@ than only reweighted. *Start at:* `blinkrate/track9_aggregation.py`.
 
 Anything quoted in README.md, FINDINGS.md or FALSIFICATION.md must be:
 
-1. produced by code in `blinkrate/`, written to `results/` as JSON;
+1. produced by code in `blinkrate/`, written to `results/` as JSON, and
+   declared `filed_data` or `model_implied` in `blinkrate/shared/provenance.py`
+   (an undeclared result refuses to save);
 2. pinned by a test in `tests/` with a tolerance tight enough to fail on a real
    change;
 3. registered in `tools/check_claims.py` so the build breaks if the prose and the

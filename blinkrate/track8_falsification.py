@@ -630,6 +630,107 @@ def a10_tail_breaking_point(year: int = 2022, min_customers: int = 100_000,
     }
 
 
+def a11_threshold_window(year: int = 2022, min_customers: int = 100_000,
+                         n_sims: int = 250, seed: int = 111) -> dict:
+    """A10 varied the tails with the threshold window held at 1.5 to 3.0. The
+    window is a second, independent analyst choice the same claim rests on.
+
+    A8 part one compares one utility's own sweep across beta against the spread
+    between utilities. The size of that sweep depends on how far from the
+    standard's 2.5 the analyst is willing to move beta, and nothing in the
+    repository argued for 1.5 to 3.0 over any other window. So this varies the
+    window jointly with the tail weight and reports where the claim holds.
+
+    Windows are symmetric around 2.5, so the question is "how far from the
+    standard". Each window edge is also expressed as the number of major event
+    days per year the standard's own fitted model implies, 365 * (1 - Phi(beta)).
+    That puts the window in the units IEEE's working group judged 2.5 on: not too
+    many and not too few major event days. A reader can then decide, on the
+    standard's own terms, whether a window is a defensible alternative.
+
+    Built on A10's `_tail_surface`, with the same fair re-inversion, so the two
+    attacks are directly comparable.
+    """
+    rng = np.random.default_rng(seed)
+    df = ingest.analysis_sample()
+    d = df[(df["year"] == year) & (df["ownership_class"] == "IOU")
+           & (df["customers"] >= min_customers)]
+    r_obs = d["retained_share"].to_numpy()
+    reported = d["saidi_without"].to_numpy()
+    spread = float(np.percentile(reported, 90) / np.percentile(reported, 10))
+
+    half_widths = np.array([0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0])
+    betas = np.unique(np.round(np.concatenate(
+        [[2.5], 2.5 - half_widths, 2.5 + half_widths]), 4))
+    col = {float(b): i for i, b in enumerate(betas)}
+    sigma_grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+
+    tails = (("lognormal", None), ("t_nu60", 60.0), ("t_nu30", 30.0),
+             ("t_nu15", 15.0), ("t_nu7", 7.0))
+    grid = {}
+    break_even = {}
+    for label, nu in tails:
+        surf = _tail_surface(nu, sigma_grid, betas, n_sims, rng)
+        r25 = surf[:, col[2.5]]
+        order = np.argsort(r25)
+        inside = (r_obs >= r25.min()) & (r_obs <= r25.max())
+        sig = np.interp(r_obs[inside], r25[order], sigma_grid[order])
+        ratios = []
+        row = {}
+        for h in half_widths:
+            lo, hi = round(2.5 - h, 4), round(2.5 + h, 4)
+            r_lo = np.interp(sig, sigma_grid, surf[:, col[lo]])
+            r_hi = np.interp(sig, sigma_grid, surf[:, col[hi]])
+            sweep = float(np.median(r_hi / np.clip(r_lo, 1e-9, None)))
+            ratios.append(sweep / spread)
+            row[f"h_{h}"] = {
+                "window": [lo, hi],
+                "median_own_sweep_x": sweep,
+                "ratio_to_spread": sweep / spread,
+                "claim_holds": bool(sweep > spread),
+            }
+        grid[label] = row
+        ratios = np.array(ratios)
+        crossing = np.flatnonzero((ratios[:-1] < 1) & (ratios[1:] >= 1))
+        if ratios[0] >= 1:
+            break_even[label] = float(half_widths[0])  # holds at every window
+        elif crossing.size:
+            i = int(crossing[0])
+            f = (1 - ratios[i]) / (ratios[i + 1] - ratios[i])
+            break_even[label] = float(half_widths[i]
+                                      + f * (half_widths[i + 1] - half_widths[i]))
+        else:
+            break_even[label] = None  # fails at every window tested
+
+    def med_days(beta: float) -> float:
+        return float(rm.DAYS_PER_YEAR * (1 - stats.norm.cdf(beta)))
+
+    lognormal_h = break_even["lognormal"]
+    return {
+        "year": year,
+        "cross_utility_spread_p90_p10": spread,
+        "half_widths": half_widths.tolist(),
+        "grid": grid,
+        "break_even_half_width": break_even,
+        "med_days_per_year": {
+            "at_standard_2.5": med_days(2.5),
+            **{f"at_{round(2.5 - h, 4)}": med_days(2.5 - h) for h in half_widths},
+            **{f"at_{round(2.5 + h, 4)}": med_days(2.5 + h) for h in half_widths},
+        },
+        "lognormal_break_even_window": (
+            [round(2.5 - lognormal_h, 3), round(2.5 + lognormal_h, 3)]
+            if lognormal_h else None),
+        "lognormal_break_even_med_days_low_edge": (
+            med_days(2.5 - lognormal_h) if lognormal_h else None),
+        "holds_anywhere_beyond_nu30": bool(
+            any(v["claim_holds"] for lbl in ("t_nu15", "t_nu7")
+                for v in grid[lbl].values())),
+        "reading": ("the central comparison holds only when daily tails are near "
+                    "log-normal AND the threshold window is wide enough to admit "
+                    "roughly a major event day every few weeks at its low edge"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -643,6 +744,7 @@ def run(save: bool = True) -> dict:
         "A8_stated_falsification_criterion": a8_stated_falsification_criterion(),
         "A9_leave_one_utility_out": a9_leave_one_utility_out(),
         "A10_tail_breaking_point": a10_tail_breaking_point(),
+        "A11_threshold_window": a11_threshold_window(),
     }
     if save:
         save_results("track8_falsification", out)

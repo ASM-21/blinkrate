@@ -1,4 +1,34 @@
 {
+  "_provenance": {
+    "blocks": {
+      "cross_sections": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "long_difference": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "substitution": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "variance_decomposition": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "within_utility": {
+        "default": "filed_data",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "cross_sections": {
     "2016": {
       "ami_share_iqr": [

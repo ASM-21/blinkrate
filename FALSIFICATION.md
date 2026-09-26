@@ -1,11 +1,11 @@
 # Falsification
 
-Track 8 attacks the other tracks. Six attacks, run in
-`blinkrate/track8_falsification.py`, results in
+Track 8 attacks the other tracks. Every attack is run in
+`blinkrate/track8_falsification.py` with results in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Ten attacks now, five of which landed. Two landed only after the panel grew
+Eleven attacks, six of which landed. Two landed only after the panel grew
 from four filing years to seven, which is worth stating plainly: **more data retracted a
 result that four years of data had supported at p = 0.026.**
 
@@ -325,6 +325,71 @@ A consistency check on the machinery: A10's log-normal row gives 6.04x against
 A8's 6.18x. The gap is resolution, since A10 builds its surfaces with 250
 simulations on a coarser grid than the committed calibration's 1,500. It is small
 next to the effect being measured.
+
+## A11: the threshold window. **Landed. A second condition on the same claim.**
+
+A10 varied the tails and held the threshold window at 1.5 to 3.0. Nothing in the
+repository argued for that window over any other, so it is an analyst choice the
+central comparison rests on, and it had never been varied. This varies it
+symmetrically around the standard's 2.5, jointly with the tail weight, using
+A10's own surfaces and fair re-inversion so the two attacks are directly
+comparable.
+
+Ratio of one utility's own sweep to the 3.92x spread
+between utilities, by window half-width. Above 1, in bold, the claim holds.
+
+| tail | ±0.25 | ±0.375 | ±0.5 | ±0.625 | ±0.75 | ±0.875 | ±1.0 |
+|---|---|---|---|---|---|---|---|
+| log-normal | 0.39 | 0.49 | 0.72 | 0.85 | 1.00 | **1.20** | **1.44** |
+| t, nu=60 | 0.40 | 0.48 | 0.67 | 0.79 | 0.93 | **1.10** | **1.34** |
+| t, nu=30 | 0.37 | 0.47 | 0.54 | 0.79 | 0.91 | **1.05** | **1.21** |
+| t, nu=15 | 0.35 | 0.41 | 0.48 | 0.56 | 0.79 | 0.93 | **1.06** |
+| t, nu=7 | 0.31 | 0.34 | 0.37 | 0.42 | 0.47 | 0.52 | 0.58 |
+
+Break-even half-width, where the ratio crosses 1:
+
+| tail | break-even |
+|---|---|
+| log-normal | ±0.75 |
+| t, nu=60 | ±0.80 |
+| t, nu=30 | ±0.83 |
+| t, nu=15 | ±0.94 |
+| t, nu=7 | beyond ±1.0 |
+
+**The claim holds in one corner only:** tails near log-normal and a window of
+about ±0.75 or wider. At ±0.5 it fails under every tail tested,
+log-normal included.
+
+Whether ±0.75 is a defensible alternative is the question, and the
+repository answers it in the standard's own units rather than its own. IEEE's
+working group judged 2.5 on having "not too many or too few major event days",
+so each window edge is converted to the number of major event days a year the
+standard's fitted model implies:
+
+| beta | major event days per year |
+|---|---|
+| 2.5 (the standard) | 2.27 |
+| 1.5 | 24.38 |
+| 1.75 | 14.62 |
+| 2.0 | 8.30 |
+| 2.25 | 4.46 |
+
+The break-even window's loose edge is beta 1.75, a
+major event day every three and a half weeks. A reader who thinks that still
+counts as "major" can accept the claim under log-normal tails. A reader who does
+not should not accept it at all.
+
+**What this does to A10.** A10's breaking point is itself window-dependent. With
+the 1.5 to 3.0 window it falls between 30 and 15 degrees of freedom. With a ±1.0
+window it moves to between 15 and 7, because under heavy tails the retained share
+keeps rising past beta 3.0 instead of saturating, so a wider upper edge buys a
+bigger sweep. A10's table is left as run; this note is what scopes it.
+
+**What this does to the prose.** README and FINDINGS now state the comparison as
+resting on two analyst choices and name both conditions. The claims guard fails
+the build if the phrase that carries the second condition is deleted.
+
+---
 
 ## Attacks not run
 

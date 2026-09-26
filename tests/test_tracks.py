@@ -14,6 +14,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from scipy import stats
 
 from blinkrate import (track1_investment, track2_weather_split,
                        track3_med_sensitivity, track4_cause_exclusions,
@@ -748,3 +749,175 @@ def test_profile_pair_outside_the_model_is_reported_not_crashed():
                        cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0
     assert "outside what IEEE 1366's own log-normal model can" in r.stdout
+
+
+def test_a11_window_is_a_second_condition():
+    """A11: the headline comparison also depends on the threshold window.
+
+    Under log-normal tails it holds only at about +/-0.75 or wider, and at +/-0.5
+    it fails under every tail tested. If a future change makes it hold at +/-0.5,
+    the README's "two analyst choices" framing is too cautious and should be
+    loosened; if it stops holding anywhere, the claim should be withdrawn.
+    """
+    a11 = _results("track8_falsification")["A11_threshold_window"]
+    be = a11["break_even_half_width"]
+    assert be["lognormal"] == pytest.approx(0.75, abs=0.03)
+    for tail, row in a11["grid"].items():
+        assert row["h_0.5"]["claim_holds"] is False, (
+            f"claim now holds at +/-0.5 under {tail}; rescope README")
+    assert a11["grid"]["lognormal"]["h_1.0"]["claim_holds"] is True
+
+
+def test_a11_heavier_tails_need_wider_windows():
+    """The break-even half-width must widen as tails get heavier. If it does not,
+    the surfaces are wrong, because heavy tails shrink the sweep at any window."""
+    be = _results("track8_falsification")["A11_threshold_window"][
+        "break_even_half_width"]
+    chain = [be["lognormal"], be["t_nu60"], be["t_nu30"], be["t_nu15"]]
+    assert all(x is not None for x in chain)
+    assert chain == sorted(chain), f"break-even not monotone in tail weight: {chain}"
+    assert be["t_nu7"] is None, "nu=7 should fail at every window up to +/-1.0"
+
+
+def test_a11_major_event_days_are_the_standards_own_arithmetic():
+    """Windows are expressed in major event days per year so a reader can judge
+    them on IEEE's working-group criterion. The conversion must be exactly the
+    standard's fitted-model rate, 365 * (1 - Phi(beta)), or the units lie."""
+    m = _results("track8_falsification")["A11_threshold_window"]["med_days_per_year"]
+    for key, beta in (("at_standard_2.5", 2.5), ("at_2.0", 2.0), ("at_1.75", 1.75),
+                      ("at_3.0", 3.0)):
+        assert m[key] == pytest.approx(365 * (1 - stats.norm.cdf(beta)), rel=1e-9)
+    low = _results("track8_falsification")["A11_threshold_window"][
+        "lognormal_break_even_med_days_low_edge"]
+    assert 13 < low < 17, "the break-even low edge should sit near 15 days a year"
+
+
+def test_a11_reuses_a10_surfaces():
+    """A11 and A10 must be directly comparable, which means one surface builder."""
+    src = (ROOT / "blinkrate" / "track8_falsification.py").read_text()
+    block = src[src.index("def a11_threshold_window"):]
+    block = block[:block.index("\ndef ")]
+    assert "_tail_surface(" in block
+
+
+# --------------------------------------------------------------------------
+# provenance: filed data and model-implied separated at the schema level
+# --------------------------------------------------------------------------
+
+def test_every_result_declares_its_provenance():
+    """Every results file carries a _provenance block covering exactly its keys."""
+    import glob
+    from blinkrate.shared import provenance as pv
+    files = sorted(glob.glob(str(ROOT / "results" / "*.json")))
+    assert len(files) == len(pv.REGISTRY)
+    for f in files:
+        d = json.loads(Path(f).read_text())
+        assert "_provenance" in d, f"{f} has no provenance block"
+        declared = set(d["_provenance"]["blocks"])
+        produced = {k for k in d if not k.startswith("_")}
+        assert declared == produced, f"{Path(f).name}: {declared ^ produced}"
+        for block in d["_provenance"]["blocks"].values():
+            assert block["default"] in pv.KINDS
+            assert all(k in pv.KINDS for k in block["exceptions"].values())
+
+
+def test_undeclared_result_cannot_be_saved():
+    """The point of schema-level separation: a new number cannot be published
+    without someone deciding whether it is filed data or model-implied."""
+    from blinkrate.shared import provenance as pv
+    good = {k: 0 for k in pv.REGISTRY["track9_aggregation"]}
+    pv.stamp("track9_aggregation", good)
+    with pytest.raises(pv.ProvenanceError, match="not declared"):
+        pv.stamp("track9_aggregation", {**good, "a_new_headline": 1.0})
+    with pytest.raises(pv.ProvenanceError, match="no longer"):
+        pv.stamp("track9_aggregation",
+                 {k: 0 for k in list(good)[:-1]})
+    with pytest.raises(pv.ProvenanceError, match="no provenance registry"):
+        pv.stamp("track99_unregistered", {})
+
+
+@pytest.mark.parametrize("file,block,field,expected", [
+    # Q1: the threshold sweep is model-implied
+    ("track3_med_sensitivity", "sensitivity", None, "model_implied"),
+    # Q2: the mass point is filed data, the admissibility share is not
+    ("track3_med_sensitivity", "coverage", "share_exactly_zero_exclusion", "filed_data"),
+    ("track3_med_sensitivity", "coverage", "share_admissible", "model_implied"),
+    ("track3_med_sensitivity", "bunching", None, "filed_data"),
+    # Q3: rank reversal between two published series is filed data
+    ("track3_med_sensitivity", "ranking", None, "filed_data"),
+    # Q4: the everyday trend and the placebo are filed data
+    ("track2_weather_split", "gradual_or_step", None, "filed_data"),
+    ("track2_weather_split", "spike_geography", None, "filed_data"),
+    # Q8: the 2.07x spread is filed data, the 14.32x combined space is not
+    ("track9_aggregation", "by_year", None, "filed_data"),
+    ("track9_aggregation", "combined_space", None, "model_implied"),
+    # A8: part one inherits the model, part two does not
+    ("track8_falsification", "A8_stated_falsification_criterion",
+     "part1_rule_vs_cross_utility_spread", "model_implied"),
+    ("track8_falsification", "A8_stated_falsification_criterion",
+     "part2_reversal_within_exposure", "filed_data"),
+    ("track8_falsification", "A11_threshold_window", None, "model_implied"),
+])
+def test_schema_matches_the_prose_basis_labels(file, block, field, expected):
+    """FINDINGS labels each answer "Basis: filed data" or "Basis: model-implied".
+    The schema must say the same thing, or one of them is lying."""
+    from blinkrate.shared import provenance as pv
+    assert pv.kind_of(file, block, field) == expected
+
+
+def test_what_holds_regardless_is_all_filed_data():
+    """README lists what survives regardless of the log-normal assumption. Each
+    item must be filed data in the schema; a model-implied quantity in that list
+    would be exactly the overclaim the list exists to prevent."""
+    from blinkrate.shared import provenance as pv
+    readme = (ROOT / "README.md").read_text()
+    assert "What holds regardless" in readme
+    regardless = [
+        ("track3_med_sensitivity", "coverage", "share_exactly_zero_exclusion"),
+        ("track3_med_sensitivity", "ranking", None),
+        ("track2_weather_split", "gradual_or_step", None),
+        ("track9_aggregation", "by_year", None),
+    ]
+    for file, block, field in regardless:
+        assert pv.kind_of(file, block, field) == "filed_data", (file, block, field)
+
+
+_NUMBER_WORDS = {w: i for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve "
+    "thirteen fourteen fifteen".split())}
+
+
+def test_attack_count_is_not_stale_anywhere_it_is_published():
+    """The attack count is stated in the README and in the Zenodo metadata that
+    is archived permanently on release. It went stale twice ("seven attacks" in
+    the layout block survived four more attacks), so it is derived from the
+    results rather than trusted to memory."""
+    import re
+    n_attacks = sum(1 for k in _results("track8_falsification")
+                    if re.match(r"A\d+_", k)
+                    and not re.match(r"A1b_", k))
+    readme = (ROOT / "README.md").read_text()
+    zenodo = json.loads((ROOT / ".zenodo.json").read_text())["description"]
+    word = {v: k for k, v in _NUMBER_WORDS.items()}[n_attacks]
+    assert f"{word} attacks on the above" in readme
+    assert re.search(rf"\b\w+ of {word} attacks landed", readme, re.IGNORECASE)
+    assert f"{word} adversarial attacks" in zenodo
+    upload = (ROOT / "UPLOAD.md").read_text()
+    assert f"{word} adversarial attacks" in upload
+    for stale in (w for w, i in _NUMBER_WORDS.items() if i != n_attacks):
+        assert f"{stale} adversarial attacks" not in zenodo, f"zenodo says {stale}"
+        assert f"{stale} adversarial attacks" not in upload, f"UPLOAD says {stale}"
+
+
+def test_release_version_is_consistent():
+    """pyproject, CITATION.cff, .zenodo.json and the newest CHANGELOG heading
+    must agree, or the archived release cites a version the code does not have."""
+    import re
+    py = re.search(r'^version = "([^"]+)"', (ROOT / "pyproject.toml").read_text(),
+                   re.MULTILINE).group(1)
+    cff = re.search(r"^version: (\S+)", (ROOT / "CITATION.cff").read_text(),
+                    re.MULTILINE).group(1)
+    zen = json.loads((ROOT / ".zenodo.json").read_text()).get("version", py)
+    log = re.search(r"^## v(\S+)", (ROOT / "CHANGELOG.md").read_text(),
+                    re.MULTILINE).group(1)
+    assert py == cff == zen == log, (py, cff, zen, log)

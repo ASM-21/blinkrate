@@ -52,6 +52,10 @@ def _round_floats(obj):
 
 
 def save_results(name: str, payload: dict) -> Path:
+    # Every result is stamped filed_data / model_implied before it can be
+    # written, and an undeclared key refuses to save. See provenance.py.
+    from .provenance import stamp
+    payload = stamp(name, payload)
     RESULTS.mkdir(parents=True, exist_ok=True)
     path = RESULTS / f"{name}.json"
     path.write_text(json.dumps(_round_floats(payload), indent=2, sort_keys=True,

@@ -70,6 +70,377 @@
     "reading": "the central claim is conditional on daily outage tails; it holds for tails no heavier than the breaking point and fails beyond it. Which side reality is on needs daily SAIDI, which is not public at national scale",
     "year": 2022
   },
+  "A11_threshold_window": {
+    "break_even_half_width": {
+      "lognormal": 0.75144500308,
+      "t_nu15": 0.941834949066,
+      "t_nu30": 0.832342402016,
+      "t_nu60": 0.799849690315,
+      "t_nu7": null
+    },
+    "cross_utility_spread_p90_p10": 3.91989859594,
+    "grid": {
+      "lognormal": {
+        "h_0.25": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.52489089084,
+          "ratio_to_spread": 0.389012841407,
+          "window": [
+            2.25,
+            2.75
+          ]
+        },
+        "h_0.375": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.90616581102,
+          "ratio_to_spread": 0.486279367786,
+          "window": [
+            2.125,
+            2.875
+          ]
+        },
+        "h_0.5": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.8410933354,
+          "ratio_to_spread": 0.72478745709,
+          "window": [
+            2.0,
+            3.0
+          ]
+        },
+        "h_0.625": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.33028260816,
+          "ratio_to_spread": 0.849583867195,
+          "window": [
+            1.875,
+            3.125
+          ]
+        },
+        "h_0.75": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.91091229275,
+          "ratio_to_spread": 0.997707516412,
+          "window": [
+            1.75,
+            3.25
+          ]
+        },
+        "h_0.875": {
+          "claim_holds": true,
+          "median_own_sweep_x": 4.68827250414,
+          "ratio_to_spread": 1.19601882278,
+          "window": [
+            1.625,
+            3.375
+          ]
+        },
+        "h_1.0": {
+          "claim_holds": true,
+          "median_own_sweep_x": 5.64688280344,
+          "ratio_to_spread": 1.44056859259,
+          "window": [
+            1.5,
+            3.5
+          ]
+        }
+      },
+      "t_nu15": {
+        "h_0.25": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.3778288113,
+          "ratio_to_spread": 0.351496034292,
+          "window": [
+            2.25,
+            2.75
+          ]
+        },
+        "h_0.375": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.60597040488,
+          "ratio_to_spread": 0.409696925972,
+          "window": [
+            2.125,
+            2.875
+          ]
+        },
+        "h_0.5": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.90074338991,
+          "ratio_to_spread": 0.48489606131,
+          "window": [
+            2.0,
+            3.0
+          ]
+        },
+        "h_0.625": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.20317023472,
+          "ratio_to_spread": 0.56204776241,
+          "window": [
+            1.875,
+            3.125
+          ]
+        },
+        "h_0.75": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.08679315753,
+          "ratio_to_spread": 0.787467604576,
+          "window": [
+            1.75,
+            3.25
+          ]
+        },
+        "h_0.875": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.6492553774,
+          "ratio_to_spread": 0.930956576576,
+          "window": [
+            1.625,
+            3.375
+          ]
+        },
+        "h_1.0": {
+          "claim_holds": true,
+          "median_own_sweep_x": 4.15543369863,
+          "ratio_to_spread": 1.06008703973,
+          "window": [
+            1.5,
+            3.5
+          ]
+        }
+      },
+      "t_nu30": {
+        "h_0.25": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.46464495169,
+          "ratio_to_spread": 0.373643581803,
+          "window": [
+            2.25,
+            2.75
+          ]
+        },
+        "h_0.375": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.84425682549,
+          "ratio_to_spread": 0.47048585068,
+          "window": [
+            2.125,
+            2.875
+          ]
+        },
+        "h_0.5": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.13124708056,
+          "ratio_to_spread": 0.543699544363,
+          "window": [
+            2.0,
+            3.0
+          ]
+        },
+        "h_0.625": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.1046339975,
+          "ratio_to_spread": 0.792018956999,
+          "window": [
+            1.875,
+            3.125
+          ]
+        },
+        "h_0.75": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.55895224654,
+          "ratio_to_spread": 0.907919467667,
+          "window": [
+            1.75,
+            3.25
+          ]
+        },
+        "h_0.875": {
+          "claim_holds": true,
+          "median_own_sweep_x": 4.10688736345,
+          "ratio_to_spread": 1.04770245019,
+          "window": [
+            1.625,
+            3.375
+          ]
+        },
+        "h_1.0": {
+          "claim_holds": true,
+          "median_own_sweep_x": 4.75950404303,
+          "ratio_to_spread": 1.2141906038,
+          "window": [
+            1.5,
+            3.5
+          ]
+        }
+      },
+      "t_nu60": {
+        "h_0.25": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.57465727754,
+          "ratio_to_spread": 0.401708676639,
+          "window": [
+            2.25,
+            2.75
+          ]
+        },
+        "h_0.375": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.89448164276,
+          "ratio_to_spread": 0.48329863551,
+          "window": [
+            2.125,
+            2.875
+          ]
+        },
+        "h_0.5": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.62579806879,
+          "ratio_to_spread": 0.669863774411,
+          "window": [
+            2.0,
+            3.0
+          ]
+        },
+        "h_0.625": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.10088067364,
+          "ratio_to_spread": 0.791061451654,
+          "window": [
+            1.875,
+            3.125
+          ]
+        },
+        "h_0.75": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.65248894339,
+          "ratio_to_spread": 0.931781487198,
+          "window": [
+            1.75,
+            3.25
+          ]
+        },
+        "h_0.875": {
+          "claim_holds": true,
+          "median_own_sweep_x": 4.3230288476,
+          "ratio_to_spread": 1.10284201027,
+          "window": [
+            1.625,
+            3.375
+          ]
+        },
+        "h_1.0": {
+          "claim_holds": true,
+          "median_own_sweep_x": 5.2530561024,
+          "ratio_to_spread": 1.34009999846,
+          "window": [
+            1.5,
+            3.5
+          ]
+        }
+      },
+      "t_nu7": {
+        "h_0.25": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.19910136133,
+          "ratio_to_spread": 0.305901117587,
+          "window": [
+            2.25,
+            2.75
+          ]
+        },
+        "h_0.375": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.32817054156,
+          "ratio_to_spread": 0.33882778063,
+          "window": [
+            2.125,
+            2.875
+          ]
+        },
+        "h_0.5": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.46625797886,
+          "ratio_to_spread": 0.374055078969,
+          "window": [
+            2.0,
+            3.0
+          ]
+        },
+        "h_0.625": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.64952547298,
+          "ratio_to_spread": 0.420808200164,
+          "window": [
+            1.875,
+            3.125
+          ]
+        },
+        "h_0.75": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.83359341846,
+          "ratio_to_spread": 0.467765523415,
+          "window": [
+            1.75,
+            3.25
+          ]
+        },
+        "h_0.875": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.02416667613,
+          "ratio_to_spread": 0.51638240801,
+          "window": [
+            1.625,
+            3.375
+          ]
+        },
+        "h_1.0": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.28987280203,
+          "ratio_to_spread": 0.584166336447,
+          "window": [
+            1.5,
+            3.5
+          ]
+        }
+      }
+    },
+    "half_widths": [
+      0.25,
+      0.375,
+      0.5,
+      0.625,
+      0.75,
+      0.875,
+      1.0
+    ],
+    "holds_anywhere_beyond_nu30": true,
+    "lognormal_break_even_med_days_low_edge": 14.6671547352,
+    "lognormal_break_even_window": [
+      1.749,
+      3.251
+    ],
+    "med_days_per_year": {
+      "at_1.5": 24.3846284631,
+      "at_1.625": 19.0096669866,
+      "at_1.75": 14.6215922553,
+      "at_1.875": 11.0946720443,
+      "at_2.0": 8.30379816109,
+      "at_2.125": 6.12955685368,
+      "at_2.25": 4.46193251909,
+      "at_2.75": 1.08761358079,
+      "at_2.875": 0.73735018383,
+      "at_3.0": 0.492712781545,
+      "at_3.125": 0.324494234175,
+      "at_3.25": 0.210614140473,
+      "at_3.375": 0.13471363581,
+      "at_3.5": 0.084909613848,
+      "at_standard_2.5": 2.26652784391
+    },
+    "reading": "the central comparison holds only when daily tails are near log-normal AND the threshold window is wide enough to admit roughly a major event day every few weeks at its low edge",
+    "year": 2022
+  },
   "A1_heavy_tail": {
     "by_case": {
       "nu10_sigma1.0": {
@@ -824,5 +1195,73 @@
     "spread_survives_dropping_top_1": true,
     "spread_survives_dropping_top_10": true,
     "year": 2022
+  },
+  "_provenance": {
+    "blocks": {
+      "A10_tail_breaking_point": {
+        "default": "model_implied",
+        "exceptions": {
+          "cross_utility_spread_p90_p10": "filed_data"
+        }
+      },
+      "A11_threshold_window": {
+        "default": "model_implied",
+        "exceptions": {
+          "cross_utility_spread_p90_p10": "filed_data"
+        }
+      },
+      "A1_heavy_tail": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "A1b_heavy_tail_matched": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "A2_mean_vs_median": {
+        "default": "model_implied",
+        "exceptions": {}
+      },
+      "A3_bunching_specs": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "A4_track2_trimmed": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "A5_ownership_large_only": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "A6_track1_power": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "A7_leave_one_state_out": {
+        "default": "filed_data",
+        "exceptions": {
+          "fleet_range_ratio": "model_implied",
+          "fleet_saidi_at_2_5": "model_implied"
+        }
+      },
+      "A8_stated_falsification_criterion": {
+        "default": "filed_data",
+        "exceptions": {
+          "cross_utility_spread_x": "filed_data",
+          "part1_rule_vs_cross_utility_spread": "model_implied"
+        }
+      },
+      "A9_leave_one_utility_out": {
+        "default": "filed_data",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
   }
 }

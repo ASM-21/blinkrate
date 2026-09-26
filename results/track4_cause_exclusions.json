@@ -1,4 +1,30 @@
 {
+  "_provenance": {
+    "blocks": {
+      "blocker": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "los": {
+        "default": "filed_data",
+        "exceptions": {}
+      },
+      "status": {
+        "default": "meta",
+        "exceptions": {}
+      },
+      "substituted_analysis": {
+        "default": "meta",
+        "exceptions": {}
+      }
+    },
+    "kinds": {
+      "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
+      "literature_model": "a payback model driven by published literature parameters",
+      "meta": "status, blockers, substitutions and audit counts",
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+    }
+  },
   "blocker": "FERC Form 1 vegetation management spending and utility outage cause codes are both unreachable: ferc.gov blocked, no mirrored Form 1 dataset on GitHub, no cause-coded outage table in EIA-861. Track 4 as scoped is not answerable from public data reachable here, and is not proxied.",
   "los": {
     "by_ownership": {
