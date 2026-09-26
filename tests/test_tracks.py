@@ -706,3 +706,21 @@ def test_stored_results_are_rounded_for_reproducibility():
     assert io._round_floats(0.12935628322404175) == io._round_floats(
         0.12935628322404166)
     assert io._round_floats({"x": [1.0, float("nan")]}) == {"x": [1.0, None]}
+
+
+def test_guard_rejects_long_quotations(tmp_path):
+    """Quotations from sources stay under 15 words. Paraphrase the rest."""
+    planted = ('The report found that "no alternative method reduced variability '
+               'for every utility in the sample and several made matters worse '
+               'for many of them over time."')
+    r = _guard_on(tmp_path, {"LITERATURE.md": lambda t: t + "\n\n" + planted + "\n"})
+    assert r.returncode == 1, r.stdout
+    assert "quotation of" in r.stdout
+
+
+def test_guard_allows_long_paper_titles(tmp_path):
+    title = ('"Tracking the Reliability of the U.S. Electric Power System: An '
+             'Assessment of Publicly Available Information Reported to State '
+             'Public Utility Commissions"')
+    r = _guard_on(tmp_path, {"LITERATURE.md": lambda t: t + "\n\nSee " + title + ".\n"})
+    assert "quotation of" not in r.stdout, r.stdout

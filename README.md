@@ -14,7 +14,9 @@ rather than the grid?**
 
 IEEE 1366 lets utilities remove "major event days" from reported SAIDI, using a
 threshold set 2.5 standard deviations up a log-normal fit to their own daily
-outage history. Nobody chose 2.5 by measuring anything. This repository works out
+outage history. The 2.5 was chosen by an IEEE working group comparing
+alternatives on donated utility data against qualitative criteria, not derived
+from any reliability outcome. This repository works out
 what that choice, and the discretion around it, is worth.
 
 **Short answer.** Under IEEE 1366's own log-normal model, re-evaluating the same
@@ -49,7 +51,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 74 tests
+pytest                           # 76 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 ```

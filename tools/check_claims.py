@@ -476,6 +476,25 @@ def main() -> int:
             if m:
                 failures.append(f"forbidden phrasing in {name}: {m.group(0)!r} - {why}")
 
+    # Quotations from sources stay under 15 words; anything longer is
+    # paraphrased. LITERATURE.md once quoted a 36-word passage from an LBNL
+    # report. Paper titles are exempt: a quoted string whose longer words are
+    # nearly all capitalised is treated as a title, not a quotation.
+    for name, text in prose.items():
+        for para in re.split(r"\n\s*\n", text):
+            flat = _flatten(re.sub(r"^>\s?", "", para, flags=re.MULTILINE))
+            for q in re.findall(r'"([^"]+)"', flat):
+                words = q.split()
+                if len(words) < 15:
+                    continue
+                long_words = [w for w in words if len(w.strip(".,:;()'")) >= 4]
+                capitalised = sum(w[:1].isupper() for w in long_words)
+                if long_words and capitalised / len(long_words) >= 0.8:
+                    continue  # a title
+                failures.append(f"quotation of {len(words)} words in {name}; "
+                                f"paraphrase anything 15 words or longer: "
+                                f"\"{' '.join(words[:8])}...\"")
+
     # House style: no em dashes anywhere in shipped prose. Checked on the raw
     # files, blockquotes included, since style applies to quoted text too.
     for name, text in prose.items():

@@ -298,9 +298,11 @@ move with the model.
 
 **The claim breaks between nu = 15 and nu = 30.** A Student-t with 15 degrees of
 freedom is only mildly heavier-tailed than a normal. And the prior work in
-LITERATURE.md cuts the wrong way for this repository: the IEEE letters on the
-2.5-beta method identify the *right tail* of daily SAIDI as the method's problem,
-which is what heavier-than-log-normal tails look like.
+LITERATURE.md cuts the wrong way for this repository: "Investigation of the 2.5
+Beta Methodology," working from actual daily data supplied by 12 utilities,
+reports that the right tail does not fit the log-normal, with catastrophic days
+pushing the threshold up. That does not measure the degree of departure, which
+is what would settle A10, but it points toward the failing side.
 
 **What this does.** This sentence was the README's headline for one session:
 

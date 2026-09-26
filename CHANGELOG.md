@@ -36,6 +36,10 @@ earlier draft should know which ones moved.
 - **Rescoped:** the comparison of one utility's threshold sweep against the
   spread across the industry holds under log-normal tails and fails between a
   Student-t with 30 and 15 degrees of freedom. It is now stated as conditional.
+- **Corrected:** the README opened by saying nobody chose 2.5 by measuring
+  anything. The IEEE working group compared alternative multipliers on donated
+  utility data and judged 2.5 best against qualitative criteria. What 2.5 was
+  not derived from is any reliability outcome, and the README now says that.
 - **Rebuilt:** the capital-deployment null was an underpowered 2022
   cross-section; it is now a within-utility design over 53 metering rollouts,
   powered to detect a 24% effect.

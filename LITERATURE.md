@@ -24,6 +24,18 @@ zero-SAIDI days materially moves the threshold across 24 utility units, and
 notes that catastrophic events cause "an unsuitable increase in the threshold
 for future years."
 
+The companion letter "Investigation of the 2.5 Beta Methodology" works from
+actual daily data supplied by 12 utilities and reports that the method's
+validity rests on daily SAIDI following the log-normal *in the tails*, and that
+the right tail of those utilities' data does not fit it.
+
+*What this does to A10.* It is the closest thing this repository has to direct
+evidence on which side of A10's breaking point reality falls. A10 shows the
+headline comparison holds only under near-log-normal tails; this letter, working
+from real daily series, says the right tail departs from log-normal. That does
+not pin the degree of departure, which is what A10 needs, but it points the same
+way the rescope already assumes.
+
 *What this does to Q1 and Q2.* Both are corroboration, not discovery. The
 self-referential property Q1 describes (a utility's exclusion allowance is set
 by its own history, so a bad year buys a larger allowance later) is the same
@@ -32,11 +44,10 @@ counterpart of a threshold effect that paper measured on 24 units.
 
 **Alternative thresholds help some utilities and hurt others.** LBNL's
 "Evaluating the Performance of the IEEE Standard 1366 Method for Identifying
-Major Event Days" tested modifications to the method and found that none
-"uniformly lowers the year-to-year variability in SAIDI without major events.
-Instead, for any given alternative, while it may lower the value of this metric
-for some utilities, it also increases it for other utilities (sometimes
-dramatically)."
+Major Event Days" tested modifications to the method and found that no
+alternative reduced the year-to-year variability of SAIDI-without-major-events
+across the board: each helped some utilities and made others worse, in some
+cases by a lot.
 
 *What this does to Q1.* It is the closest prior work to Q1's sweep and it
 reaches a compatible conclusion by a different route: they varied the method
@@ -70,11 +81,24 @@ for excluding them at all.
 with Q4's geographic placebo. Q4's contribution is separating the weather spike
 from the methodology drift empirically rather than assuming the split.
 
+**2.5 was a working-group judgment, not an arbitrary number.** The IEEE PES
+Distribution Reliability Working Group's drafting documents describe members
+donating daily outage data, comparing candidate methods and multipliers on it,
+and finding none clearly superior to 2.5. A contemporaneous teaching account
+gives the criteria as qualitative: not too many or too few major event days,
+the right days classified, and consistency across a utility's subdivisions.
+
+*What this does to the README.* An earlier README said nobody chose 2.5 by
+measuring anything. That overstated it. The value was compared against
+alternatives on real data; what it was not derived from is any reliability
+outcome, and the criteria it was judged on were qualitative. The README now
+says that instead.
+
 **Aggregation is a known comparability problem with a chosen answer.** APPA's
-annual reliability benchmarking reports state that "to address the issues
-associated with comparability, each utility's reliability statistics are
-weighted based on customer count when aggregated." APPA also applies its own
-major-event threshold, distinct from IEEE 1366's, in the same reports.
+annual reliability benchmarking reports explain that, to make utilities
+comparable, each utility's statistics are weighted by customer count when
+aggregated. APPA also applies its own major-event threshold, distinct from
+IEEE 1366's, in the same reports.
 
 *What this does to Q8.* The question is recognised and a convention exists. What
 the search did not turn up is a published measurement of how much the national
@@ -119,6 +143,10 @@ further.
 
 ## Sources
 
+- "Investigation of the 2.5 Beta Methodology," IEEE letter, working from daily
+  data supplied by 12 utilities
+- IEEE PES Distribution Reliability Working Group, P1366 major event day
+  language draft (2002) and major event white paper (2002)
 - "2.5 Beta Methodology: Impact of 'Zero SAIDI' Days," *IEEE Transactions on
   Power Delivery*, 2013. DOI 10.1109/TPWRD.2013.2243918
 - "Investigation of 2.5 Beta Methodology" and "Major event day segmentation,"
