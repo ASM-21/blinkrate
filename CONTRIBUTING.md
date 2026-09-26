@@ -1,5 +1,13 @@
 # Contributing
 
+## Using it on your own numbers
+
+`python tools/utility_profile.py --pair SAIDI_WITH SAIDI_WITHOUT --tails` runs
+any filed pair through the engine, including utilities outside the EIA-861
+panel, and shows how much the counterfactual depends on the tail assumption.
+If you have real daily SAIDI for a utility, contribution 2 below is the most
+valuable thing anyone could add.
+
 ## Good first contributions
 
 Ordered by how much each would change a conclusion. Each names a finish line and

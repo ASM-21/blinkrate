@@ -724,3 +724,27 @@ def test_guard_allows_long_paper_titles(tmp_path):
              'Public Utility Commissions"')
     r = _guard_on(tmp_path, {"LITERATURE.md": lambda t: t + "\n\nSee " + title + ".\n"})
     assert "quotation of" not in r.stdout, r.stdout
+
+
+def test_profile_any_pair_with_tails():
+    """--pair works for utilities outside the panel, and --tails shows the
+    sweep shrinking as tails get heavier while the filed value is reproduced."""
+    import re
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "utility_profile.py"),
+                        "--pair", "200", "120", "--tails"],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    sweeps = [float(x) for x in re.findall(r"([\d.]+)x\s*$", r.stdout, re.MULTILINE)]
+    assert len(sweeps) == 4
+    assert all(a > b for a, b in zip(sweeps, sweeps[1:])), sweeps
+    # every row reproduces the filed without-MED value at beta 2.5
+    assert r.stdout.count("120.0") >= 4
+    assert "attack A10" in r.stdout
+
+
+def test_profile_pair_outside_the_model_is_reported_not_crashed():
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "utility_profile.py"),
+                        "--pair", "120", "120"],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0
+    assert "outside what IEEE 1366's own log-normal model can" in r.stdout

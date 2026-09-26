@@ -44,6 +44,12 @@ earlier draft should know which ones moved.
   cross-section; it is now a within-utility design over 53 metering rollouts,
   powered to detect a 24% effect.
 
+### Tools
+
+`tools/utility_profile.py` profiles any EIA-861 utility by name or id, or any
+filed pair with `--pair`, and with `--tails` shows how the counterfactual sweep
+shrinks under heavier-tailed daily outages while reproducing the filed value.
+
 ### Reproducibility
 
 Every committed result is regenerated in CI and must match byte for byte.

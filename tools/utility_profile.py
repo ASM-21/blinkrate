@@ -4,6 +4,8 @@
     python tools/utility_profile.py --name "PPL"
     python tools/utility_profile.py --id 14715 --state PA --figure
     python tools/utility_profile.py --name "Duke Energy" --peers
+    python tools/utility_profile.py --pair 200 120               # any filed pair
+    python tools/utility_profile.py --pair 200 120 --tails       # and its tail sensitivity
 
 Takes the (SAIDI with MED, SAIDI without MED) pair a utility actually filed and
 reports what it would have filed at other threshold values, where it sits
@@ -137,6 +139,66 @@ def make_figure(prof: pd.DataFrame, label: str) -> Path:
     return save_figure(fig, f"profile_{slug}")
 
 
+def profile_pair(saidi_with: float, saidi_without: float, tails: bool) -> int:
+    """Counterfactual sweep for any (SAIDI with MED, SAIDI without MED) pair.
+
+    For utilities not in the EIA-861 panel, or for someone checking their own
+    filing. With --tails it repeats the sweep under heavier-tailed daily
+    outages, re-inverting dispersion each time so every row reproduces the same
+    filed pair, which is attack A10 applied to one utility.
+    """
+    if not (saidi_with > 0 and 0 <= saidi_without <= saidi_with):
+        print("need SAIDI_WITH > 0 and 0 <= SAIDI_WITHOUT <= SAIDI_WITH")
+        return 1
+    r = saidi_without / saidi_with
+    print(f"\nfiled: {saidi_with:.1f} with major event days, {saidi_without:.1f} "
+          f"without  |  retained share {r:.3f}, excluded {100 * (1 - r):.1f}%\n")
+
+    sigma = fs.implied_sigma_fs(np.array([r]))[0]
+    if not np.isfinite(sigma):
+        print("This pair is outside what IEEE 1366's own log-normal model can "
+              "produce\n(it excludes less than any non-negative dispersion "
+              "would, or more than the\ncalibration grid reaches). No "
+              "counterfactual is computed; that is a finding, not a failure.")
+        return 0
+
+    rows = [("log-normal (IEEE 1366's assumption)", None)]
+    if tails:
+        rows += [("Student-t, nu = 30", 30.0), ("Student-t, nu = 15", 15.0),
+                 ("Student-t, nu = 5", 5.0)]
+    betas = np.array([1.5, 2.0, 2.5, 3.0])
+    print(f"{'daily outage distribution':38s}" +
+          "".join(f"{'beta ' + str(b):>11s}" for b in betas) + f"{'sweep':>9s}")
+
+    from blinkrate.track8_falsification import _tail_surface
+    rng = np.random.default_rng(20260926)
+    grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+    for label, nu in rows:
+        if nu is None:
+            curve = fs.retained_share_fs(sigma, betas).ravel()
+        else:
+            surf = _tail_surface(nu, grid, betas, 250, rng)
+            r25 = surf[:, 2]
+            order = np.argsort(r25)
+            if not (r25.min() <= r <= r25.max()):
+                print(f"{label:38s}  outside this model's range")
+                continue
+            sig = np.interp(r, r25[order], grid[order])
+            curve = np.array([np.interp(sig, grid, surf[:, j])
+                              for j in range(betas.size)])
+        vals = saidi_with * curve
+        print(f"{label:38s}" + "".join(f"{v:11.1f}" for v in vals) +
+              f"{vals[-1] / vals[0]:8.2f}x")
+
+    print("\nEvery row reproduces the filed pair at beta 2.5 by construction. "
+          "How far the\nother columns spread is the part that depends on the "
+          "tail assumption; see\nFALSIFICATION.md, attack A10." if tails else
+          "\nModel-implied under IEEE 1366's own log-normal assumption. Add "
+          "--tails to see\nhow much the sweep depends on it (FALSIFICATION.md, "
+          "attack A10).")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--name", help="substring of the utility name")
@@ -145,9 +207,16 @@ def main() -> int:
     ap.add_argument("--figure", action="store_true", help="write a figure")
     ap.add_argument("--peers", action="store_true",
                     help="list the nearest same-size peers in the latest year")
+    ap.add_argument("--pair", nargs=2, type=float,
+                    metavar=("SAIDI_WITH", "SAIDI_WITHOUT"),
+                    help="profile any filed pair instead of an EIA-861 utility")
+    ap.add_argument("--tails", action="store_true",
+                    help="with --pair, repeat the sweep under heavier tails")
     args = ap.parse_args()
+    if args.pair:
+        return profile_pair(args.pair[0], args.pair[1], args.tails)
     if not args.name and args.id is None:
-        ap.error("give --name or --id")
+        ap.error("give --name, --id or --pair")
 
     full = ingest.analysis_sample()
     sub = select(full, args.name, args.id, args.state)

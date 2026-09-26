@@ -51,9 +51,10 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 76 tests
+pytest                           # 78 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
+python tools/utility_profile.py --pair 200 120 --tails   # any filed pair
 ```
 
 ---
