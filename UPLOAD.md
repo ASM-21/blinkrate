@@ -3,12 +3,12 @@
 Everything here is already done except the push, which needs your GitHub
 credentials. Commits are authored as `Andrew Morrissey
 <77601626+ASM-21@users.noreply.github.com>`, the address GitHub attributes to
-ASM-21. Tags `v1.0.0` and `v1.1.0` are annotated and point at verified commits.
+ASM-21. Tags `v1.0.0`, `v1.1.0` and `v1.2.0` are annotated and point at verified commits.
 
 ## 1. Verify from nothing, one last time
 
 ```bash
-tar -xzf blinkrate.tar.gz && cd blinkrate
+tar -xzf blinkrate-v1.2.0.tar.gz && cd blinkrate
 ./verify.sh            # isolated venv, cold install, full regeneration
 ./verify.sh --fast     # reuses installed numpy/pandas/scipy if memory is tight
 ```
@@ -40,7 +40,7 @@ git push origin --tags
 Suggested repository description:
 
 > How much of a US utility's reported reliability number is the measurement rule
-> rather than the grid? EIA-861, 2013-2018 and 2022, eleven adversarial attacks.
+> rather than the grid? EIA-861, 2013-2018 and 2022, thirteen adversarial attacks.
 
 Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 `distribution-grid`, `falsification`, `reproducible-research`.
@@ -50,7 +50,7 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 - **CI.** Open the Actions tab and confirm the first run is green. It rebuilds
   the calibration cache bit for bit, regenerates every result, fails on any byte
   difference, then runs the tests and the claims guard.
-- **Release.** Create a GitHub release from tag `v1.1.0` and paste the v1.1.0
+- **Release.** Create a GitHub release from tag `v1.2.0` and paste the v1.2.0
   section of CHANGELOG.md as the notes.
 - **DOI (optional).** Enabling the repository in Zenodo *before* creating the
   release mints a DOI from `.zenodo.json`. Add the DOI badge to the README and
@@ -74,5 +74,5 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 ## If something fails after pushing
 
 Do not force-push over a published tag. Fix forward in a new commit, re-run
-`./verify.sh`, and cut `v1.1.1`. CHANGELOG.md is where a reader looks to find out
+`./verify.sh`, and cut `v1.2.1`. CHANGELOG.md is where a reader looks to find out
 what moved, so every correction goes there first.

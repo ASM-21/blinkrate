@@ -8,7 +8,7 @@ authors:
     orcid: "https://orcid.org/0009-0004-8758-2687"
 repository-code: "https://github.com/ASM-21/blinkrate"
 url: "https://github.com/ASM-21/blinkrate"
-version: 1.1.0
+version: 1.2.0
 date-released: 2026-09-26
 license: Apache-2.0
 keywords:
@@ -21,21 +21,22 @@ abstract: >-
   IEEE 1366 permits utilities to exclude "major event days" from reported SAIDI
   using a threshold set 2.5 standard deviations up a log-normal fit to their own
   daily outage history. Using 6,245 utility-state-years of EIA-861 reliability
-  filings from 2013-2018 and 2022, this work inverts the closed-form exclusion
-  identity r = Phi(beta - sigma) to show that re-evaluating the same filed
-  outage records at other threshold values moves customer-weighted fleet SAIDI
-  over a 7.66x range; that 29.8% of filings report no major event days at all
-  (12.0x excess mass over a polynomial counterfactual); that between 40 and 57%
-  of large investor-owned utilities change performance quartile depending on
-  which of the two published series is used to rank them; and that a
-  within-utility design covering 53 advanced-metering rollouts finds no
-  detectable reliability effect in a design powered to detect 24%. A geographic
-  placebo separates weather-driven spikes in the excluded portion from a slower
-  methodological drift into using the exclusion at all, and a
-  leave-one-state-out jackknife shows that while the underlying deterioration
-  trend is national, the customer-weighted claim that most reported
-  deterioration falls in the excluded portion is substantially a Gulf-coast
-  result. The threshold
-  sensitivity is model-implied and inherits IEEE 1366's own log-normality
-  assumption; an adversarial track shows its direction survives heavier-tailed
-  daily outage distributions while its magnitude does not.
+  filings from 2013-2018 and 2022, this work finds, directly from the filings,
+  that between 40 and 57% of large investor-owned utilities change performance
+  quartile depending on which of the two published SAIDI series is used to rank
+  them, a reversal that survives stratification by storm exposure, and that six
+  defensible rules for aggregating the same filings give national SAIDI spanning
+  2.07x. It inverts the closed-form exclusion identity r = Phi(beta - sigma) to
+  re-evaluate filed outage records at other thresholds: on the range of
+  thresholds the literature supports, one to fifteen major event days a year,
+  fleet SAIDI moves 1.52x to 3.16x depending on the daily-outage tail model. A
+  comparison between the threshold's effect on one utility and the spread
+  between utilities, reported in earlier versions, fails on every
+  evidence-grounded threshold window and is withdrawn. Of all filings, 29.8%
+  report no major event days; for large IEEE-standard filers the rate is
+  consistent with genuine zero-event years, and the excess is concentrated among
+  smaller utilities and self-defined-standard filers. A within-utility design
+  covering 53 advanced-metering rollouts finds no detectable reliability effect
+  in a design powered to detect 24%. A geographic placebo separates
+  weather-driven spikes in the excluded portion from a slower methodological
+  drift into using the exclusion at all.

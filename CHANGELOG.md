@@ -1,5 +1,73 @@
 # Changelog
 
+## v1.2.0 (2026-09)
+
+A second literature pass, run to answer the two questions attacks A10 and A11
+left open, decided one of them. The repository's central comparison is
+withdrawn, and its thesis is restated on filed data only.
+
+### Withdrawn
+
+- **The comparison between the threshold's effect on one utility and the
+  spread between utilities** (attack A13). v1.1.0 stated it as holding only in
+  one corner of two analyst choices, the tails of daily outages and the width of
+  the threshold window. The literature says the working group designed 2.5 as a
+  frequency target, so realistic alternatives are other frequencies, and it
+  brackets them at one to fifteen major event days a year. On every such window,
+  under every tail model tested including the standard's own log-normal, one
+  utility's sweep is smaller than the spread between utilities. The best ratio
+  anywhere is 0.86. By the falsification criterion FINDINGS commits to,
+  part one of the central claim fails, and README and FINDINGS now withdraw it in
+  a blockquote.
+
+### Restated
+
+- **The central claim, on filed data only.** Which of the two published series
+  a benchmark ranks on reorders half the large-utility field, surviving
+  stratification by storm exposure; how the national figure is averaged moves it
+  2.07x, surviving removal of the ten largest contributors. Neither depends on a
+  distributional assumption.
+- **Q1's magnitude on realistic windows.** On one to fifteen major event days a
+  year the threshold moves fleet SAIDI 1.52x to 3.16x depending on the tail model,
+  against the 7.66x the log-normal model gives over a sweep wider than any
+  alternative in the literature.
+- **Q2's zero-exclusion mass point.** EIA's filing FAQ makes an identical pair
+  the prescribed way to report removing nothing. Against the standard's own
+  design frequency, large IEEE filers (12.2%) sit inside the range genuine
+  zero-event years produce (10.3% nominal, at most 13.5%). The excess is
+  concentrated in smaller utilities and self-defined-standard filers.
+
+### Added
+
+- **Attack A12**, Laplace tails in daily log-SAIDI, the family the working
+  group's excess of major event days points to. Fails at every window.
+- **Attack A13**, evidence-grounded threshold windows. The decisive attack.
+- **`zero_exclusion_benchmark()`** in track 3, filed shares against the
+  standard's design frequency, by reporting standard and size.
+- **`tools/daily_tail_test.py`**, which tests the log-normal assumption on any
+  daily outage series, including raw EAGLE-I county files. Validated on
+  synthetic series of known shape before any real data exists.
+- **LITERATURE.md second pass**, with the working group's own report of two to
+  eight major event days a year, Fumagalli et al. (2006) as contrary evidence of
+  thinner-than-normal tails, and the EIA FAQ.
+
+### Corrected
+
+- **A calibration check that turned out not to discriminate.** US event-level
+  Pareto tail indices of 0.73 to 1.47 (Ahmad and Dobson 2025) first looked like
+  confirmation of Laplace tails. Validating the new tail tool showed a plain
+  log-normal gives a Hill index of 1.23, inside that range. The evidence is now
+  described as consistent with, not establishing, heavier tails, and the tool
+  reports the Hill index as not diagnostic on its own.
+- **A mistaken ordering of tail weight.** The first draft of A12 described
+  Laplace tails as lighter than any Student-t. That holds only beyond about 40
+  standard deviations; at the standard's 2.5 Laplace implies 5.32 major event
+  days a year against 3.09 for t with 15 degrees of freedom.
+- **FINDINGS still said the 2.5 was "not derived from anything"**, the overclaim
+  v1.0.0 corrected in the README only. It now says 2.5 was a consensus frequency
+  target, not derived from any reliability outcome. FINDINGS also opened by
+  counting seven questions; there are eight.
+
 ## v1.1.0 (2026-09)
 
 A second condition on the central comparison, and filed data separated from

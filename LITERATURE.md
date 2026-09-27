@@ -107,6 +107,141 @@ aggregator.
 
 ---
 
+## Second pass: the tails and the window (v1.2.0)
+
+Run after attacks A10 and A11 left the central comparison conditional on two
+questions the data could not answer: how heavy are the tails of daily outages,
+and which threshold windows are realistic? Both turned out to have partial
+answers in the literature, and one of them decided the comparison.
+
+### On the tails: mixed, and weaker than it first looked
+
+**The method's own authors saw more major event days than the model predicts.**
+Warren, Bouford, Christie and colleagues, the working group paper that
+introduced the method ("Classification of Major Event Days," IEEE PES General
+Meeting 2003), report that on donated utility data the counts, "from two to
+eight, are seen", against the 2.3 a year the log-normal model implies. They
+attribute this to real data not conforming exactly to the log-normal.
+
+*What this changed.* It is the strongest direct evidence of misfit, and it
+points to heavier tails: a Laplace model of daily log-SAIDI predicts 5.32 a year at
+beta 2.5, inside that range, where log-normal gives 2.27. It is not clean
+evidence of tail shape, because the threshold is fitted on earlier years and
+non-stationarity also produces excess exceedances. Attack A12 is built on it.
+
+**An industry guide reports the same pattern at utility scale.** The Canadian
+Electricity Association's Major Event Day Determination Reference Guide (2015)
+gives one utility's whole-province count as eight days above threshold in 2014
+and fifteen in 2013, and says real data "will likely not pass the p-test for
+normality". *What this changed.* It supplies the loose end of the realistic
+frequency window in attack A13.
+
+**The only formal fit test found cuts the other way.** Fumagalli, Lo Schiavo,
+Salvati and Secchi (IEEE Transactions on Power Systems 21(2), 2006) ran
+Shapiro-Wilk tests on log daily SAIDI across 278 Italian districts. Normality
+was rejected in most districts, but the distributions looked "fatter in the
+middle and thinner in the tails than a standard normal". *What this changed.*
+It is the main contrary evidence, and this file records it as such. It concerns
+districts rather than utilities, one year at a time, under Italian rules that
+exclude interruptions of three minutes or less, so it does not transfer
+directly. It does mean the tail question is not settled against log-normality.
+
+**Event-level Pareto tails, and why they discriminate less than they seem to.**
+Ahmad and Dobson ("Logarithmic resilience risk metrics that address the huge
+variations in blackout cost," IEEE Transactions on Power Systems 40(6), 2025)
+measure tail indices of event customer cost for five US utilities between 0.73
+and 1.47, all below 2. The companion SALEDI paper (arXiv:2602.07684) reports a
+likelihood-ratio test finding "insufficient evidence to prefer one over the
+other" between Pareto and truncated log-normal. *What this changed.* It
+suggested the Laplace family for A12. Then this repository's own tail test,
+validated on synthetic data, gave a plain log-normal with a log-SD of 1.8 a Hill
+index of 1.23, inside the measured range. A wide log-normal mimics a Pareto tail
+under the Hill estimator. So this evidence is consistent with Laplace tails and
+does not establish them, and `tools/daily_tail_test.py` reports the Hill index as
+not diagnostic on its own.
+
+**Earlier IEEE work, abstract only.** Hann and Daly ("Investigation of the 2.5
+Beta Methodology," IEEE Transactions on Power Systems, 2011) report, for data
+from 12 utilities, problems when "the right tail of utility data sets do not fit
+the log-normal distribution". Numeric results were not accessible.
+
+**A test that should not be relied on.** A Utah Division of Public Utilities
+memo in PacifiCorp's Docket 10-035-114 (2010) reports failing to reject
+log-normality with a Kolmogorov-Smirnov test, but only after removing box-plot
+outliers first. Removing the tail before testing the tail leaves nothing to test,
+and this file cites it only as an example of that.
+
+**Transmission blackouts, indirect.** The blackout-size literature (Carreras,
+Newman and Dobson 2016; Hines and colleagues 2009) finds power-law regions in
+North American transmission events, with Hines reporting only moderate support.
+Different system, different events; it bears on tails only by analogy.
+
+### On the window: 2.5 was a frequency, so alternatives are frequencies
+
+**Christie defined major event days by how often they occur.** "Statistical
+classification of major event days in distribution system reliability" (IEEE
+Transactions on Power Delivery 18(4), 2003) proposes defining them "in terms of
+average frequency of occurrence". The 2.5 multiplier is then just the Gaussian
+quantile for a target of about 2.3 days a year, chosen by working-group
+consensus, as the CEA guide also records.
+
+*What this changed.* Everything about the window. Attack A11 had varied beta
+symmetrically and left the reader to judge which window was realistic. Read as a
+frequency, the literature brackets it: Italy's regulator guarantees one excluded
+day a year, the working group observed two to eight, and the Canadian utility
+logged fifteen. Converted through the standard's own model, the widest of these
+runs from beta 1.74 to 2.78. On every such window, under
+every tail model, the central comparison fails (attack A13, best ratio
+0.86). This is the result that withdrew it.
+
+No primary source was found listing which multipliers, such as 2.0 or 3.0, were
+compared on donated data in 2003. The alternatives documented are methods and
+frequencies: bootstrap and distribution-fitting definitions, robust estimation
+for catastrophic days (explored and found not to work well in practice), two-day
+rolling windows, fixed percentages of customers, and national rules abroad.
+
+### On zero exclusion: EIA's own instructions
+
+**An identical pair is the prescribed way to report removing nothing.** EIA's
+FAQ for Form 861 tells a utility that removes no data to report the same values
+under both headings; filing identical values, it says, means "you are telling us
+exactly that". *What this changed.* Q2's mass point is a reporting practice
+with a documented meaning, not an anomaly in the data. The open question became
+how much of it is genuine years with no qualifying day, which the standard's
+design frequency bounds: about 10.3% of years, at most
+13.5% on the working group's observed rates. Large IEEE filers sit at
+12.2%, inside that range, so Q2 was rescoped: the non-segmentation reading
+holds for small and self-defined-standard filers, not for large IEEE ones.
+
+### On data
+
+**Daily outage data exists, just not anywhere this repository can reach.** ORNL's
+EAGLE-I county outage record (Brelsford and colleagues, Scientific Data 2024,
+DOI 10.1038/s41597-024-03095-5) gives customers out per county every 15 minutes
+from 2014 to 2022, at 1.1 to 1.2 GB a year, distributed through Globus and
+Figshare. A GitHub repository, SC-Lab-Go/SMCDC-EAGLE-I, documents the files but
+does not host them. EAGLE-I approximates customer-minutes rather than measuring
+SAIDI, and it omits zero rows without distinguishing them from gaps. *What this
+changed.* `tools/daily_tail_test.py` accepts an EAGLE-I file directly, so the
+tail question is one command away for anyone with the data.
+
+**The 2019-2021 filings are in PUDL.** Catalyst Cooperative's PUDL publishes the
+EIA-861 reliability table as `core_eia861__yearly_reliability`, distributed
+through S3, Kaggle and Zenodo rather than GitHub, so still unreachable here.
+PUDL issue 4907 reports a column swap in the 2024 rows only. No GitHub mirror of
+the raw 2019-2021 reliability workbooks was found by searching their file names.
+
+### Closest prior work to the rank reversal, now cited
+
+Eto and LaCommare's assessment of utility reporting practices (IEEE PES General
+Meeting 2012; LBNL-1092E, 2008) compared IEEE and non-IEEE major event
+segmentation for nine utilities and found a regional average SAIDI without major
+events higher than the average with them, because different utilities
+contributed to each. Larsen, LaCommare, Eto and Sweeney (LBNL-188741, 2015)
+regress weather on reported SAIDI. Neither measures rank reversal or separates
+weather from methodology geographically, but both are the nearest neighbours of
+Q3 and Q4.
+
 ## What the search did not find
 
 Stated as "not found," not as "does not exist." These are the pieces worth
@@ -125,6 +260,13 @@ further.
 4. **The geographic placebo.** Separating weather-driven spikes from
    methodological drift using a storm-track state list applied across every year
    transition.
+
+A second, deeper pass in v1.2.0 searched IEEE PES working-group documents, LBNL,
+the CEA guide, EIA's filing guidance, PUDL, and recent resilience-metric papers
+for each of the four items above. None was found. The nearest neighbours are now
+cited in the second-pass section: Eto and LaCommare for rank reversal, Larsen and
+colleagues for weather attribution. Absence from two searches is still not
+absence from the literature.
 
 ## What changed in this repository because of the search
 
@@ -162,3 +304,31 @@ further.
   arXiv:2602.07684
 - IEEE Std 1366-2012, *IEEE Guide for Electric Power Distribution Reliability
   Indices*
+- Warren, C. A., Bouford, J. D., Christie, R. D., et al. "Classification of
+  Major Event Days." IEEE PES General Meeting, 2003, vol. 1, pp. 466-471
+- Christie, R. D. "Statistical classification of major event days in
+  distribution system reliability." IEEE Transactions on Power Delivery 18(4),
+  2003, pp. 1336-1341
+- Canadian Electricity Association. "Major Event Day Determination Reference
+  Guide." 2015
+- Fumagalli, E., Lo Schiavo, L., Salvati, S., Secchi, P. "Statistical
+  Identification of Major Event Days: An Application to Continuity of Supply
+  Regulation in Italy." IEEE Transactions on Power Systems 21(2), 2006
+- Hann, M. and Daly, P. "Investigation of the 2.5 Beta Methodology." IEEE
+  Transactions on Power Systems, 2011
+- Ahmad and Dobson. "Logarithmic resilience risk metrics that address the huge
+  variations in blackout cost." IEEE Transactions on Power Systems 40(6), 2025.
+  DOI 10.1109/TPWRS.2025.3612225
+- Carreras, B. A., Newman, D. E., Dobson, I. "North American blackout time
+  series statistics and implications for blackout risk." IEEE Transactions on
+  Power Systems 31(6), 2016. DOI 10.1109/TPWRS.2015.2510627
+- Utah Division of Public Utilities. Memorandum, Docket 10-035-114, 2010
+- US Energy Information Administration. FAQs for Survey Form EIA-861
+- Brelsford, C., et al. "A dataset of recorded electricity outages by United
+  States county 2014-2022." Scientific Data, 2024.
+  DOI 10.1038/s41597-024-03095-5
+- Eto, J. and LaCommare, K. "A Quantitative Assessment of Utility Reporting
+  Practices for Reporting Electric Power Distribution Events." IEEE PES General
+  Meeting, 2012; and LBNL-1092E, 2008
+- Larsen, P., LaCommare, K., Eto, J., Sweeney, J. LBNL-188741, 2015
+- Catalyst Cooperative. PUDL, table `core_eia861__yearly_reliability`

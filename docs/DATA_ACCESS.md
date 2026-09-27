@@ -105,8 +105,25 @@ distinction the track was scoped to make. Stated in the module and in FINDINGS.
 
 **Daily SAIDI series (track 3).** Not a proxy problem, a publication problem:
 EIA-861 reports annual aggregates only, and no utility publishes daily SAIDI at
-national scale. This is why track 3 inverts the exclusion identity rather than
-recomputing thresholds. See `docs/derivation.md`.
+national scale. This is why track 3 inverts an identity instead of recomputing
+thresholds. The closest public substitute is ORNL's EAGLE-I county outage record
+(Brelsford et al., Scientific Data 2024, DOI 10.1038/s41597-024-03095-5):
+customers out per county every 15 minutes, 2014 to 2022. It is distributed
+through Globus and Figshare at 1.1 to 1.2 GB a year, neither reachable from the
+build environment and too large to vendor. The GitHub repository
+`SC-Lab-Go/SMCDC-EAGLE-I` documents the files but does not host them.
+`tools/daily_tail_test.py` reads an EAGLE-I file directly for anyone who has it.
+Two caveats travel with the data: county customers-out approximates
+customer-minutes rather than measuring SAIDI, and EAGLE-I omits zero rows without
+distinguishing them from collection gaps.
+
+**The 2019-2021 filings.** Catalyst Cooperative's PUDL publishes the EIA-861
+reliability table as `core_eia861__yearly_reliability`, including these years,
+through S3, Kaggle and Zenodo rather than GitHub. Searching the raw workbook file
+names (`Reliability_2019.xlsx` and so on), the method that found 2016-2018, turned
+up no GitHub mirror. PUDL issue 4907 reports a column swap affecting its 2024 rows
+only; anyone loading through PUDL should check the column order against EIA's
+raw workbook, which is what `ingest.py`'s position-based column map exists to do.
 
 ## Track 5 literature parameters
 

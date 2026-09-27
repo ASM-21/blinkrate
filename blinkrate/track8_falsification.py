@@ -731,6 +731,235 @@ def a11_threshold_window(year: int = 2022, min_customers: int = 100_000,
     }
 
 
+def _laplace_surface(sigma_grid: np.ndarray, betas: np.ndarray, n_sims: int,
+                     rng: np.random.Generator) -> np.ndarray:
+    """A10's `_tail_surface`, with Laplace-distributed daily log-SAIDI.
+
+    A Laplace distribution in logs has exponential tails on both sides, which
+    is exactly a Pareto tail in the level: P(X > x) ~ x^(-alpha) with
+    alpha = 1 / b for Laplace scale b. Scaled here so its standard deviation is
+    sigma, matching every other surface, which gives b = sigma / sqrt(2) and
+    alpha = sqrt(2) / sigma. The utility still follows the standard and fits a
+    log-normal; only reality changes.
+
+    Kept as its own function rather than a branch of `_tail_surface` so that
+    A10 and A11 consume their random streams exactly as before and stay
+    byte-identical.
+    """
+    days, window = rm.DAYS_PER_YEAR, rm.DAYS_PER_YEAR * 5
+    out = np.empty((sigma_grid.size, betas.size))
+    for i, sigma in enumerate(sigma_grid):
+        logs = rng.laplace(0.0, sigma / np.sqrt(2.0), (n_sims, window))
+        mu_hat = logs.mean(axis=1, keepdims=True)
+        sd_hat = logs.std(axis=1, ddof=1, keepdims=True)
+        year = np.exp(logs[:, :days])
+        total = year.sum(axis=1)
+        for j, b in enumerate(betas):
+            kept = np.where(logs[:, :days] <= mu_hat + b * sd_hat, year, 0.0)
+            out[i, j] = np.median(kept.sum(axis=1) / total)
+    return np.minimum.accumulate(out, axis=0)
+
+
+def _own_sweeps(surf: np.ndarray, sigma_grid: np.ndarray, col: dict,
+                r_obs: np.ndarray, lo: float, hi: float):
+    """Fair re-inversion (as in A1b/A10): match each utility's filed retained
+    share at 2.5 under this distribution, then read its sweep from lo to hi."""
+    r25 = surf[:, col[2.5]]
+    order = np.argsort(r25)
+    inside = (r_obs >= r25.min()) & (r_obs <= r25.max())
+    sig = np.interp(r_obs[inside], r25[order], sigma_grid[order])
+    r_lo = np.interp(sig, sigma_grid, surf[:, col[lo]])
+    r_hi = np.interp(sig, sigma_grid, surf[:, col[hi]])
+    return r_hi / np.clip(r_lo, 1e-9, None), sig
+
+
+def _central_comparison_inputs(year: int, min_customers: int):
+    df = ingest.analysis_sample()
+    d = df[(df["year"] == year) & (df["ownership_class"] == "IOU")
+           & (df["customers"] >= min_customers)]
+    reported = d["saidi_without"].to_numpy()
+    spread = float(np.percentile(reported, 90) / np.percentile(reported, 10))
+    return d["retained_share"].to_numpy(), spread
+
+
+# Ahmad & Dobson (IEEE Trans. Power Systems 40(6), 2025), Table I: tail indices
+# of event customer cost for five US utilities, all below 2.
+AHMAD_DOBSON_ALPHAS = (0.73, 0.75, 0.83, 1.00, 1.47)
+
+
+def a12_pareto_tail(year: int = 2022, min_customers: int = 100_000,
+                    n_sims: int = 250, seed: int = 112) -> dict:
+    """Does the central comparison survive the tail class US data actually show?
+
+    A10 used Student-t tails, a convenient family nobody has measured for
+    distribution outages. The evidence that exists points somewhere specific:
+    event-level customer-minute data for five US utilities have Pareto tails in
+    the level with index alpha between 0.73 and 1.47 (Ahmad & Dobson 2025). A
+    Pareto tail in the level is an exponential tail in the log, so the matching
+    model for daily log-SAIDI is Laplace, not Student-t.
+
+    The Laplace scale is not hand-picked. It is set by each utility's own
+    matched dispersion, which implies alpha = sqrt(2) / sigma per utility, and
+    that implied alpha is reported against the measured range as a calibration
+    check. Windows are varied as in A11, because the claim depends on both.
+    """
+    rng = np.random.default_rng(seed)
+    r_obs, spread = _central_comparison_inputs(year, min_customers)
+    half_widths = np.array([0.25, 0.5, 0.75, 1.0])
+    betas = np.unique(np.round(np.concatenate(
+        [[2.5], 2.5 - half_widths, 2.5 + half_widths]), 4))
+    col = {float(b): i for i, b in enumerate(betas)}
+    sigma_grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+    surf = _laplace_surface(sigma_grid, betas, n_sims, rng)
+
+    rows = {}
+    sig_at_25 = None
+    for h in half_widths:
+        lo, hi = round(2.5 - h, 4), round(2.5 + h, 4)
+        sweep, sig = _own_sweeps(surf, sigma_grid, col, r_obs, lo, hi)
+        sig_at_25 = sig
+        med = float(np.median(sweep))
+        rows[f"h_{h}"] = {"window": [lo, hi], "median_own_sweep_x": med,
+                          "ratio_to_spread": med / spread,
+                          "claim_holds": bool(med > spread)}
+
+    implied_alpha = np.sqrt(2.0) / np.clip(sig_at_25, 1e-9, None)
+    lo_a, hi_a = min(AHMAD_DOBSON_ALPHAS), max(AHMAD_DOBSON_ALPHAS)
+    # Where each model puts its mass matters more than its asymptotic order.
+    # Laplace is lighter than any Student-t only beyond roughly 40 standard
+    # deviations; across the band that decides this comparison it carries more
+    # mass than t with 15 df. Expressed as the major event days a year each
+    # model implies at the standard's 2.5, which is directly comparable to the
+    # working group's observed two to eight.
+    def per_year(sf: float) -> float:
+        return float(rm.DAYS_PER_YEAR * sf)
+
+    z = 2.5
+    med_rates = {
+        "lognormal": per_year(stats.norm.sf(z)),
+        "t_nu30": per_year(stats.t.sf(z * np.sqrt(30 / 28), 30)),
+        "t_nu15": per_year(stats.t.sf(z * np.sqrt(15 / 13), 15)),
+        "laplace": per_year(0.5 * np.exp(-z * np.sqrt(2.0))),
+    }
+    return {
+        "year": year,
+        "cross_utility_spread_p90_p10": spread,
+        "by_window": rows,
+        "holds_at_any_window": bool(any(v["claim_holds"] for v in rows.values())),
+        "med_days_per_year_at_2_5": med_rates,
+        "working_group_observed_range": [2.0, 8.0],
+        "implied_pareto_alpha": {
+            "median": float(np.median(implied_alpha)),
+            "iqr": [float(np.percentile(implied_alpha, 25)),
+                    float(np.percentile(implied_alpha, 75))],
+            "share_within_measured_range": float(
+                ((implied_alpha >= lo_a) & (implied_alpha <= hi_a)).mean()),
+            "measured_range": [lo_a, hi_a],
+        },
+        "reading": ("Laplace in the log is the tail class the only US measurement "
+                    "supports. It is asymptotically lighter than any Student-t, "
+                    "but only beyond about 40 standard deviations; in the band "
+                    "that decides this comparison it is heavier than t with 15 "
+                    "degrees of freedom, and the comparison fails at every "
+                    "window"),
+    }
+
+
+# Major event days per year that the evidence brackets as realistic.
+#   1   Italy's regulator guarantees one excluded day a year (CEA 2015, App. B)
+#   2-8 IEEE working group, observed on donated utility data (Warren et al. 2003)
+#   15  one Canadian utility's whole-province count in 2013 (CEA 2015)
+EVIDENCE_WINDOWS = {"1_to_8_per_year": (1.0, 8.0),
+                    "2_to_8_per_year": (2.0, 8.0),
+                    "1_to_15_per_year": (1.0, 15.0)}
+
+
+def beta_for_med_rate(per_year: float) -> float:
+    """The multiplier at which the standard's own fitted model flags this many
+    days a year: 365 * (1 - Phi(beta)) = per_year."""
+    return float(stats.norm.ppf(1.0 - per_year / rm.DAYS_PER_YEAR))
+
+
+def a13_evidence_grounded_window(year: int = 2022, min_customers: int = 100_000,
+                                 n_sims: int = 250, seed: int = 113) -> dict:
+    """A11 varied the window symmetrically around 2.5. The evidence says what
+    the window should be instead.
+
+    IEEE's working group designed 2.5 as a frequency target, about 2.3 days a
+    year, following Christie's frequency-based definition. So the defensible
+    alternatives are other frequencies, not other multipliers, and the
+    literature brackets them: Italy's guaranteed one day a year at the strict
+    end, the working group's observed two to eight on donated data, and one
+    utility's fifteen in a bad year at the loose end. Each frequency maps to a
+    beta through the standard's own model, which makes the window asymmetric
+    around 2.5.
+
+    The comparison is then run on each evidence-grounded window under every tail
+    model the repository uses, with A10's surfaces and the same fair
+    re-inversion.
+    """
+    rng = np.random.default_rng(seed)
+    r_obs, spread = _central_comparison_inputs(year, min_customers)
+    windows = {k: (round(beta_for_med_rate(hi_rate), 4),
+                   round(beta_for_med_rate(lo_rate), 4))
+               for k, (lo_rate, hi_rate) in EVIDENCE_WINDOWS.items()}
+    betas = np.unique(np.round(np.array(
+        [2.5] + [b for w in windows.values() for b in w]), 4))
+    col = {float(b): i for i, b in enumerate(betas)}
+    sigma_grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+
+    surfaces = {"lognormal": _tail_surface(None, sigma_grid, betas, n_sims, rng),
+                "laplace": _laplace_surface(sigma_grid, betas, n_sims, rng),
+                "t_nu15": _tail_surface(15.0, sigma_grid, betas, n_sims, rng)}
+    grid = {}
+    for tail, surf in surfaces.items():
+        grid[tail] = {}
+        for name, (lo, hi) in windows.items():
+            sweep, _ = _own_sweeps(surf, sigma_grid, col, r_obs, lo, hi)
+            med = float(np.median(sweep))
+            grid[tail][name] = {"window_beta": [lo, hi],
+                                "median_own_sweep_x": med,
+                                "ratio_to_spread": med / spread,
+                                "claim_holds": bool(med > spread)}
+    # Q1's fleet-level magnitude, restated on the widest evidence window. The
+    # repository's 7.66x headline sweeps beta 1.5 to 3.5 under log-normal tails;
+    # this is the same quantity on the window the literature supports.
+    df = ingest.analysis_sample()
+    fleet = df[df["year"] == year]
+    r_f = fleet["retained_share"].to_numpy()
+    w_f = fleet["customers"].to_numpy()
+    s_f = fleet["saidi_with"].to_numpy()
+    lo, hi = windows["1_to_15_per_year"]
+    fleet_range = {}
+    for tail, surf in surfaces.items():
+        r25 = surf[:, col[2.5]]
+        order = np.argsort(r25)
+        inside = (r_f >= r25.min()) & (r_f <= r25.max())
+        sig = np.interp(r_f[inside], r25[order], sigma_grid[order])
+        at_lo = np.average(s_f[inside] * np.interp(sig, sigma_grid, surf[:, col[lo]]),
+                           weights=w_f[inside])
+        at_hi = np.average(s_f[inside] * np.interp(sig, sigma_grid, surf[:, col[hi]]),
+                           weights=w_f[inside])
+        fleet_range[tail] = {"fleet_saidi_at_15_per_year": float(at_lo),
+                             "fleet_saidi_at_1_per_year": float(at_hi),
+                             "range_x": float(at_hi / at_lo)}
+
+    best = max(v["ratio_to_spread"] for t in grid.values() for v in t.values())
+    return {
+        "year": year,
+        "cross_utility_spread_p90_p10": spread,
+        "windows_in_med_days_per_year": {k: list(v)
+                                         for k, v in EVIDENCE_WINDOWS.items()},
+        "windows_in_beta": {k: list(v) for k, v in windows.items()},
+        "grid": grid,
+        "best_ratio_anywhere": best,
+        "holds_anywhere": bool(best > 1.0),
+        "fleet_range_on_widest_evidence_window": fleet_range,
+        "reading": ("on windows the evidence supports, the rule moves one "
+                    "utility by less than the industry spans, whatever the tails"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -745,6 +974,8 @@ def run(save: bool = True) -> dict:
         "A9_leave_one_utility_out": a9_leave_one_utility_out(),
         "A10_tail_breaking_point": a10_tail_breaking_point(),
         "A11_threshold_window": a11_threshold_window(),
+        "A12_pareto_tail": a12_pareto_tail(),
+        "A13_evidence_grounded_window": a13_evidence_grounded_window(),
     }
     if save:
         save_results("track8_falsification", out)

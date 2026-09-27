@@ -441,6 +441,213 @@
     "reading": "the central comparison holds only when daily tails are near log-normal AND the threshold window is wide enough to admit roughly a major event day every few weeks at its low edge",
     "year": 2022
   },
+  "A12_pareto_tail": {
+    "by_window": {
+      "h_0.25": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.15807593317,
+        "ratio_to_spread": 0.295435176401,
+        "window": [
+          2.25,
+          2.75
+        ]
+      },
+      "h_0.5": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.3510502807,
+        "ratio_to_spread": 0.344664599767,
+        "window": [
+          2.0,
+          3.0
+        ]
+      },
+      "h_0.75": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.62872280628,
+        "ratio_to_spread": 0.415501260151,
+        "window": [
+          1.75,
+          3.25
+        ]
+      },
+      "h_1.0": {
+        "claim_holds": false,
+        "median_own_sweep_x": 1.96998724919,
+        "ratio_to_spread": 0.502560768085,
+        "window": [
+          1.5,
+          3.5
+        ]
+      }
+    },
+    "cross_utility_spread_p90_p10": 3.91989859594,
+    "holds_at_any_window": false,
+    "implied_pareto_alpha": {
+      "iqr": [
+        0.822581282085,
+        1.4215044279
+      ],
+      "measured_range": [
+        0.73,
+        1.47
+      ],
+      "median": 1.06358501101,
+      "share_within_measured_range": 0.649572649573
+    },
+    "med_days_per_year_at_2_5": {
+      "laplace": 5.3186327428,
+      "lognormal": 2.26652784391,
+      "t_nu15": 3.09272999446,
+      "t_nu30": 2.69160460335
+    },
+    "reading": "Laplace in the log is the tail class the only US measurement supports. It is asymptotically lighter than any Student-t, but only beyond about 40 standard deviations; in the band that decides this comparison it is heavier than t with 15 degrees of freedom, and the comparison fails at every window",
+    "working_group_observed_range": [
+      2.0,
+      8.0
+    ],
+    "year": 2022
+  },
+  "A13_evidence_grounded_window": {
+    "best_ratio_anywhere": 0.863666825538,
+    "cross_utility_spread_p90_p10": 3.91989859594,
+    "fleet_range_on_widest_evidence_window": {
+      "laplace": {
+        "fleet_saidi_at_15_per_year": 95.2484487992,
+        "fleet_saidi_at_1_per_year": 145.232532355,
+        "range_x": 1.5247758277
+      },
+      "lognormal": {
+        "fleet_saidi_at_15_per_year": 56.4467030948,
+        "fleet_saidi_at_1_per_year": 178.496623987,
+        "range_x": 3.16221522605
+      },
+      "t_nu15": {
+        "fleet_saidi_at_15_per_year": 72.2641548378,
+        "fleet_saidi_at_1_per_year": 156.764215902,
+        "range_x": 2.16932193083
+      }
+    },
+    "grid": {
+      "laplace": {
+        "1_to_15_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.44470903047,
+          "ratio_to_spread": 0.368557756052,
+          "window_beta": [
+            1.7381,
+            2.7774
+          ]
+        },
+        "1_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.28884204512,
+          "ratio_to_spread": 0.328794741387,
+          "window_beta": [
+            2.0157,
+            2.7774
+          ]
+        },
+        "2_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.20917601969,
+          "ratio_to_spread": 0.308471249981,
+          "window_beta": [
+            2.0157,
+            2.544
+          ]
+        }
+      },
+      "lognormal": {
+        "1_to_15_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 3.38548637679,
+          "ratio_to_spread": 0.863666825538,
+          "window_beta": [
+            1.7381,
+            2.7774
+          ]
+        },
+        "1_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.29327989371,
+          "ratio_to_spread": 0.585035514969,
+          "window_beta": [
+            2.0157,
+            2.7774
+          ]
+        },
+        "2_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.86986031113,
+          "ratio_to_spread": 0.477017521083,
+          "window_beta": [
+            2.0157,
+            2.544
+          ]
+        }
+      },
+      "t_nu15": {
+        "1_to_15_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 2.04234521815,
+          "ratio_to_spread": 0.521019911144,
+          "window_beta": [
+            1.7381,
+            2.7774
+          ]
+        },
+        "1_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.61704600523,
+          "ratio_to_spread": 0.412522407316,
+          "window_beta": [
+            2.0157,
+            2.7774
+          ]
+        },
+        "2_to_8_per_year": {
+          "claim_holds": false,
+          "median_own_sweep_x": 1.43243321059,
+          "ratio_to_spread": 0.365426088336,
+          "window_beta": [
+            2.0157,
+            2.544
+          ]
+        }
+      }
+    },
+    "holds_anywhere": false,
+    "reading": "on windows the evidence supports, the rule moves one utility by less than the industry spans, whatever the tails",
+    "windows_in_beta": {
+      "1_to_15_per_year": [
+        1.7381,
+        2.7774
+      ],
+      "1_to_8_per_year": [
+        2.0157,
+        2.7774
+      ],
+      "2_to_8_per_year": [
+        2.0157,
+        2.544
+      ]
+    },
+    "windows_in_med_days_per_year": {
+      "1_to_15_per_year": [
+        1.0,
+        15.0
+      ],
+      "1_to_8_per_year": [
+        1.0,
+        8.0
+      ],
+      "2_to_8_per_year": [
+        2.0,
+        8.0
+      ]
+    },
+    "year": 2022
+  },
   "A1_heavy_tail": {
     "by_case": {
       "nu10_sigma1.0": {
@@ -1208,6 +1415,20 @@
         "default": "model_implied",
         "exceptions": {
           "cross_utility_spread_p90_p10": "filed_data"
+        }
+      },
+      "A12_pareto_tail": {
+        "default": "model_implied",
+        "exceptions": {
+          "cross_utility_spread_p90_p10": "filed_data",
+          "working_group_observed_range": "literature_model"
+        }
+      },
+      "A13_evidence_grounded_window": {
+        "default": "model_implied",
+        "exceptions": {
+          "cross_utility_spread_p90_p10": "filed_data",
+          "windows_in_med_days_per_year": "literature_model"
         }
       },
       "A1_heavy_tail": {

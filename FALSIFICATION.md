@@ -5,7 +5,7 @@ Track 8 attacks the other tracks. Every attack is run in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Eleven attacks, six of which landed. Two landed only after the panel grew
+Thirteen attacks, eight of which landed. Two landed only after the panel grew
 from four filing years to seven, which is worth stating plainly: **more data retracted a
 result that four years of data had supported at p = 0.026.**
 
@@ -211,7 +211,7 @@ fix was to narrow a claim's scope rather than to drop it.
 
 ---
 
-## A8: the criterion this repository commits to. **Both halves hold.**
+## A8: the criterion this repository commits to. **Held as first run; part one later failed (A13).**
 
 FINDINGS states a falsification criterion for the whole repository. A criterion
 nobody runs is decoration, so this runs it, on large investor-owned utilities in
@@ -358,7 +358,7 @@ Break-even half-width, where the ratio crosses 1:
 
 **The claim holds in one corner only:** tails near log-normal and a window of
 about ±0.75 or wider. At ±0.5 it fails under every tail tested,
-log-normal included.
+log-normal included, where the ratio never exceeds **0.72**.
 
 Whether ±0.75 is a defensible alternative is the question, and the
 repository answers it in the standard's own units rather than its own. IEEE's
@@ -388,6 +388,104 @@ bigger sweep. A10's table is left as run; this note is what scopes it.
 **What this does to the prose.** README and FINDINGS now state the comparison as
 resting on two analyst choices and name both conditions. The claims guard fails
 the build if the phrase that carries the second condition is deleted.
+
+---
+
+## A12: the tail class the evidence points to. **Landed. Fails at every window.**
+
+A10 tested Student-t tails, a convenient family nobody has measured for
+distribution outages. The second literature pass found two pieces of evidence
+about what the tails actually look like, and both point to one family.
+
+The working group behind the 2.5-beta method reported seeing two to eight major
+event days a year on donated utility data, where the log-normal model predicts
+2.27. And Ahmad and Dobson (2025) measured Pareto tails in event-level customer
+cost for five US utilities, with tail indices of 0.73 to 1.47. A Pareto tail in
+the level is an exponential tail in the log, which makes the matching model for
+daily log-SAIDI a Laplace distribution. Its scale here is not chosen: each
+utility's own filed data sets it, as in every other attack.
+
+| window around 2.5 | beta | ratio to spread |
+|---|---|---|
+| ±0.25 | 2.25 to 2.75 | 0.30 |
+| ±0.5 | 2.00 to 3.00 | 0.34 |
+| ±0.75 | 1.75 to 3.25 | 0.42 |
+| ±1.0 | 1.50 to 3.50 | 0.50 |
+
+It fails everywhere, including at ±1.0, where A11 found the Student-t with 15
+degrees of freedom still holding. That ordering looks backwards until the tail
+mass is written down. Laplace is lighter than any Student-t only asymptotically,
+beyond roughly 40 standard deviations. In the band that decides this comparison
+it carries more mass, which the implied major event days a year at the
+standard's 2.5 make concrete:
+
+| daily log-SAIDI model | major event days a year at beta 2.5 |
+|---|---|
+| log-normal (the standard's) | 2.27 |
+| t, nu=30 | 2.69 |
+| t, nu=15 | 3.09 |
+| Laplace | 5.32 |
+| working group, observed | 2 to 8 |
+
+**The calibration check, and why it is weaker than it looks.** The Laplace
+scale each utility's data implies corresponds to a Pareto index with median
+1.06 and interquartile range 0.82 to 1.42; 65% of utilities
+fall inside Ahmad and Dobson's measured range. That looked like independent
+confirmation until this repository's own tail test was validated on synthetic
+data: a plain log-normal with a log-SD of 1.8 produces a Hill index of 1.23,
+also inside that range. Their authors' own likelihood-ratio test could not
+separate Pareto from truncated log-normal either. So the event-level evidence is
+consistent with Laplace tails and does not establish them. The working group's
+excess of major event days is the stronger signal, and it too mixes tail shape
+with non-stationarity, since the threshold is fitted on earlier years.
+
+**What this does.** It adds weight against the withdrawn comparison without
+settling the tail question. The decisive result is A13, which does not depend on
+tails at all.
+
+## A13: the window the evidence supports. **Landed. The central comparison fails.**
+
+A11 varied the threshold window symmetrically around 2.5 and asked how wide it
+had to be. The second literature pass answered the question A11 left to the
+reader: which windows are realistic?
+
+The working group designed 2.5 as a frequency target, following Christie's 2003
+frequency-based definition of a major event day. So the defensible alternatives
+are other frequencies, and the literature brackets them:
+
+- one excluded day a year, the strict end: Italy's regulator guarantees one
+- two to eight a year: what the working group observed on donated utility data
+- fifteen a year, the loose end: one Canadian utility's whole-province count in
+  2013
+
+Each frequency converts to a threshold through the standard's own model, which
+makes the windows asymmetric around 2.5: one to eight a year is beta
+2.02 to 2.78, and one to fifteen is 1.74 to 2.78. Ratio of one
+utility's own sweep to the 3.92x spread between utilities:
+
+| daily log-SAIDI model | 1 to 8 a year | 2 to 8 a year | 1 to 15 a year |
+|---|---|---|---|
+| log-normal | 0.59 | 0.48 | 0.86 |
+| t, nu=15 | 0.41 | 0.37 | 0.52 |
+| Laplace | 0.33 | 0.31 | 0.37 |
+
+**Below 1 everywhere.** The best case, log-normal tails on the widest window, is
+**0.86**. The comparison fails on every window the evidence supports under
+every tail model, including the standard's own. That is part one of the
+falsification criterion in FINDINGS, and it fails.
+
+**What this does.** FINDINGS and the README withdraw the comparison in a
+blockquote and restate the central claim on filed data only: rank reversal
+between the two published series, which survives stratification by storm
+exposure (A8 part two), and the spread across aggregation rules, which survives
+removing the largest contributors (A9). Q1's magnitude is restated on the same
+window: 3.16x under log-normal tails and 1.52x under Laplace, against the
+7.66x the log-normal model gives over a sweep wider than any alternative the
+literature proposes.
+
+This is the most consequential attack in the repository, and it came from
+reading, not computing. The machinery to run it existed since A11; what was
+missing was evidence about which windows mean anything.
 
 ---
 

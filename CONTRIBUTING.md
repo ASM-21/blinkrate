@@ -21,33 +21,37 @@ issue showing any of them fails under a specification the repository does not
 already test. *Start at:* `blinkrate/shared/reliability_metrics.py` and
 `blinkrate/track8_falsification.py`.
 
-**2. Run the engine on real daily SAIDI.** Q1's sweep is model-implied because
-no daily series is public at national scale. Some state commissions require
-daily outage logs in annual reliability filings. One utility's five-year daily
-series replaces the inversion with a measurement and settles attack A1 outright.
-*Finish line:* `simulate_med_exclusion()` run on real daily data, with the
-realized retained share compared against what the inversion predicts from that
-utility's published annual pair. *Start at:*
-`blinkrate/shared/reliability_metrics.py`.
+**2. Run the tail test on real daily outage data.** Every model-implied number
+here rests on daily SAIDI being log-normal, and the evidence is mixed: the
+working group saw more major event days than the model predicts, while the one
+formal fit test found (Fumagalli et al. 2006, Italian districts) found thinner
+tails. `tools/daily_tail_test.py` settles it for any series you can get. ORNL's
+EAGLE-I county data (Scientific Data 2024, DOI 10.1038/s41597-024-03095-5, via
+Globus or Figshare) works directly with `--eaglei --state XX`; Massachusetts
+utility outage records are the most promising source of true daily SAIDI.
+*Finish line:* the tool's output for at least one utility or state, committed
+under `results/external/` with the source recorded. The tool is validated on
+synthetic data already; read its Hill caveat before quoting a tail index.
 
-**3. Supply the 2019-2021 filings.** The panel jumps 2018 to 2022, so no
-movement after 2018 can be dated. If a GitHub mirror of those years exists,
-adding it is a three-line change to `_HEADER_ROWS` and `YEARS_AVAILABLE`.
-*Finish line:* seven becomes ten filing years and every test still passes.
-*Start at:* `blinkrate/shared/ingest.py` and `docs/DATA_ACCESS.md`.
+**3. Supply the 2019-2021 filings.** The panel jumps 2018 to 2022. Catalyst
+Cooperative's PUDL has them as `core_eia861__yearly_reliability`, distributed
+through S3, Kaggle and Zenodo, none reachable from where this was built. Mind
+PUDL issue 4907, a column swap in the 2024 rows. *Finish line:* the three years
+loaded through `blinkrate/shared/ingest.py` with the same position-based column
+map, checked against EIA's raw workbooks, and every test still passing.
 
 **4. Supply FERC Form 1.** The only genuinely blocked track. With a capex
 series, Q5 gets a spending variable and the vegetation-management question stops
 being marked BLOCKED. *Finish line:* `track4_cause_exclusions.py` loses its
 BLOCKED status. *Start at:* `docs/DATA_ACCESS.md` for the search record.
 
-**5. Break attack A8's part one.** It compares a model-implied sweep against
-observed spread, so it inherits A1's log-normality dependence: under
-heavier-tailed daily outages the sweep narrows and the ratio of 1.58 falls. Work
-out how heavy the tail has to be before the criterion fails, and whether real
-daily data is anywhere near that. *Finish line:* the breaking point stated as a
-number. *Start at:* `a1b_heavy_tail_matched` and
-`a8_stated_falsification_criterion` in `blinkrate/track8_falsification.py`.
+**5. Find a realistic window where the withdrawn comparison holds.** Attack
+A13 found the threshold's effect on one utility smaller than the spread between
+utilities on every window the literature supports. The strongest way to reverse
+that is evidence that realistic major-event frequencies extend well past fifteen
+a year, or below one, for large US utilities. *Finish line:* a citable source,
+added to `EVIDENCE_WINDOWS` in `blinkrate/track8_falsification.py`, and A13
+re-run. If the comparison then holds, the withdrawal in FINDINGS comes out.
 
 **6. An exogenous aggregation weight.** Track 9 reweights the national figure
 six ways, all derived from the filings themselves. A weight from outside the

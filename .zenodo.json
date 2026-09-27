@@ -1,7 +1,7 @@
 {
   "title": "blinkrate: measurement rules and reported US electric distribution reliability",
   "upload_type": "software",
-  "description": "Eight questions about how the IEEE 1366 major-event-day exclusion and the choice of aggregation rule shape reported US distribution reliability (SAIDI), answered on 6,245 utility-state-years of EIA-861 filings (2013-2018, 2022) with eleven adversarial attacks run against the answers. National-scale corroboration of an established critique of the 2.5-beta method, plus a closed-form inversion that allows the threshold sweep from published annual aggregates. Independent personal project using only public data.",
+  "description": "Eight questions about how the IEEE 1366 major-event-day exclusion and the choice of aggregation rule shape reported US distribution reliability (SAIDI), answered on 6,245 utility-state-years of EIA-861 filings (2013-2018, 2022) with thirteen adversarial attacks run against the answers. National-scale corroboration of an established critique of the 2.5-beta method, plus a closed-form inversion that allows the threshold sweep from published annual aggregates. A central model-implied comparison from earlier versions is withdrawn after failing on every evidence-grounded threshold window. Independent personal project using only public data.",
   "creators": [
     {
       "name": "Morrissey, Andrew",

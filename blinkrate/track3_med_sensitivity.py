@@ -241,6 +241,67 @@ def standard_choice(df: pd.DataFrame) -> dict:
     return out
 
 
+SIZE_BANDS = ((100, 10_000, "100_to_10k"), (10_000, 100_000, "10k_to_100k"),
+              (100_000, float("inf"), "100k_plus"))
+
+
+def zero_exclusion_benchmark(df: pd.DataFrame) -> dict:
+    """How many zero-exclusion filings would genuine segmentation produce?
+
+    EIA's own filing instructions settle what an identical with/without pair
+    means: a utility that removes no data reports the same value in both
+    columns. So the 29.8% mass point is a reporting practice, and the question
+    is how much of it is genuine zero-major-event years versus utilities not
+    segmenting at all.
+
+    The standard's design answers the first part. A utility applying the
+    2.5-beta method flags each day with probability 1 - Phi(2.5), so it should
+    see a year with no qualifying day with probability (1 - p)^365, about
+    10.3%. The working group observed two to eight major event days a year on
+    donated data rather than 2.3, which moves that to between 0.03% and 13.5%.
+    Anything well above 13.5% is more than genuine zero-event years can explain.
+
+    Split by reporting standard and size, because small utilities have lumpy
+    daily SAIDI with many zero days, which is exactly where the benchmark
+    applies least well (the 2013 IEEE letter on zero-SAIDI days).
+    """
+    p_day = float(stats.norm.sf(rm.BETA_STANDARD))
+    benchmarks = {
+        "nominal_2_27_per_year": float((1 - p_day) ** rm.DAYS_PER_YEAR),
+        "wg_observed_2_per_year": float(np.exp(-2.0)),
+        "wg_observed_8_per_year": float(np.exp(-8.0)),
+        "laplace_5_32_per_year": float(np.exp(-rm.DAYS_PER_YEAR * 0.5
+                                              * np.exp(-rm.BETA_STANDARD
+                                                       * np.sqrt(2.0)))),
+    }
+    ceiling = max(benchmarks.values())
+    zero = df["retained_share"] >= 1 - 1e-9
+    table = {}
+    for std in ("IEEE", "Other"):
+        table[std] = {}
+        for lo, hi, label in SIZE_BANDS:
+            m = ((df["standard"] == std) & (df["customers"] >= lo)
+                 & (df["customers"] < hi))
+            table[std][label] = {"n": int(m.sum()),
+                                 "share_zero_exclusion": float(zero[m].mean()),
+                                 "multiple_of_generous_benchmark": float(
+                                     zero[m].mean() / ceiling)}
+    large_ieee = table["IEEE"]["100k_plus"]["share_zero_exclusion"]
+    return {
+        "benchmarks": benchmarks,
+        "generous_ceiling": ceiling,
+        "by_standard_and_size": table,
+        "large_ieee_within_benchmark_range": bool(large_ieee <= ceiling),
+        "other_to_ieee_ratio_by_size": {
+            label: float(table["Other"][label]["share_zero_exclusion"]
+                         / table["IEEE"][label]["share_zero_exclusion"])
+            for _, _, label in SIZE_BANDS},
+        "source_note": ("EIA-861 FAQ: identical with/without values report that no "
+                        "data was removed; benchmark frequencies from Warren et al. "
+                        "2003 (IEEE PES GM)"),
+    }
+
+
 def ranking_sensitivity(df: pd.DataFrame, min_customers: int = 100_000,
                         ownership: str = "IOU") -> dict:
     """Does the exclusion change WHO looks reliable, not just by how much?
@@ -376,6 +437,7 @@ def run(save: bool = True) -> dict:
         "bunching": excess_mass_at_zero_exclusion(df),
         "standard_choice": standard_choice(df),
         "ranking": ranking_sensitivity(df),
+        "zero_exclusion_benchmark": zero_exclusion_benchmark(df),
     }
     if save:
         _fig_sensitivity(df, out["sensitivity"])

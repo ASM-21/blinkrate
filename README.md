@@ -19,35 +19,48 @@ alternatives on donated utility data against qualitative criteria, not derived
 from any reliability outcome. This repository works out
 what that choice, and the discretion around it, is worth.
 
-**Short answer.** Under IEEE 1366's own log-normal model, re-evaluating the same
-filed outage records at other threshold values moves customer-weighted fleet
-SAIDI from 37 min/yr to 287 min/yr, a **7.66x range**, with no change to any
-underlying outage. That magnitude is model-implied and narrows under heavier
-tails; the direction does not. Sweep the averaging
-rule as well, which is the second undocumented choice behind every national
-figure, and the space of defensible values for one year spans **14.32x**. Nearly
-a third of filings report no major event days at all, and half the large-utility
-field changes quartile depending on which of the two published series someone
-chose to rank on.
+**Short answer.** Two measurement choices that never appear next to a published
+reliability figure change who looks reliable and what the national number is,
+and both are measured directly from the filings. Which of the two SAIDI series
+EIA publishes a benchmark ranks on moves half the large-utility field across
+performance quartiles, and that survives comparing utilities within like storm
+exposure. How the national figure is averaged moves it by a factor of 2.07
+across six defensible rules; sweep the threshold as well and the space of
+defensible national values for one year spans **14.32x**.
 
-Put the two side by side and the thesis becomes a measurement, with conditions
-attached. Under IEEE 1366's own log-normal assumption, moving the threshold from
-1.5 to 3.0 changes one large utility's reported SAIDI by a median of **6.18x**,
-while the whole spread between large utilities is **3.92x** from the 10th to the
-90th percentile. **That comparison rests on two analyst choices, and it holds only
-in one corner of them.** It is conditional on the tails of daily outages: it
-needs them close to log-normal, and the IEEE literature on the method identifies
-heavy right tails as its central problem. It also needs a threshold window wide enough that, at its loose end, the
-standard's own model would declare about **14.7** major event days a
-year. Within half a unit of the standard's 2.5, a window running from
-8.3 major event days a year down to 0.5, the rule moves one
-utility by less than the industry spans under every tail tested, log-normal
-included.
+The threshold itself matters, but less than this repository first said. On the
+range of thresholds the evidence supports, one to fifteen qualifying days a year,
+it moves customer-weighted fleet SAIDI **3.16x** under IEEE 1366's own
+log-normal model and **1.52x** under a heavier-tailed Laplace model,
+roughly 50 to 120 minutes a year. Over a wider sweep, beta 1.5 to 3.5, the
+log-normal model gives 37 min/yr to 287 min/yr, a **7.66x range**; no alternative
+in the literature is that wide.
+
+> **Withdrawn.** Earlier versions led with a comparison: moving the threshold
+> from 1.5 to 3.0 changes one large utility's reported SAIDI by a median of
+> **6.18x**, while the whole spread between large utilities is **3.92x**. That
+> comparison rests on two analyst choices. It is conditional on the tails of
+> daily outages, and it needed a threshold window wide enough that the standard's
+> own model would declare about **14.7** major event days a year. The second
+> literature pass found where both choices sit. On every threshold window the
+> evidence supports, the rule moves one utility by less than the industry spans,
+> under every tail model tested, log-normal included (best ratio
+> **0.86**, attack A13). By the falsification criterion this repository
+> committed to, that part of its central claim fails.
+
+Nearly a third of filings report no major event days at all. EIA's own
+instructions make an identical pair the way to report removing nothing, and for
+large IEEE filers the rate, 12.2%, is about what genuine years with no
+qualifying day should produce. The excess sits with smaller utilities and with
+filers using a self-defined standard.
 
 What holds regardless is everything measured directly from the filings rather
 than through the model: the zero-exclusion mass point, the rank reversal between
 the two published series, the everyday deterioration trend, and the spread across
-aggregation rules.
+aggregation rules. Whether daily outages are log-normal, which decides every
+model-implied number here, can now be tested in one command on real data with
+`tools/daily_tail_test.py`; no such data is reachable from the environment this
+was built in.
 
 Built on 6,245 utility-state-years of EIA-861 reliability filings, 2013-2018 and
 2022. Every headline number is regenerated from code and pinned by a test that
@@ -56,7 +69,7 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 99 tests
+pytest                           # 111 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Duke Energy" --figure
 python tools/utility_profile.py --pair 200 120 --tails   # any filed pair
@@ -150,16 +163,11 @@ EIA-861) or `model_implied` (depends on the log-normal inversion), and a result
 that has not been declared refuses to save. Tests hold those labels to the
 "Basis:" line on each answer in FINDINGS, so the two cannot drift apart.
 
-**Falsification is a track, not an appendix.** Six of eleven attacks landed.
-The two most recent found that the repository's own headline comparison rests on
-two analyst choices, the tails of daily outages and the width of the threshold
-window, and holds only in one corner of them. It was rescoped both times. Q6's
-regression result was retracted outright when the panel grew. Q1's magnitude was
-scoped to its distributional assumption, and the guard fails the build if that
-qualifier is deleted. Leave-one-state-out found that Q4's headline share falls
-from 0.829 to 0.509 when Florida alone is removed, while every other headline
-moves by under 8.4% whichever state is dropped, so Q4 was rewritten to separate
-a national trend from a Gulf-coast aggregate.
+**Falsification is a track, not an appendix.** Eight of thirteen attacks
+landed. The most consequential came from reading rather than computing: once
+the literature showed which threshold windows are realistic, the repository's
+own headline comparison failed on every one of them, and it is withdrawn in
+place rather than defended.
 
 **More data was allowed to break things.** The panel started at four filing
 years. Finding 2016-2018 nearly doubled it, retracted one published result at
@@ -204,13 +212,14 @@ blinkrate/
   track6_ownership.py           Q6 ownership stratification
   track7_validation.py          Q7 engine and source-data checks
   track9_aggregation.py         Q8 how much the averaging rule is worth
-  track8_falsification.py       eleven attacks on the above
+  track8_falsification.py       thirteen attacks on the above
   run_all.py
 data/raw/                       vendored EIA-861 (US Gov, public domain)
 docs/derivation.md              the exclusion identity
 docs/DATA_ACCESS.md             provenance, licences, what is blocked
 tools/check_claims.py           drift and overclaim guard
 tools/utility_profile.py        run one utility's filed numbers through the engine
+tools/daily_tail_test.py        test the log-normal assumption on real daily data
 ```
 
 ## Data

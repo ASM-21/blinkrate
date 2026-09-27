@@ -4,14 +4,13 @@ Ordered by how much each item would change a conclusion, not by effort.
 
 ## Would settle an open falsification result
 
-**Daily SAIDI series from any utility.** Track 3's sensitivity is model-implied
-because no daily outage series is public at national scale. Attack A1 showed the
-magnitude of the result does not survive dropping log-normality even though its
-direction does. A single utility's five-year daily SAIDI series would replace the
-inversion with a measurement and close A1 outright. Some state commissions
-require daily outage logs in annual reliability filings; those are per-state PDF
-or spreadsheet attachments, not a dataset, so this is a scraping and parsing job
-rather than a download.
+**Daily SAIDI series from any utility.** The model-implied results rest on
+log-normal daily outages, and the literature is split on whether that holds.
+`tools/daily_tail_test.py` now runs the test on any daily series, including
+EAGLE-I county files directly; what is missing is the data, which is too large
+to vendor and unreachable from the build environment. Note that this would no
+longer revive the withdrawn comparison on its own: A13 found it fails on every
+evidence-grounded window even under log-normal tails.
 
 **A storm severity index keyed to service territories.** Track 2 cannot separate
 weather severity from classification, which is the question it exists to answer.
@@ -29,10 +28,9 @@ gap and changed three conclusions. What remains is 2019-2021, without which 2022
 is a single later observation rather than a continuation and no movement after
 2018 can be dated.
 
-**Leave-one-utility-out.** Leave-one-state-out is now attack A7 and it found
-that Q4's excluded-share headline is largely Florida. Within Florida a single
-utility is most of the mass, so the utility-level version would mostly restate
-A7, but it becomes necessary the moment Q4 is quoted at a utility level.
+**Leave-one-utility-out.** Done as attack A9: dropping the ten largest
+contributors to national customer-outage-minutes moves Q8's aggregation spread
+from 2.07x to 2.00x.
 
 **A weighted aggregate keyed to something other than customer count.** Done in
 part: track 9 reports six aggregation rules and shows they span 2.07x for a
@@ -41,10 +39,11 @@ still missing is a weight that is not derived from the filings themselves
 (state population, or customer-hours at risk), which would let the national
 figure be checked against something exogenous rather than only reweighted.
 
-**Leave-one-utility-out inside Florida.** A7 works at state granularity. Within
-Florida a single co-operative reported over nine days per customer after
-Hurricane Ian, so the utility-level jackknife is the natural next cut and
-becomes necessary the moment Q4 or Q8 is quoted at utility level.
+**A frequency-based major event definition, run end to end.** Christie's 2003
+framing defines major event days by how often they occur. Re-expressing every
+model-implied result in the repository in major event days per year, rather than
+in beta, would make them directly comparable with the frequencies regulators and
+the working group actually discuss.
 
 **Pre-2016 AMI deployment.** Done for 2016-2018, which was enough to rebuild Q5
 around a within-utility design and turn an underpowered null into a bounded one.

@@ -86,6 +86,12 @@ REGISTRY: dict[str, dict[str, dict]] = {
         "bunching": _b(FILED),
         "standard_choice": _b(FILED),
         "ranking": _b(FILED),
+        # observed shares are filed data; what they are compared against is the
+        # standard's own design frequency, which is a model
+        "zero_exclusion_benchmark": _b(FILED, benchmarks=MODEL,
+                                       generous_ceiling=MODEL,
+                                       multiple_of_generous_benchmark=MODEL,
+                                       large_ieee_within_benchmark_range=MODEL),
     },
     "track4_cause_exclusions": {
         "status": _b(META),
@@ -131,6 +137,10 @@ REGISTRY: dict[str, dict[str, dict]] = {
         "A9_leave_one_utility_out": _b(FILED),
         "A10_tail_breaking_point": _b(MODEL, cross_utility_spread_p90_p10=FILED),
         "A11_threshold_window": _b(MODEL, cross_utility_spread_p90_p10=FILED),
+        "A12_pareto_tail": _b(MODEL, cross_utility_spread_p90_p10=FILED,
+                              working_group_observed_range=LIT),
+        "A13_evidence_grounded_window": _b(MODEL, cross_utility_spread_p90_p10=FILED,
+                                           windows_in_med_days_per_year=LIT),
     },
     "track9_aggregation": {
         "by_year": _b(FILED),

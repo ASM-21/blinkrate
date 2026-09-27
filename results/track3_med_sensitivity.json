@@ -34,6 +34,15 @@
       "standard_choice": {
         "default": "filed_data",
         "exceptions": {}
+      },
+      "zero_exclusion_benchmark": {
+        "default": "filed_data",
+        "exceptions": {
+          "benchmarks": "model_implied",
+          "generous_ceiling": "model_implied",
+          "large_ieee_within_benchmark_range": "model_implied",
+          "multiple_of_generous_benchmark": "model_implied"
+        }
       }
     },
     "kinds": {
@@ -404,5 +413,57 @@
       "note": "utility-state-years are not independent across filing years; treat the p-value as descriptive, the effect size is the point",
       "p_value": 5.24577440359e-20
     }
+  },
+  "zero_exclusion_benchmark": {
+    "benchmarks": {
+      "laplace_5_32_per_year": 0.00489944795331,
+      "nominal_2_27_per_year": 0.102941511419,
+      "wg_observed_2_per_year": 0.135335283237,
+      "wg_observed_8_per_year": 0.000335462627903
+    },
+    "by_standard_and_size": {
+      "IEEE": {
+        "100_to_10k": {
+          "multiple_of_generous_benchmark": 3.41463956087,
+          "n": 792,
+          "share_zero_exclusion": 0.462121212121
+        },
+        "100k_plus": {
+          "multiple_of_generous_benchmark": 0.899077378091,
+          "n": 978,
+          "share_zero_exclusion": 0.121676891616
+        },
+        "10k_to_100k": {
+          "multiple_of_generous_benchmark": 1.76718830468,
+          "n": 2676,
+          "share_zero_exclusion": 0.239162929746
+        }
+      },
+      "Other": {
+        "100_to_10k": {
+          "multiple_of_generous_benchmark": 3.53019154644,
+          "n": 607,
+          "share_zero_exclusion": 0.477759472817
+        },
+        "100k_plus": {
+          "multiple_of_generous_benchmark": 1.71986650579,
+          "n": 232,
+          "share_zero_exclusion": 0.23275862069
+        },
+        "10k_to_100k": {
+          "multiple_of_generous_benchmark": 3.00180404019,
+          "n": 960,
+          "share_zero_exclusion": 0.40625
+        }
+      }
+    },
+    "generous_ceiling": 0.135335283237,
+    "large_ieee_within_benchmark_range": true,
+    "other_to_ieee_ratio_by_size": {
+      "100_to_10k": 1.03384017069,
+      "100k_plus": 1.91292379021,
+      "10k_to_100k": 1.6986328125
+    },
+    "source_note": "EIA-861 FAQ: identical with/without values report that no data was removed; benchmark frequencies from Warren et al. 2003 (IEEE PES GM)"
   }
 }

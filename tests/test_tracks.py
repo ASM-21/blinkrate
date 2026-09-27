@@ -14,6 +14,8 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import numpy as np
+import pandas as pd
 from scipy import stats
 
 from blinkrate import (track1_investment, track2_weather_split,
@@ -900,7 +902,10 @@ def test_attack_count_is_not_stale_anywhere_it_is_published():
     zenodo = json.loads((ROOT / ".zenodo.json").read_text())["description"]
     word = {v: k for k, v in _NUMBER_WORDS.items()}[n_attacks]
     assert f"{word} attacks on the above" in readme
-    assert re.search(rf"\b\w+ of {word} attacks landed", readme, re.IGNORECASE)
+    # whitespace-tolerant: prose reflows, and a line break inside the phrase
+    # must not make a correct count look stale
+    assert re.search(rf"\b\w+\s+of\s+{word}\s+attacks\s+landed", readme,
+                     re.IGNORECASE)
     assert f"{word} adversarial attacks" in zenodo
     upload = (ROOT / "UPLOAD.md").read_text()
     assert f"{word} adversarial attacks" in upload
@@ -921,3 +926,144 @@ def test_release_version_is_consistent():
     log = re.search(r"^## v(\S+)", (ROOT / "CHANGELOG.md").read_text(),
                     re.MULTILINE).group(1)
     assert py == cff == zen == log, (py, cff, zen, log)
+
+
+# --------------------------------------------------------------------------
+# second literature pass: A12, A13, the zero-exclusion benchmark, the tail tool
+# --------------------------------------------------------------------------
+
+def test_a13_headline_fails_on_every_evidence_window_under_every_tail():
+    """The decisive result. On threshold windows the literature supports, the
+    model-implied central comparison fails even under IEEE 1366's own
+    log-normal assumption. If it ever holds on one of these windows, the
+    withdrawal in FINDINGS is wrong and has to be reversed, not kept."""
+    a13 = _results("track8_falsification")["A13_evidence_grounded_window"]
+    assert a13["holds_anywhere"] is False
+    assert a13["best_ratio_anywhere"] == pytest.approx(0.86, abs=0.02)
+    for tail in ("lognormal", "laplace", "t_nu15"):
+        for window in a13["grid"][tail].values():
+            assert window["claim_holds"] is False
+
+
+def test_a13_windows_come_from_the_standards_own_arithmetic():
+    """Each window edge is the beta at which 365 * (1 - Phi(beta)) equals the
+    evidence-backed frequency. If the conversion drifts, the windows stop
+    meaning what LITERATURE.md says they mean."""
+    a13 = _results("track8_falsification")["A13_evidence_grounded_window"]
+    for name, (lo_rate, hi_rate) in a13["windows_in_med_days_per_year"].items():
+        lo_beta, hi_beta = a13["windows_in_beta"][name]
+        assert 365 * stats.norm.sf(lo_beta) == pytest.approx(hi_rate, rel=1e-3)
+        assert 365 * stats.norm.sf(hi_beta) == pytest.approx(lo_rate, rel=1e-3)
+
+
+def test_a13_fleet_magnitude_on_evidence_window():
+    """Q1's 7.66x sweeps beta 1.5 to 3.5 under log-normal tails. On the widest
+    window the evidence supports it is far smaller, and smaller again under
+    heavier tails, which is the ordering FINDINGS reports."""
+    f = _results("track8_falsification")["A13_evidence_grounded_window"][
+        "fleet_range_on_widest_evidence_window"]
+    assert f["lognormal"]["range_x"] == pytest.approx(3.16, abs=0.03)
+    assert f["laplace"]["range_x"] == pytest.approx(1.52, abs=0.03)
+    assert (f["laplace"]["range_x"] < f["t_nu15"]["range_x"]
+            < f["lognormal"]["range_x"])
+
+
+def test_a12_laplace_fails_at_every_window():
+    a12 = _results("track8_falsification")["A12_pareto_tail"]
+    assert a12["holds_at_any_window"] is False
+    assert max(v["ratio_to_spread"] for v in a12["by_window"].values()) < 0.6
+
+
+def test_a12_tail_mass_ordering_is_stated_correctly():
+    """Laplace is asymptotically lighter than any Student-t, but only beyond
+    roughly 40 standard deviations. At the standard's 2.5 it carries more mass
+    than t with 15 df, which is why it fails harder. The implied major event
+    days per year are the checkable form of that claim."""
+    m = _results("track8_falsification")["A12_pareto_tail"]["med_days_per_year_at_2_5"]
+    assert m["lognormal"] == pytest.approx(2.27, abs=0.01)
+    assert m["laplace"] == pytest.approx(5.32, abs=0.01)
+    assert m["lognormal"] < m["t_nu30"] < m["t_nu15"] < m["laplace"]
+    lo, hi = _results("track8_falsification")["A12_pareto_tail"][
+        "working_group_observed_range"]
+    assert lo <= m["laplace"] <= hi
+
+
+def test_zero_exclusion_benchmark_rescopes_q2():
+    """Large IEEE filers sit inside the range genuine segmentation produces;
+    the mass point lives with smaller and self-defined-standard filers."""
+    z = _results("track3_med_sensitivity")["zero_exclusion_benchmark"]
+    b = z["benchmarks"]
+    assert b["nominal_2_27_per_year"] == pytest.approx(
+        (1 - stats.norm.sf(2.5)) ** 365, rel=1e-9)
+    assert z["generous_ceiling"] == pytest.approx(np.exp(-2.0), rel=1e-9)
+    ieee = z["by_standard_and_size"]["IEEE"]
+    assert z["large_ieee_within_benchmark_range"] is True
+    assert ieee["100k_plus"]["share_zero_exclusion"] == pytest.approx(0.122, abs=0.003)
+    assert ieee["10k_to_100k"]["share_zero_exclusion"] > z["generous_ceiling"]
+    for band in ("10k_to_100k", "100k_plus"):
+        assert z["other_to_ieee_ratio_by_size"][band] > 1.5
+
+
+# --- the daily tail tool, validated before any real data arrives -----------
+
+def _synthetic(kind: str, seed: int = 42):
+    rng = np.random.default_rng(seed)
+    days = pd.date_range("2015-01-01", periods=365 * 8, freq="D")
+    if kind == "lognormal":
+        logs = rng.normal(5, 1.8, len(days))
+    elif kind == "laplace":
+        logs = rng.laplace(5, 1.8 / np.sqrt(2), len(days))
+    else:
+        logs = 5 + 1.8 * rng.standard_t(5, len(days)) / np.sqrt(5 / 3)
+    return pd.Series(np.exp(logs), index=days)
+
+
+@pytest.mark.parametrize("kind,expected", [("lognormal", "normal"),
+                                           ("laplace", "laplace"),
+                                           ("t5", "student_t")])
+def test_daily_tail_tool_identifies_the_generating_family(kind, expected):
+    sys.path.insert(0, str(ROOT / "tools"))
+    import daily_tail_test as dt
+    out = dt.analyse(_synthetic(kind))
+    assert out["tail_family"]["best"] == expected
+
+
+def test_daily_tail_tool_recovers_the_major_event_rate():
+    """Log-normal data should flag near the nominal 2.27 days a year and
+    Laplace near 5.32. If the tool is off here it is off on real data."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import daily_tail_test as dt
+    assert dt.analyse(_synthetic("lognormal"))["med_days_per_year_at_2_5"] == \
+        pytest.approx(2.27, abs=1.0)
+    assert dt.analyse(_synthetic("laplace"))["med_days_per_year_at_2_5"] == \
+        pytest.approx(5.32, abs=1.5)
+
+
+def test_hill_index_is_documented_as_non_diagnostic():
+    """A wide log-normal produces a Hill index inside Ahmad & Dobson's measured
+    range. That is why the tool and FINDINGS both refuse to treat an in-range
+    Hill index as evidence of a Pareto tail. Pinned so the caveat cannot be
+    quietly dropped while the phenomenon it describes is still true."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import daily_tail_test as dt
+    out = dt.analyse(_synthetic("lognormal"))
+    assert out["tail_family"]["best"] == "normal"
+    assert out["hill_alpha_within_ahmad_dobson"] is True
+    assert "not diagnostic" in (ROOT / "tools" / "daily_tail_test.py").read_text()
+
+
+def test_archived_abstract_reflects_the_withdrawal():
+    """CITATION.cff and .zenodo.json are what a citing reader sees, and they are
+    archived permanently on release. They must carry the evidence-window
+    magnitude and the withdrawal, and must not quote the withdrawn comparison as
+    a finding."""
+    import re
+    fr = _results("track8_falsification")["A13_evidence_grounded_window"][
+        "fleet_range_on_widest_evidence_window"]
+    cff = re.sub(r"\s+", " ", (ROOT / "CITATION.cff").read_text())
+    assert f"{fr['laplace']['range_x']:.2f}x to {fr['lognormal']['range_x']:.2f}x" in cff
+    assert "withdrawn" in cff
+    for withdrawn in ("6.18x", "1.58 times", "more than the whole industry"):
+        assert withdrawn not in cff, f"abstract quotes the withdrawn claim: {withdrawn}"
+    zen = json.loads((ROOT / ".zenodo.json").read_text())["description"]
+    assert "withdrawn" in zen

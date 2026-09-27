@@ -241,13 +241,13 @@ def claims() -> list[tuple[str, float, float]]:
     strat = a8["part2_reversal_within_exposure"]["by_stratum"]
     add(f"median of **{p1['own_sweep_median_x']:.2f}x**",
         p1["own_sweep_median_x"], 0.02)
-    add(f"range {p1['own_sweep_iqr_x'][0]:.2f}x to {p1['own_sweep_iqr_x'][1]:.2f}x",
+    add(f"interquartile range | {p1['own_sweep_iqr_x'][0]:.2f}x to {p1['own_sweep_iqr_x'][1]:.2f}x",
         p1["own_sweep_iqr_x"][0], 0.02)
     add(f"is **{p1['cross_utility_spread_x']['p90_over_p10']:.2f}x**",
         p1["cross_utility_spread_x"]["p90_over_p10"], 0.02)
-    add(f"and {p1['cross_utility_spread_x']['p75_over_p25']:.2f}x across",
+    add(f"{p1['cross_utility_spread_x']['p75_over_p25']:.2f}x | | ratio of rule",
         p1["cross_utility_spread_x"]["p75_over_p25"], 0.02)
-    add(f"**{p1['ratio_rule_to_spread']:.2f}** times the whole",
+    add(f"{p1['ratio_rule_to_spread']:.2f} times the whole",
         p1["ratio_rule_to_spread"], 0.02)
     add(f"quartile change runs {strat['low_pre_exposure']['pct_changing_quartile']:.0f}%, "
         f"{strat['mid_pre_exposure']['pct_changing_quartile']:.0f}% and "
@@ -266,9 +266,9 @@ def claims() -> list[tuple[str, float, float]]:
 
     # --- A10: the breaking point that made the headline conditional ----------
     a10 = t8["A10_tail_breaking_point"]["by_tail"]
-    add(f"where the ratio is {a10['t_nu30']['ratio_to_cross_utility_spread']:.2f}",
+    add(f"{a10['t_nu30']['ratio_to_cross_utility_spread']:.2f} | holds |",
         a10["t_nu30"]["ratio_to_cross_utility_spread"], 0.02)
-    add(f"where it is\n{a10['t_nu15']['ratio_to_cross_utility_spread']:.2f}",
+    add(f"{a10['t_nu15']['ratio_to_cross_utility_spread']:.2f} | **fails** |",
         a10["t_nu15"]["ratio_to_cross_utility_spread"], 0.02)
     add(f"row gives {a10['lognormal']['median_own_sweep_x']:.2f}x against",
         a10["lognormal"]["median_own_sweep_x"], 0.02)
@@ -277,16 +277,51 @@ def claims() -> list[tuple[str, float, float]]:
     a11 = t8["A11_threshold_window"]
     add(f"about **{a11['lognormal_break_even_med_days_low_edge']:.1f}** major event days",
         a11["lognormal_break_even_med_days_low_edge"], 0.1)
-    add(f"declare **{a11['lognormal_break_even_med_days_low_edge']:.1f}** major event days",
+    add(f"declare {a11['lognormal_break_even_med_days_low_edge']:.1f} major event days",
         a11["lognormal_break_even_med_days_low_edge"], 0.1)
-    add(f"window must reach about ±{a11['break_even_half_width']['lognormal']:.2f}",
+    add(f"| log-normal | ±{a11['break_even_half_width']['lognormal']:.2f} |",
         a11["break_even_half_width"]["lognormal"], 0.01)
-    add(f"to ±{a11['break_even_half_width']['t_nu15']:.2f} at 15 degrees",
+    add(f"±{a11['break_even_half_width']['t_nu15']:.2f} | | t, nu=7",
         a11["break_even_half_width"]["t_nu15"], 0.01)
     worst_half = max(v["h_0.5"]["ratio_to_spread"] for v in a11["grid"].values())
     add(f"never exceeds **{worst_half:.2f}**", worst_half, 0.01)
-    add(f"running from\n{a11['med_days_per_year']['at_2.0']:.1f} major event days",
+    add(f"{a11['med_days_per_year']['at_2.0']:.2f} | | 2.25 |",
         a11["med_days_per_year"]["at_2.0"], 0.1)
+
+    # --- second literature pass: A12, A13 and the zero-exclusion benchmark ---
+    a12 = t8["A12_pareto_tail"]
+    a13 = t8["A13_evidence_grounded_window"]
+    fr = a13["fleet_range_on_widest_evidence_window"]
+    lo13, hi13 = a13["windows_in_beta"]["1_to_15_per_year"]
+    add(f"is **{a13['best_ratio_anywhere']:.2f}**, and it is the log-normal case",
+        a13["best_ratio_anywhere"], 0.01)
+    add(f"{lo13:.2f} to {hi13:.2f}. On every", lo13, 0.01)
+    add(f"**{fr['lognormal']['range_x']:.2f}x** under IEEE 1366's own",
+        fr["lognormal"]["range_x"], 0.02)
+    add(f"**{fr['laplace']['range_x']:.2f}x** under a heavier-tailed Laplace",
+        fr["laplace"]["range_x"], 0.02)
+    for tail in ("lognormal", "laplace"):
+        add(f"{fr[tail]['fleet_saidi_at_15_per_year']:.1f} | "
+            f"{fr[tail]['fleet_saidi_at_1_per_year']:.1f} | {fr[tail]['range_x']:.2f}x |",
+            fr[tail]["fleet_saidi_at_15_per_year"], 0.2)
+    m12 = a12["med_days_per_year_at_2_5"]
+    add(f"predicts **{m12['laplace']:.2f}**, inside that range", m12["laplace"], 0.01)
+    add(f"{m12['lognormal']:.2f} | | t, nu=30 | {m12['t_nu30']:.2f} |",
+        m12["lognormal"], 0.01)
+    add(f"median\n{a12['implied_pareto_alpha']['median']:.2f} and interquartile range",
+        a12["implied_pareto_alpha"]["median"], 0.01)
+
+    zb = t3["zero_exclusion_benchmark"]
+    ie = zb["by_standard_and_size"]["IEEE"]
+    add(f"about **{100 * zb['benchmarks']['nominal_2_27_per_year']:.1f}%** of the time",
+        100 * zb["benchmarks"]["nominal_2_27_per_year"], 0.1)
+    add(f"at most\n**{100 * zb['generous_ceiling']:.1f}%** at the low end",
+        100 * zb["generous_ceiling"], 0.1)
+    add(f"rate, {100 * ie['100k_plus']['share_zero_exclusion']:.1f}%, is about",
+        100 * ie["100k_plus"]["share_zero_exclusion"], 0.1)
+    rr = zb["other_to_ieee_ratio_by_size"]
+    add(f"{rr['10k_to_100k']:.1f} to\n{rr['100k_plus']:.1f} times as often",
+        rr["10k_to_100k"], 0.05)
 
     return out
 
@@ -301,6 +336,13 @@ REQUIRED_DISCLAIMER = [
 ]
 
 REQUIRED_PRIOR_ART = [
+    ("Fumagalli", "the main contrary evidence on tails (thinner than normal, "
+                  "Italian districts) must stay cited, or the tail discussion "
+                  "reads one-sided"),
+    ("two to eight", "the working group's own report of more major event days "
+                     "than the log-normal predicts must stay quoted"),
+    ("FAQ", "Q2's reading of identical pairs rests on EIA's filing instruction; "
+            "the source must stay cited"),
     ("LITERATURE.md", "the literature record must stay linked from the prose"),
     ("corroboration", "Q1 and Q2 are corroboration of an established critique; "
                       "saying otherwise overstates the contribution"),
@@ -332,6 +374,12 @@ REQUIRED_HEDGES = [
      "A10 found the headline comparison breaks under mildly heavy tails; the "
      "README must say so where it makes the comparison"),
     ("Basis: model-implied", "FINDINGS must label model-implied answers as such"),
+    ("Withdrawn",
+     "A13 withdrew the central model-implied comparison on evidence-grounded "
+     "windows; the withdrawal must stay visible wherever the comparison appears"),
+    ("not diagnostic",
+     "a wide log-normal gives a Hill index inside the measured Pareto range, so "
+     "an in-range Hill index must never be presented as evidence of a Pareto tail"),
     ("rests on two analyst choices",
      "A11 found the headline comparison also depends on the threshold window, "
      "holding only at about +/-0.75 or wider even under log-normal tails; the "
