@@ -431,7 +431,7 @@ explanation both predict exactly this pattern. Attack A5 shrinks the raw gap fro
 
 *Basis: filed data.*
 
-**Yes, to nine significant figures.**
+**Yes, to eight significant figures at the 99th percentile of filings.**
 
 CAIDI is definitionally SAIDI / SAIFI, and EIA-861 collects all three
 independently in the 2016-2018 and 2022 files. The identity reproduces within 1%

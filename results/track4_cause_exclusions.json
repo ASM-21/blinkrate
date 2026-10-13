@@ -29,75 +29,75 @@
   "los": {
     "by_ownership": {
       "Coop": {
-        "median_los_retained": 0.934837092732,
+        "median_los_retained": 0.934837093,
         "n": 2221,
-        "share_los_removes_nothing": 0.16118865376
+        "share_los_removes_nothing": 0.161188654
       },
       "IOU": {
-        "median_los_retained": 0.957401442635,
+        "median_los_retained": 0.957401443,
         "n": 868,
-        "share_los_removes_nothing": 0.191244239631
+        "share_los_removes_nothing": 0.19124424
       },
       "Municipal": {
         "median_los_retained": 1.0,
         "n": 817,
-        "share_los_removes_nothing": 0.744186046512
+        "share_los_removes_nothing": 0.744186047
       }
     },
     "by_year": {
       "2013": {
-        "median_los_retained": 0.941588785047,
+        "median_los_retained": 0.941588785,
         "n_ieee": 511,
         "n_reporting_los": 459,
-        "share_reporting_los": 0.898238747554
+        "share_reporting_los": 0.898238748
       },
       "2014": {
-        "median_los_retained": 0.945761124122,
+        "median_los_retained": 0.945761124,
         "n_ieee": 562,
         "n_reporting_los": 501,
-        "share_reporting_los": 0.891459074733
+        "share_reporting_los": 0.891459075
       },
       "2015": {
-        "median_los_retained": 0.961899629285,
+        "median_los_retained": 0.961899629,
         "n_ieee": 620,
         "n_reporting_los": 559,
-        "share_reporting_los": 0.901612903226
+        "share_reporting_los": 0.901612903
       },
       "2016": {
-        "median_los_retained": 0.966252220249,
+        "median_los_retained": 0.96625222,
         "n_ieee": 647,
         "n_reporting_los": 557,
-        "share_reporting_los": 0.860896445131
+        "share_reporting_los": 0.860896445
       },
       "2017": {
-        "median_los_retained": 0.964358522795,
+        "median_los_retained": 0.964358523,
         "n_ieee": 687,
         "n_reporting_los": 600,
-        "share_reporting_los": 0.873362445415
+        "share_reporting_los": 0.873362445
       },
       "2018": {
-        "median_los_retained": 0.971287907058,
+        "median_los_retained": 0.971287907,
         "n_ieee": 730,
         "n_reporting_los": 634,
-        "share_reporting_los": 0.868493150685
+        "share_reporting_los": 0.868493151
       },
       "2022": {
-        "median_los_retained": 0.976136180034,
+        "median_los_retained": 0.97613618,
         "n_ieee": 689,
         "n_reporting_los": 622,
-        "share_reporting_los": 0.902757619739
+        "share_reporting_los": 0.90275762
       }
     },
-    "customer_weighted_los_retained": 0.926809356532,
-    "mean_los_retained_share": 0.871599896354,
-    "median_los_retained_share": 0.963648236098,
+    "customer_weighted_los_retained": 0.926809357,
+    "mean_los_retained_share": 0.871599896,
+    "median_los_retained_share": 0.963648236,
     "n_ieee_rows": 4446,
     "n_reporting_los": 3932,
     "n_valid": 3932,
-    "share_of_ieee_reporting_los": 0.884390463338,
-    "share_where_los_removes_nothing": 0.28992878942,
+    "share_of_ieee_reporting_los": 0.884390463,
+    "share_where_los_removes_nothing": 0.289928789,
     "stacked_med_and_los": {
-      "median_combined_retained": 0.588090514448,
+      "median_combined_retained": 0.588090514,
       "note": "multiplicative approximation: EIA does not publish a both-removed variant, so this assumes the two carve-outs are independent, which they are not for storm events that take out transmission"
     }
   },

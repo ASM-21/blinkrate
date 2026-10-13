@@ -22,8 +22,15 @@ from blinkrate import (track1_investment, track2_weather_split,
                        track3_med_sensitivity, track4_cause_exclusions,
                        track5_undergrounding, track6_ownership, track7_validation)
 from blinkrate.shared import ingest
+from blinkrate.shared import io as results_io
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Rounding to SIG_FIGS significant figures moves a value by at most
+# 5 * 10**-SIG_FIGS relative, so a test comparing a stored result with an exact
+# value allows twice that.
+STORED_REL = 10.0 ** (1 - results_io.SIG_FIGS)
+
 def _guard_prose_files() -> tuple[str, ...]:
     """The prose list, read from the guard itself.
 
@@ -328,6 +335,43 @@ def test_readme_test_count_is_not_stale():
         f"README says {stated.group(1)} tests, collection finds {collected}")
 
 
+def test_readme_claim_count_is_not_stale():
+    """The README says how many quoted figures the guard checks. It still said
+    74, the count when the sentence was written, after the guard had grown to
+    105 across three releases: the kind of stale number the guard exists to
+    catch. So the count is read from the guard itself."""
+    import importlib.util
+    import re
+    spec = importlib.util.spec_from_file_location(
+        "check_claims", ROOT / "tools" / "check_claims.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    stated = re.search(r"check_claims\.py` pairs (\d+) figures",
+                       (ROOT / "README.md").read_text())
+    assert stated, "README no longer states how many figures the guard checks"
+    assert int(stated.group(1)) == len(mod.claims()), (
+        f"README says {stated.group(1)}, the guard checks {len(mod.claims())}")
+
+
+def test_verify_script_replays_every_ci_step():
+    """UPLOAD.md tells a reader that ./verify.sh is CI run locally, so every
+    check CI makes must be in it. Its first install step also failed on Python
+    3.12 and later until v1.2.0: it installs without build isolation, and venvs
+    there ship without setuptools, so the backend must be installed first."""
+    import re
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+    verify = (ROOT / "verify.sh").read_text()
+    for step in ("blinkrate.shared.finite_sample --check", "blinkrate.run_all",
+                 "git diff --exit-code", "-- results/", "pytest -q",
+                 "tools/check_claims.py"):
+        assert step in ci, f"CI no longer runs {step!r}; update this test"
+        assert step in verify, f"verify.sh skips a CI step: {step!r}"
+    backend = re.search(r'pip" install[^\n]*setuptools', verify)
+    no_isolation = verify.index("--no-build-isolation")
+    assert backend and backend.start() < no_isolation, (
+        "verify.sh must install setuptools before installing without isolation")
+
+
 def test_track3_ranking_sensitivity():
     """The exclusion reorders the leaderboard, in every filing year."""
     rk = _results("track3_med_sensitivity")["ranking"]
@@ -354,11 +398,27 @@ def test_utility_profile_cli_runs():
     """The per-utility tool is a deliverable, so it gets a smoke test."""
     r = subprocess.run(
         [sys.executable, str(ROOT / "tools" / "utility_profile.py"),
-         "--id", "14715"],
+         "--id", "4110"],
         cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
     assert "WHAT WOULD HAVE BEEN FILED AT OTHER THRESHOLDS" in r.stdout
     assert "model-implied" in r.stdout, "the caveat must print with the numbers"
+
+
+def test_seed_spread_compares_claims_by_position():
+    """tools/seed_spread.py takes minutes per seed, so the suite checks only its
+    comparison: identical results report nothing, and a figure moved past the
+    guard's tolerance is reported as such."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "seed_spread", ROOT / "tools" / "seed_spread.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    base = mod.claim_values(ROOT / "results")
+    assert mod.compare(base, [base]) == []
+    moved = [(t, v + 2 * tol + 1.0, tol) for t, v, tol in base]
+    rows = mod.compare(base, [moved])
+    assert len(rows) == len(base) and all(r["exceeds_tolerance"] for r in rows)
 
 
 def test_utility_profile_refuses_ambiguous_match():
@@ -556,6 +616,28 @@ def test_employer_is_not_a_worked_example():
             assert hits == 0, f"{name} names the employer"
 
 
+def test_employer_is_not_a_worked_example_in_code_either():
+    """The same rule for code. Until v1.2.0 the profile tool's usage examples,
+    which print with --help, opened with the employer by name and by EIA id,
+    and the tool's smoke test ran on that id; the prose test above reads
+    neither. The id is looked up from the vendored data rather than written
+    here, so this file can scan itself."""
+    import re
+    df = ingest.analysis_sample()
+    ids = {str(int(i)) for i in df.loc[
+        df["utility_name"].str.contains(r"\bPPL\b", regex=True), "utility_id"]}
+    assert ids, "no employer id found, so the scan below would pass vacuously"
+    code = [p for p in (ROOT / "tools").glob("*.py") if p.name != "check_claims.py"]
+    code += sorted((ROOT / "blinkrate").rglob("*.py"))
+    code += sorted((ROOT / "tests").glob("*.py"))
+    for path in code:
+        text = path.read_text()
+        for i in ids:
+            assert not re.search(rf"\b{i}\b", text), f"{path.name} uses the id {i}"
+        if path.parent.name != "tests":  # tests name it in their own messages
+            assert not re.search(r"\bPPL\b", text), f"{path.name} names the employer"
+
+
 def test_stated_falsification_criterion_is_actually_run():
     """FINDINGS commits to a criterion. A criterion nobody runs is decoration.
 
@@ -702,10 +784,16 @@ def test_guard_enforces_no_em_dashes(tmp_path):
 
 
 def test_stored_results_are_rounded_for_reproducibility():
-    """Results are rounded to 12 significant figures so they are byte-identical
-    across supported library versions; CI's git diff on results/ depends on it."""
+    """Results are rounded to 9 significant figures so they are byte-identical
+    across library versions and runner CPUs; CI's git diff on results/ depends
+    on it. The p-value pair is real: track 6's log_customers_p as computed with
+    the Intel AVX-512 and AMD Zen 3 kernels. At the 12 figures stored before
+    v1.2.0 the two disagreed in the last digit and CI failed on Zen 3."""
     from blinkrate.shared import io
-    assert io.SIG_FIGS == 12
+    assert io.SIG_FIGS == 9
+    intel, zen3 = 8.589131538277231e-14, 8.58913153832389e-14  # numpy 2.5.4
+    assert f"{intel:.12g}" != f"{zen3:.12g}"
+    assert io._round_floats(intel) == io._round_floats(zen3)
     assert io._round_floats(0.12935628322404175) == io._round_floats(
         0.12935628322404166)
     assert io._round_floats({"x": [1.0, float("nan")]}) == {"x": [1.0, None]}
@@ -788,7 +876,8 @@ def test_a11_major_event_days_are_the_standards_own_arithmetic():
     m = _results("track8_falsification")["A11_threshold_window"]["med_days_per_year"]
     for key, beta in (("at_standard_2.5", 2.5), ("at_2.0", 2.0), ("at_1.75", 1.75),
                       ("at_3.0", 3.0)):
-        assert m[key] == pytest.approx(365 * (1 - stats.norm.cdf(beta)), rel=1e-9)
+        assert m[key] == pytest.approx(365 * (1 - stats.norm.cdf(beta)),
+                                       rel=STORED_REL)
     low = _results("track8_falsification")["A11_threshold_window"][
         "lognormal_break_even_med_days_low_edge"]
     assert 13 < low < 17, "the break-even low edge should sit near 15 days a year"
@@ -994,8 +1083,8 @@ def test_zero_exclusion_benchmark_rescopes_q2():
     z = _results("track3_med_sensitivity")["zero_exclusion_benchmark"]
     b = z["benchmarks"]
     assert b["nominal_2_27_per_year"] == pytest.approx(
-        (1 - stats.norm.sf(2.5)) ** 365, rel=1e-9)
-    assert z["generous_ceiling"] == pytest.approx(np.exp(-2.0), rel=1e-9)
+        (1 - stats.norm.sf(2.5)) ** 365, rel=STORED_REL)
+    assert z["generous_ceiling"] == pytest.approx(np.exp(-2.0), rel=STORED_REL)
     ieee = z["by_standard_and_size"]["IEEE"]
     assert z["large_ieee_within_benchmark_range"] is True
     assert ieee["100k_plus"]["share_zero_exclusion"] == pytest.approx(0.122, abs=0.003)
@@ -1067,3 +1156,68 @@ def test_archived_abstract_reflects_the_withdrawal():
         assert withdrawn not in cff, f"abstract quotes the withdrawn claim: {withdrawn}"
     zen = json.loads((ROOT / ".zenodo.json").read_text())["description"]
     assert "withdrawn" in zen
+
+
+# --------------------------------------------------------------------------
+# reproducibility: the bunching fit must not depend on the LAPACK build
+# --------------------------------------------------------------------------
+
+_BUNCHING_GRID = [(d, w, lo) for d in (3, 4, 5, 7) for w in (0.02, 0.05, 0.10)
+                  for lo in (0.2, 0.3, 0.5)]
+
+
+def _exact_excess_mass(r, window, degree, fit_lo):
+    """The bunching point estimate in exact rational arithmetic: least squares
+    by Gauss-Jordan elimination over Fractions, so no floating point anywhere.
+    The reference both polynomial bases are judged against."""
+    from fractions import Fraction
+    edges = np.arange(fit_lo, 1.0 + 1e-9, 0.01)
+    centers = (edges[:-1] + edges[1:]) / 2
+    in_window = centers > (1 - window)
+    b = np.digitize(r, edges) - 1
+    counts = np.bincount(b[(b >= 0) & (b < centers.size)], minlength=centers.size)
+    xs = [Fraction(float(x)) for x in centers]
+    fit = [i for i in range(len(xs)) if not in_window[i]]
+    win = [i for i in range(len(xs)) if in_window[i]]
+    k = degree + 1
+    m = [[sum(xs[i] ** (a + c) for i in fit) for c in range(k)]
+         + [sum(xs[i] ** a * int(counts[i]) for i in fit)] for a in range(k)]
+    for c in range(k):
+        p = next(i for i in range(c, k) if m[i][c] != 0)
+        m[c], m[p] = m[p], m[c]
+        m[c] = [v / m[c][c] for v in m[c]]
+        for i in range(k):
+            if i != c and m[i][c] != 0:
+                m[i] = [x - m[i][c] * y for x, y in zip(m[i], m[c])]
+    coef = [m[i][k] for i in range(k)]
+    cf = sum(max(Fraction(0), sum(coef[a] * xs[i] ** a for a in range(k)))
+             for i in win)
+    return float(Fraction(int(counts[in_window].sum())) / cf)
+
+
+def test_bunching_fit_is_well_conditioned():
+    """The counterfactual polynomial is fitted in a Legendre basis on the
+    fitted points' rescaled range, condition number 3.7 at worst on this grid.
+    The raw power basis it replaced reaches 2.3e8, which left the last digits
+    of every bunching result to the LAPACK build and failed CI's byte-identity
+    check under numpy 2.5. Scaling to the full bin range instead reaches 352.
+    If either regression comes back, this fails before CI does."""
+    from blinkrate.track3_med_sensitivity import bunching_design_for
+    worst = max(np.linalg.cond(bunching_design_for(lo, w, d)[0])
+                for d, w, lo in _BUNCHING_GRID)
+    assert worst < 10, f"bunching design condition number {worst:.3g}"
+
+
+@pytest.mark.parametrize("degree,window,fit_lo", [(5, 0.05, 0.30),   # headline
+                                                  (7, 0.05, 0.50),   # worst-conditioned
+                                                  (7, 0.02, 0.50)])
+def test_bunching_estimate_matches_exact_arithmetic(degree, window, fit_lo):
+    """Same estimator, now within about 1e-14 of exact rational arithmetic. The
+    old power basis missed by up to 1.6e-9 relative, as large as the rounding
+    step of the ninth significant figure that results are stored to."""
+    from blinkrate.track3_med_sensitivity import excess_mass_at_zero_exclusion
+    df = ingest.analysis_sample()
+    got = excess_mass_at_zero_exclusion(df, window=window, degree=degree,
+                                        n_boot=10, fit_lo=fit_lo)["excess_mass_ratio"]
+    want = _exact_excess_mass(df["retained_share"].to_numpy(), window, degree, fit_lo)
+    assert got == pytest.approx(want, rel=1e-12)

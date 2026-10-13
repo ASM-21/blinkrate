@@ -81,7 +81,7 @@ python -m blinkrate.run_all       # all tracks; track 8 takes a few minutes
 python -m blinkrate.run_all --skip 8
 pytest
 python tools/check_claims.py
-./verify.sh                       # clean venv, full suite, guard
+./verify.sh                       # every CI check, in a clean venv
 ```
 
 Install editable (`-e`). The vendored EIA files and the calibration cache are
@@ -91,9 +91,16 @@ from a wheel and use elsewhere. `verify.sh` installs editable for that reason.
 
 `data/calibration_med.npz` is generated. Rebuild it with
 `python -m blinkrate.shared.finite_sample` (about 20 seconds, and bit-identical
-to the committed cache since it is fully seeded). Rebuilding it
-changes track 3, 6 and 8 numbers at the third decimal, so rerun the tracks and
-the guard afterwards.
+to the committed cache since it is fully seeded), or add `--check` to compare a
+fresh build with the committed cache without writing, which is what CI runs.
+
+The seed makes the surface's Monte Carlo noise reproducible; it does not remove
+it. Rebuilt from five other seeds, 14 of the 105 guarded figures move, all of
+them model-implied, by up to 7.7%, and eight move by more than the guard's
+tolerance (the 7.66x threshold range lands between 7.69x and 7.75x).
+`python tools/seed_spread.py` measures this. Changing the seed or the simulation
+count therefore changes quoted figures: rerun the tracks and the guard after
+either, and update the prose.
 
 ## Style rules that exist for a reason
 

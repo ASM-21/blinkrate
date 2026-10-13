@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Run one utility's filed numbers through the exclusion engine.
 
-    python tools/utility_profile.py --name "PPL"
-    python tools/utility_profile.py --id 14715 --state PA --figure
-    python tools/utility_profile.py --name "Duke Energy" --peers
+    python tools/utility_profile.py --name "Commonwealth Edison"
+    python tools/utility_profile.py --id 5416 --state NC --figure
+    python tools/utility_profile.py --name "Georgia Power" --peers
     python tools/utility_profile.py --pair 200 120               # any filed pair
     python tools/utility_profile.py --pair 200 120 --tails       # and its tail sensitivity
 

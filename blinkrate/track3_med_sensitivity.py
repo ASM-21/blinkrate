@@ -142,6 +142,45 @@ def elasticity_identity(df: pd.DataFrame) -> dict:
     }
 
 
+def _bunching_design(edges: np.ndarray, centers: np.ndarray,
+                     in_window: np.ndarray, degree: int):
+    """Design matrices for the counterfactual polynomial, outside and inside
+    the bunching window.
+
+    A Legendre basis on the fitted points' own range rescaled to [-1, 1], not
+    the raw power basis that `np.vander` gives. Both span the same polynomials,
+    so the least-squares fit, and therefore the estimator, is identical; the
+    window bins are evaluated just outside [-1, 1], which is the extrapolation
+    the estimator has always done. What differs is conditioning. Across the
+    36-specification grid in attack A3 the power basis reaches a condition
+    number of 2.3e8, which left the last few significant digits of every
+    bunching result to whichever LAPACK build ran the pseudo-inverse, and under
+    numpy 2.5 broke CI's byte-identity check on results that had not changed in
+    any reported digit. This basis stays at or below 3.7 across the same grid.
+
+    Scaling to the fitted points rather than to the full bin range matters: the
+    full range reaches 352 at degree 7 with the widest window, because the
+    fitted points then occupy only part of [-1, 1].
+    """
+    x_fit = centers[~in_window]
+    lo, hi = float(x_fit.min()), float(x_fit.max())
+
+    def basis(x: np.ndarray) -> np.ndarray:
+        return np.polynomial.legendre.legvander((2.0 * x - (lo + hi)) / (hi - lo),
+                                                degree)
+
+    return basis(x_fit), basis(centers[in_window])
+
+
+def bunching_design_for(fit_lo: float, window: float, degree: int):
+    """The fit-side design matrix for one specification, for conditioning
+    checks. Mirrors the binning in `excess_mass_at_zero_exclusion` exactly."""
+    edges = np.arange(fit_lo, 1.0 + 1e-9, 0.01)
+    centers = (edges[:-1] + edges[1:]) / 2
+    in_window = centers > (1 - window)
+    return _bunching_design(edges, centers, in_window, degree)
+
+
 def excess_mass_at_zero_exclusion(df: pd.DataFrame, window: float = 0.05,
                                   degree: int = 5, n_boot: int = 2000,
                                   fit_lo: float = 0.30, seed: int = 7) -> dict:
@@ -162,7 +201,8 @@ def excess_mass_at_zero_exclusion(df: pd.DataFrame, window: float = 0.05,
     product; and since the polynomial design matrix is the same for every draw,
     one pseudo-inverse fits all of them at once. Same estimator, three orders of
     magnitude faster, which is what makes the 36-specification robustness grid in
-    track 8 affordable.
+    track 8 affordable. The polynomial is fitted in a well-conditioned basis; see
+    `_bunching_design` for why that matters to reproducibility.
     """
     rng = np.random.default_rng(seed)
     r = df["retained_share"].to_numpy()
@@ -181,8 +221,7 @@ def excess_mass_at_zero_exclusion(df: pd.DataFrame, window: float = 0.05,
     cluster_hist = np.zeros((uniq.size, centers.size))
     np.add.at(cluster_hist, (inv[valid], bin_idx[valid]), 1.0)
 
-    V_fit = np.vander(centers[~in_window], degree + 1)
-    V_win = np.vander(centers[in_window], degree + 1)
+    V_fit, V_win = _bunching_design(edges, centers, in_window, degree)
     pinv = np.linalg.pinv(V_fit)
 
     def ratios(count_matrix: np.ndarray) -> np.ndarray:

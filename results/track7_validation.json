@@ -36,17 +36,17 @@
   "caidi_identity": {
     "tolerance": 0.01,
     "with_med": {
-      "median_relative_error": 6.55840772339e-09,
+      "median_relative_error": 6.55840772e-09,
       "n_checked": 3838,
       "n_failing": 0,
-      "p99_relative_error": 4.30003398835e-08,
+      "p99_relative_error": 4.30003399e-08,
       "share_within_tolerance": 1.0
     },
     "without_med": {
-      "median_relative_error": 5.18880022045e-09,
+      "median_relative_error": 5.18880022e-09,
       "n_checked": 3392,
       "n_failing": 0,
-      "p99_relative_error": 4.31092814512e-08,
+      "p99_relative_error": 4.31092815e-08,
       "share_within_tolerance": 1.0
     },
     "years_checked": [
@@ -59,56 +59,56 @@
   "closed_form_vs_procedure": {
     "by_sigma": {
       "sigma_0.5": {
-        "abs_err_calibration_vs_sim_median": 0.000525642738333,
-        "abs_err_closed_form_vs_sim_median": 0.00224819439641,
-        "calibrated_surface": 0.980023705187,
-        "closed_form": 0.977249868052,
-        "simulated_mean": 0.977060965675,
-        "simulated_median": 0.979498062448
+        "abs_err_calibration_vs_sim_median": 0.000525642738,
+        "abs_err_closed_form_vs_sim_median": 0.0022481944,
+        "calibrated_surface": 0.980023705,
+        "closed_form": 0.977249868,
+        "simulated_mean": 0.977060966,
+        "simulated_median": 0.979498062
       },
       "sigma_1.0": {
-        "abs_err_calibration_vs_sim_median": 0.00306277828515,
-        "abs_err_closed_form_vs_sim_median": 0.0101902956909,
-        "calibrated_surface": 0.940320316137,
-        "closed_form": 0.933192798731,
-        "simulated_mean": 0.936716119953,
-        "simulated_median": 0.943383094422
+        "abs_err_calibration_vs_sim_median": 0.00306277829,
+        "abs_err_closed_form_vs_sim_median": 0.0101902957,
+        "calibrated_surface": 0.940320316,
+        "closed_form": 0.933192799,
+        "simulated_mean": 0.93671612,
+        "simulated_median": 0.943383094
       },
       "sigma_1.5": {
-        "abs_err_calibration_vs_sim_median": 0.000230746540456,
-        "abs_err_closed_form_vs_sim_median": 0.0215745659866,
-        "calibrated_surface": 0.862688565515,
-        "closed_form": 0.841344746069,
-        "simulated_mean": 0.855477462982,
-        "simulated_median": 0.862919312055
+        "abs_err_calibration_vs_sim_median": 0.00023074654,
+        "abs_err_closed_form_vs_sim_median": 0.021574566,
+        "calibrated_surface": 0.862688566,
+        "closed_form": 0.841344746,
+        "simulated_mean": 0.855477463,
+        "simulated_median": 0.862919312
       },
       "sigma_2.0": {
-        "abs_err_calibration_vs_sim_median": 0.0123355706078,
-        "abs_err_closed_form_vs_sim_median": 0.0543399688588,
-        "calibrated_surface": 0.758138000741,
-        "closed_form": 0.691462461274,
-        "simulated_mean": 0.746011345452,
-        "simulated_median": 0.745802430133
+        "abs_err_calibration_vs_sim_median": 0.0123355706,
+        "abs_err_closed_form_vs_sim_median": 0.0543399689,
+        "calibrated_surface": 0.758138001,
+        "closed_form": 0.691462461,
+        "simulated_mean": 0.746011345,
+        "simulated_median": 0.74580243
       },
       "sigma_2.5": {
-        "abs_err_calibration_vs_sim_median": 0.01826834284,
-        "abs_err_closed_form_vs_sim_median": 0.10995994612,
-        "calibrated_surface": 0.62822828896,
+        "abs_err_calibration_vs_sim_median": 0.0182683428,
+        "abs_err_closed_form_vs_sim_median": 0.109959946,
+        "calibrated_surface": 0.628228289,
         "closed_form": 0.5,
-        "simulated_mean": 0.614286587362,
-        "simulated_median": 0.60995994612
+        "simulated_mean": 0.614286587,
+        "simulated_median": 0.609959946
       },
       "sigma_3.0": {
-        "abs_err_calibration_vs_sim_median": 0.0172917212819,
-        "abs_err_closed_form_vs_sim_median": 0.196401030324,
-        "calibrated_surface": 0.487646847768,
-        "closed_form": 0.308537538726,
-        "simulated_mean": 0.529104368896,
-        "simulated_median": 0.50493856905
+        "abs_err_calibration_vs_sim_median": 0.0172917213,
+        "abs_err_closed_form_vs_sim_median": 0.19640103,
+        "calibrated_surface": 0.487646848,
+        "closed_form": 0.308537539,
+        "simulated_mean": 0.529104369,
+        "simulated_median": 0.504938569
       }
     },
-    "max_abs_err_calibration": 0.01826834284,
-    "max_abs_err_closed_form": 0.196401030324,
+    "max_abs_err_calibration": 0.0182683428,
+    "max_abs_err_closed_form": 0.19640103,
     "verdict": "closed form is accurate for sigma <= 1 and degrades badly above 2; the calibrated surface is what the tracks use"
   },
   "duplicate_filings": {
@@ -133,36 +133,36 @@
   "round_trip": {
     "by_r": {
       "r_0.3": {
-        "abs_error": 0.0167958869009,
-        "implied_sigma": 3.88055971776,
-        "recovered_median_r": 0.283204113099
+        "abs_error": 0.0167958869,
+        "implied_sigma": 3.88055972,
+        "recovered_median_r": 0.283204113
       },
       "r_0.45": {
-        "abs_error": 0.00129035444591,
-        "implied_sigma": 3.18623780394,
-        "recovered_median_r": 0.451290354446
+        "abs_error": 0.00129035445,
+        "implied_sigma": 3.1862378,
+        "recovered_median_r": 0.451290354
       },
       "r_0.6": {
-        "abs_error": 0.00797271040961,
-        "implied_sigma": 2.61171201158,
-        "recovered_median_r": 0.59202728959
+        "abs_error": 0.00797271041,
+        "implied_sigma": 2.61171201,
+        "recovered_median_r": 0.59202729
       },
       "r_0.75": {
-        "abs_error": 0.0150881858534,
-        "implied_sigma": 2.0232826038,
-        "recovered_median_r": 0.734911814147
+        "abs_error": 0.0150881859,
+        "implied_sigma": 2.0232826,
+        "recovered_median_r": 0.734911814
       },
       "r_0.85": {
-        "abs_error": 0.0118262178496,
-        "implied_sigma": 1.58162739673,
-        "recovered_median_r": 0.83817378215
+        "abs_error": 0.0118262178,
+        "implied_sigma": 1.5816274,
+        "recovered_median_r": 0.838173782
       },
       "r_0.95": {
-        "abs_error": 0.00121069292417,
-        "implied_sigma": 0.912599913193,
-        "recovered_median_r": 0.951210692924
+        "abs_error": 0.00121069292,
+        "implied_sigma": 0.912599913,
+        "recovered_median_r": 0.951210693
       }
     },
-    "max_abs_error": 0.0167958869009
+    "max_abs_error": 0.0167958869
   }
 }

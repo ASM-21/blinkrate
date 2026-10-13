@@ -7,8 +7,11 @@ on:
 jobs:
   reproduce:
     # Oldest and newest supported Python. Both must regenerate every committed
-    # result byte for byte; the byte-identity was verified across pandas
-    # 2.2-3.0, numpy 2.2-2.4, scipy 1.15-1.17 and statsmodels 0.14-0.15.
+    # result byte for byte. Verified on Python 3.10-3.13 with pandas 2.2.3-3.0.6,
+    # numpy 2.2.6-2.5.4, scipy 1.15.3-1.18.1 and statsmodels 0.14.4-0.15.0, under
+    # Intel AVX-512 and AMD Zen 3 code paths, since a hosted runner may have
+    # either CPU. That is why results are stored to 9 significant figures; see
+    # blinkrate/shared/io.py.
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,16 +27,7 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Calibration cache reproduces bit for bit
-        run: |
-          python - <<'EOF'
-          import numpy as np
-          from blinkrate.shared import finite_sample as fs
-          fresh = fs.build_calibration()
-          with np.load("data/calibration_med.npz") as z:
-              assert all(np.array_equal(fresh[k], z[k]) for k in z.files), \
-                  "committed calibration surface does not reproduce"
-          print("calibration cache reproduces bit for bit")
-          EOF
+        run: python -m blinkrate.shared.finite_sample --check
 
       - name: Regenerate every result from the vendored data
         run: python -m blinkrate.run_all

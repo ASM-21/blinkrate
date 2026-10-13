@@ -8,16 +8,22 @@ ASM-21. Tags `v1.0.0`, `v1.1.0` and `v1.2.0` are annotated and point at verified
 ## 1. Verify from nothing, one last time
 
 ```bash
-tar -xzf blinkrate-v1.2.0.tar.gz && cd blinkrate
-./verify.sh            # isolated venv, cold install, full regeneration
+unzip blinkrate-v1.2.0.zip && cd blinkrate
+./verify.sh            # isolated venv, cold install, every check CI makes
 ./verify.sh --fast     # reuses installed numpy/pandas/scipy if memory is tight
 ```
 
-`verify.sh` deletes nothing of yours. It builds a throwaway environment,
-regenerates every result from the vendored EIA-861 files, runs the test suite
-and the claims guard, and prints `ALL GREEN` or stops at the first failure.
+`verify.sh` is CI run on your machine, and needs Python 3.10 or later. It builds
+a throwaway environment, rebuilds the calibration surface from its seed and
+checks it bit for bit, regenerates every result from the vendored EIA-861 files,
+checks those byte for byte against the committed ones, then runs the test suite
+and the claims guard. It prints `ALL GREEN` or stops at the first failure.
 
-To reproduce the CI byte check by hand:
+It regenerates the figures in place as well. Their pixels depend on the
+matplotlib version, so `git status` may list modified PNGs afterwards, and
+`git checkout -- figures/` restores the committed ones. Nothing else is touched.
+
+To rerun only the byte check:
 
 ```bash
 python -m blinkrate.run_all
@@ -37,6 +43,12 @@ git push -u origin main
 git push origin --tags
 ```
 
+Pushing the tags also runs CI on `v1.0.0` and `v1.1.0`, each with the workflow
+it shipped with. Expect both runs to fail: those releases store results to 12
+significant figures and predate the bunching fix, the two problems listed under
+Fixed in CHANGELOG v1.2.0. The failures are a record of that problem rather than
+a regression, and the README badge follows `main`.
+
 Suggested repository description:
 
 > How much of a US utility's reported reliability number is the measurement rule
@@ -47,9 +59,9 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 
 ## 3. After the push
 
-- **CI.** Open the Actions tab and confirm the first run is green. It rebuilds
-  the calibration cache bit for bit, regenerates every result, fails on any byte
-  difference, then runs the tests and the claims guard.
+- **CI.** Open the Actions tab and confirm the run on `main` is green. It
+  rebuilds the calibration cache bit for bit, regenerates every result, fails on
+  any byte difference, then runs the tests and the claims guard.
 - **Release.** Create a GitHub release from tag `v1.2.0` and paste the v1.2.0
   section of CHANGELOG.md as the notes.
 - **DOI (optional).** Enabling the repository in Zenodo *before* creating the
@@ -70,6 +82,9 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
   redistribution of the public-domain originals.
 - Versions agree across pyproject.toml, CITATION.cff, .zenodo.json and the newest
   CHANGELOG heading, and a test fails if they drift.
+- Every CI step passes from a fresh clone on the oldest and newest supported
+  library versions, under both Intel AVX-512 and AMD Zen 3 code paths, since a
+  hosted runner may have either CPU. Ranges are in requirements-lock.txt.
 
 ## If something fails after pushing
 

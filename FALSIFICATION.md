@@ -322,9 +322,10 @@ placebo (Q4), and the aggregation spread on filed values (Q8). FINDINGS now
 labels every answer by basis so the reader can tell which kind they are reading.
 
 A consistency check on the machinery: A10's log-normal row gives 6.04x against
-A8's 6.18x. The gap is resolution, since A10 builds its surfaces with 250
-simulations on a coarser grid than the committed calibration's 1,500. It is small
-next to the effect being measured.
+A8's 6.18x. A10 builds its surfaces with 250 simulations on a coarser grid than
+the committed calibration's 1,500, but the gap needs no resolution story:
+rebuilding the calibration from other seeds moves A8's own figure by more than
+that (ROADMAP, Monte Carlo error). It is small next to the effect being measured.
 
 ## A11: the threshold window. **Landed. A second condition on the same claim.**
 

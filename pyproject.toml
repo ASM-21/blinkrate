@@ -21,8 +21,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",
 ]
-# Lower bounds are the oldest versions actually verified to reproduce every
-# committed result byte for byte, not guesses. See requirements-lock.txt.
+# Lower bounds are the oldest release lines verified to reproduce every
+# committed result byte for byte, not guesses. Exact versions tested are in
+# requirements-lock.txt.
 dependencies = [
     "numpy>=2.2",
     "pandas>=2.2",

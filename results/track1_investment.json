@@ -32,126 +32,126 @@
   "cross_sections": {
     "2016": {
       "ami_share_iqr": [
-        0.0426189043636,
+        0.0426189044,
         1.0
       ],
-      "ami_share_sd": 0.439345284943,
+      "ami_share_sd": 0.439345285,
       "coefficients": {
         "ami_share": {
-          "beta": -0.129281853816,
+          "beta": -0.129281854,
           "ci95": [
-            -0.282999057386,
-            0.0244353497538
+            -0.282999057,
+            0.0244353498
           ],
-          "mde_80pct_power": 0.219600040302,
-          "mde_as_pct_saidi": -19.7160162665,
-          "p": 0.0992701638236,
-          "se": 0.0784285858222
+          "mde_80pct_power": 0.21960004,
+          "mde_as_pct_saidi": -19.7160163,
+          "p": 0.0992701638,
+          "se": 0.0784285858
         }
       },
       "n": 652,
       "n_clusters": 51,
-      "r2": 0.429233339628,
-      "share_at_100pct": 0.355828220859
+      "r2": 0.42923334,
+      "share_at_100pct": 0.355828221
     },
     "2017": {
       "ami_share_iqr": [
-        0.210157833323,
+        0.210157833,
         1.0
       ],
-      "ami_share_sd": 0.421982588299,
+      "ami_share_sd": 0.421982588,
       "coefficients": {
         "ami_share": {
-          "beta": -0.0308608786673,
+          "beta": -0.0308608787,
           "ci95": [
-            -0.21260682978,
-            0.150885072445
+            -0.21260683,
+            0.150885072
           ],
-          "mde_80pct_power": 0.259641843998,
-          "mde_as_pct_saidi": -22.8672207984,
-          "p": 0.739280447586,
-          "se": 0.0927292299993
+          "mde_80pct_power": 0.259641844,
+          "mde_as_pct_saidi": -22.8672208,
+          "p": 0.739280448,
+          "se": 0.09272923
         }
       },
       "n": 685,
       "n_clusters": 51,
-      "r2": 0.367441836916,
-      "share_at_100pct": 0.401459854015
+      "r2": 0.367441837,
+      "share_at_100pct": 0.401459854
     },
     "2018": {
       "ami_share_iqr": [
-        0.53992919824,
+        0.539929198,
         1.0
       ],
-      "ami_share_sd": 0.401746634674,
+      "ami_share_sd": 0.401746635,
       "coefficients": {
         "ami_share": {
-          "beta": -0.0384572778577,
+          "beta": -0.0384572779,
           "ci95": [
-            -0.270496561546,
-            0.193582005831
+            -0.270496562,
+            0.193582006
           ],
-          "mde_80pct_power": 0.331490782204,
-          "mde_as_pct_saidi": -28.2147226794,
-          "p": 0.745304652665,
-          "se": 0.118389565073
+          "mde_80pct_power": 0.331490782,
+          "mde_as_pct_saidi": -28.2147227,
+          "p": 0.745304653,
+          "se": 0.118389565
         }
       },
       "n": 750,
       "n_clusters": 51,
-      "r2": 0.39457551363,
-      "share_at_100pct": 0.418666666667
+      "r2": 0.394575514,
+      "share_at_100pct": 0.418666667
     },
     "2022": {
       "ami_share_iqr": [
-        0.965280680255,
+        0.96528068,
         1.0
       ],
-      "ami_share_sd": 0.338107888764,
+      "ami_share_sd": 0.338107889,
       "coefficients": {
         "ami_share": {
-          "beta": -0.175640009813,
+          "beta": -0.17564001,
           "ci95": [
-            -0.40197565377,
-            0.0506956341445
+            -0.401975654,
+            0.0506956341
           ],
-          "mde_80pct_power": 0.32334257572,
-          "mde_as_pct_saidi": -27.6274119019,
-          "p": 0.128269174265,
-          "se": 0.115479491329
+          "mde_80pct_power": 0.323342576,
+          "mde_as_pct_saidi": -27.6274119,
+          "p": 0.128269174,
+          "se": 0.115479491
         }
       },
       "n": 755,
       "n_clusters": 51,
-      "r2": 0.311885727604,
-      "share_at_100pct": 0.553642384106
+      "r2": 0.311885728,
+      "share_at_100pct": 0.553642384
     }
   },
   "long_difference": {
     "coefficients": {
       "d_ami": {
-        "beta": 0.0494947604568,
+        "beta": 0.0494947605,
         "ci95": [
-          -0.196500118734,
-          0.295489639647
+          -0.196500119,
+          0.29548964
         ],
-        "mde_80pct_power": 0.351427713553,
-        "mde_as_pct_saidi": -29.6317285153,
-        "p": 0.693323051356,
-        "se": 0.125509897697
+        "mde_80pct_power": 0.351427714,
+        "mde_as_pct_saidi": -29.6317285,
+        "p": 0.693323051,
+        "se": 0.125509898
       }
     },
     "group_comparison": {
-      "difference": -0.0303993237974,
-      "mean_d_log_saidi_rollout": -0.000758435312112,
-      "mean_d_log_saidi_stable": 0.0296408884853,
+      "difference": -0.0303993238,
+      "mean_d_log_saidi_rollout": -0.000758435312,
+      "mean_d_log_saidi_stable": 0.0296408885,
       "n_rollout": 49,
       "n_stable": 464,
-      "pct_saidi_difference": -2.9941911084
+      "pct_saidi_difference": -2.99419111
     },
     "n": 589,
     "n_clusters": 51,
-    "r2": 0.0885990680932,
+    "r2": 0.0885990681,
     "span": "2016 to 2018"
   },
   "substitution": "FERC Form 1 capex unreachable; regressors are physical capital deployment (AMI share, voltage-optimised circuit share) from EIA-861, not spending",
@@ -159,9 +159,9 @@
     "n_rows": 3900,
     "n_utility_states_balanced": 650,
     "reading": "the between share is the ceiling for any time-invariant utility characteristic; the with-MED series is far less persistent because major events are a year-specific shock",
-    "share_between_utility": 0.587340258287,
-    "share_between_utility_with_med": 0.526208902686,
-    "share_within_utility": 0.412659741713,
+    "share_between_utility": 0.587340258,
+    "share_between_utility_with_med": 0.526208903,
+    "share_within_utility": 0.412659742,
     "years": [
       2013,
       2014,
@@ -174,36 +174,36 @@
   "within_utility": {
     "coefficients": {
       "ami_share": {
-        "beta": 0.0357160068705,
+        "beta": 0.0357160069,
         "ci95": [
-          -0.159120141907,
-          0.230552155648
+          -0.159120142,
+          0.230552156
         ],
-        "mde_80pct_power": 0.278342470005,
-        "mde_as_pct_saidi": -24.2962485527,
-        "p": 0.719380430144,
-        "se": 0.0994080250017
+        "mde_80pct_power": 0.27834247,
+        "mde_as_pct_saidi": -24.2962486,
+        "p": 0.71938043,
+        "se": 0.099408025
       },
       "volt_opt_share": {
-        "beta": 0.0102457043787,
+        "beta": 0.0102457044,
         "ci95": [
-          -0.266765762812,
-          0.28725717157
+          -0.266765763,
+          0.287257172
         ],
-        "mde_80pct_power": 0.395737939193,
-        "mde_as_pct_saidi": -32.6816912273,
-        "p": 0.94221009515,
-        "se": 0.141334978283
+        "mde_80pct_power": 0.395737939,
+        "mde_as_pct_saidi": -32.6816912,
+        "p": 0.942210095,
+        "se": 0.141334978
       }
     },
-    "mean_within_utility_sd_ami": 0.0575643991371,
+    "mean_within_utility_sd_ami": 0.0575643991,
     "n": 1767,
     "n_clusters": 589,
     "n_moving_ami_gt_0_10": 111,
     "n_moving_ami_gt_0_50": 53,
     "n_utility_states": 589,
     "note": "coefficients are within-utility; year effects absorbed",
-    "r2": 0.00123005352156,
+    "r2": 0.00123005352,
     "years": [
       2016,
       2017,

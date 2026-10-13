@@ -1,6 +1,8 @@
 # Exact versions that generated the committed results/ and data/calibration_med.npz.
-# Results are also verified byte-identical under pandas 2.2.3, numpy 2.2.6,
-# scipy 1.15.3, statsmodels 0.14.4 and matplotlib 3.9.4 (Python 3.10-compatible).
+# Results are also verified byte-identical at the oldest supported versions
+# (Python 3.10 with pandas 2.2.3, numpy 2.2.6, scipy 1.15.3, statsmodels 0.14.4,
+# matplotlib 3.9.4) and the newest tested (Python 3.13 with pandas 3.0.6, numpy
+# 2.5.4, scipy 1.18.1), each under Intel AVX-512 and AMD Zen 3 code paths.
 # CI enforces this: it regenerates every result and fails on any byte difference.
 numpy==2.4.4
 pandas==3.0.2

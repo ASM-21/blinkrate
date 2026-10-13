@@ -49,20 +49,20 @@
   "blocker": "no external weather severity index: NOAA blocked, no mirrored storm panel keyed to service territories found. A widening major-event gap cannot be split into weather severity versus classification.",
   "exclusion_entry": {
     "n": 568,
-    "net_entry_into_exclusion": 0.0862676056338,
+    "net_entry_into_exclusion": 0.0862676056,
     "share_zero_exclusion_by_year": {
-      "2013": 0.274647887324,
-      "2014": 0.267605633803,
-      "2015": 0.274647887324,
-      "2016": 0.246478873239,
-      "2017": 0.181338028169,
-      "2018": 0.227112676056,
-      "2022": 0.18838028169
+      "2013": 0.274647887,
+      "2014": 0.267605634,
+      "2015": 0.274647887,
+      "2016": 0.246478873,
+      "2017": 0.181338028,
+      "2018": 0.227112676,
+      "2022": 0.188380282
     },
-    "started_excluding": 0.19014084507,
-    "stopped_excluding": 0.103873239437,
-    "trend_p": 0.0256555001333,
-    "trend_pct_points_per_year": -1.07881330536
+    "started_excluding": 0.190140845,
+    "stopped_excluding": 0.103873239,
+    "trend_p": 0.0256555001,
+    "trend_pct_points_per_year": -1.07881331
   },
   "gradual_or_step": {
     "consecutive_years": [
@@ -75,74 +75,74 @@
     ],
     "extrapolation": {
       "caveat": "six fitted points extrapolated four years; treat the residual as descriptive, not as a test",
-      "observed_2022_gap": 225.292559833,
-      "predicted_2022_gap": 440.057339703,
-      "residual": -214.764779869,
-      "residual_in_pre_2022_sd": -2.28072808688
+      "observed_2022_gap": 225.29256,
+      "predicted_2022_gap": 440.05734,
+      "residual": -214.76478,
+      "residual_in_pre_2022_sd": -2.28072809
     },
-    "gap_2013": 109.004370894,
-    "gap_2018": 228.526653818,
-    "gap_r2": 0.475921309766,
-    "gap_slope_min_per_year": 41.6824327834,
-    "gap_slope_p": 0.129356283224,
+    "gap_2013": 109.004371,
+    "gap_2018": 228.526654,
+    "gap_r2": 0.47592131,
+    "gap_slope_min_per_year": 41.6824328,
+    "gap_slope_p": 0.129356283,
     "n_utility_states_consecutive": 662,
-    "without_med_r2": 0.879345557897,
-    "without_med_slope_min_per_year": 3.20555197669,
-    "without_med_slope_p": 0.00569482923532
+    "without_med_r2": 0.879345558,
+    "without_med_slope_min_per_year": 3.20555198,
+    "without_med_slope_p": 0.00569482924
   },
   "spike_geography": {
     "by_transition": {
       "2013_2014": {
-        "d_everyday_hurricane_cw": 5.41571635959,
-        "d_everyday_other_cw": 2.75713213068,
-        "d_excluded_hurricane_cw": 65.517684384,
-        "d_excluded_other_cw": -24.7407046109,
-        "excluded_gap_minutes": 90.2583889949,
+        "d_everyday_hurricane_cw": 5.41571636,
+        "d_everyday_other_cw": 2.75713213,
+        "d_excluded_hurricane_cw": 65.5176844,
+        "d_excluded_other_cw": -24.7407046,
+        "excluded_gap_minutes": 90.258389,
         "largest_mover_state": "MI",
         "n_hurricane_states_rows": 164
       },
       "2014_2015": {
-        "d_everyday_hurricane_cw": 11.4820439343,
-        "d_everyday_other_cw": 4.0178506378,
-        "d_excluded_hurricane_cw": -41.0020035819,
-        "d_excluded_other_cw": -11.4879999469,
-        "excluded_gap_minutes": -29.514003635,
+        "d_everyday_hurricane_cw": 11.4820439,
+        "d_everyday_other_cw": 4.01785064,
+        "d_excluded_hurricane_cw": -41.0020036,
+        "d_excluded_other_cw": -11.4879999,
+        "excluded_gap_minutes": -29.5140036,
         "largest_mover_state": "MI",
         "n_hurricane_states_rows": 164
       },
       "2015_2016": {
-        "d_everyday_hurricane_cw": 4.45551364428,
-        "d_everyday_other_cw": 6.07270204893,
-        "d_excluded_hurricane_cw": 225.392002333,
-        "d_excluded_other_cw": -26.7808973256,
-        "excluded_gap_minutes": 252.172899659,
+        "d_everyday_hurricane_cw": 4.45551364,
+        "d_everyday_other_cw": 6.07270205,
+        "d_excluded_hurricane_cw": 225.392002,
+        "d_excluded_other_cw": -26.7808973,
+        "excluded_gap_minutes": 252.1729,
         "largest_mover_state": "NC",
         "n_hurricane_states_rows": 164
       },
       "2016_2017": {
-        "d_everyday_hurricane_cw": 0.0775398767055,
-        "d_everyday_other_cw": -2.73968175112,
-        "d_excluded_hurricane_cw": 655.910873044,
-        "d_excluded_other_cw": 107.699781377,
-        "excluded_gap_minutes": 548.211091667,
+        "d_everyday_hurricane_cw": 0.0775398767,
+        "d_everyday_other_cw": -2.73968175,
+        "d_excluded_hurricane_cw": 655.910873,
+        "d_excluded_other_cw": 107.699781,
+        "excluded_gap_minutes": 548.211092,
         "largest_mover_state": "FL",
         "n_hurricane_states_rows": 164
       },
       "2017_2018": {
-        "d_everyday_hurricane_cw": -2.60464577383,
-        "d_everyday_other_cw": 4.54039520936,
-        "d_excluded_hurricane_cw": -657.139764728,
-        "d_excluded_other_cw": 19.437172365,
-        "excluded_gap_minutes": -676.576937093,
+        "d_everyday_hurricane_cw": -2.60464577,
+        "d_everyday_other_cw": 4.54039521,
+        "d_excluded_hurricane_cw": -657.139765,
+        "d_excluded_other_cw": 19.4371724,
+        "excluded_gap_minutes": -676.576937,
         "largest_mover_state": "FL",
         "n_hurricane_states_rows": 164
       },
       "2018_2022": {
-        "d_everyday_hurricane_cw": 1.5379994314,
-        "d_everyday_other_cw": 11.4861325812,
-        "d_excluded_hurricane_cw": 132.313012077,
-        "d_excluded_other_cw": -44.503435961,
-        "excluded_gap_minutes": 176.816448038,
+        "d_everyday_hurricane_cw": 1.53799943,
+        "d_everyday_other_cw": 11.4861326,
+        "d_excluded_hurricane_cw": 132.313012,
+        "d_excluded_other_cw": -44.503436,
+        "excluded_gap_minutes": 176.816448,
         "largest_mover_state": "FL",
         "n_hurricane_states_rows": 164
       }
@@ -159,130 +159,130 @@
       "AL",
       "NC"
     ],
-    "hurricane_states_share_of_panel_customers_pct": 27.0847057229,
-    "largest_excluded_gap_minutes": 548.211091667,
+    "hurricane_states_share_of_panel_customers_pct": 27.0847057,
+    "largest_excluded_gap_minutes": 548.211092,
     "largest_excluded_gap_transition": "2016_2017",
     "reading": "the hurricane-state list is fixed from the 2017 storm tracks and applied to every transition, so 2017 has to distinguish itself rather than being selected",
-    "second_largest_excluded_gap_minutes": 252.172899659
+    "second_largest_excluded_gap_minutes": 252.1729
   },
   "storm_state_sensitivity": {
     "all_states": {
-      "everyday_p": 0.00774726231071,
-      "everyday_r2": 0.859784313438,
-      "everyday_slope": 3.07763505015,
-      "gap_2017": 386.249240226,
-      "gap_p": 0.143409830191,
-      "gap_r2": 0.452111132774,
-      "gap_slope": 40.8956282454,
+      "everyday_p": 0.00774726231,
+      "everyday_r2": 0.859784313,
+      "everyday_slope": 3.07763505,
+      "gap_2017": 386.24924,
+      "gap_p": 0.14340983,
+      "gap_r2": 0.452111133,
+      "gap_slope": 40.8956282,
       "n_utility_states": 568,
-      "share_from_excluded_cw": 0.829416721119,
-      "share_from_excluded_unweighted": 0.814372279424
+      "share_from_excluded_cw": 0.829416721,
+      "share_from_excluded_unweighted": 0.814372279
     },
     "hurricane_states_dropped": {
-      "everyday_p": 0.00582538487219,
-      "everyday_r2": 0.878000655969,
-      "everyday_slope": 2.72113045258,
-      "gap_2017": 170.554685944,
-      "gap_p": 0.26236222682,
-      "gap_r2": 0.298140314306,
-      "gap_slope": 14.2303775711,
+      "everyday_p": 0.00582538487,
+      "everyday_r2": 0.878000656,
+      "everyday_slope": 2.72113045,
+      "gap_2017": 170.554686,
+      "gap_p": 0.262362227,
+      "gap_r2": 0.298140314,
+      "gap_slope": 14.2303776,
       "n_utility_states": 404,
-      "share_from_excluded_cw": 0.40491888086,
-      "share_from_excluded_unweighted": 0.742857915145
+      "share_from_excluded_cw": 0.404918881,
+      "share_from_excluded_unweighted": 0.742857915
     },
     "reading": {
       "everyday_trend_survives": true,
-      "excluded_share_drop": 0.424497840259,
+      "excluded_share_drop": 0.42449784,
       "excluded_share_survives": false,
       "note": "the customer-weighted share collapses while the unweighted one barely moves, which locates the effect precisely: a few very large storm-exposed utilities, not a broad pattern",
-      "unweighted_share_drop": 0.0715143642791
+      "unweighted_share_drop": 0.0715143643
     }
   },
   "trend": {
     "by_year": {
       "2013": {
-        "med_gap_cw": 109.550861804,
-        "median_retained_share": 0.749617737003,
+        "med_gap_cw": 109.550862,
+        "median_retained_share": 0.749617737,
         "n": 568,
-        "saidi_with_cw": 210.429236958,
-        "saidi_without_cw": 100.878375154,
-        "share_zero_exclusion": 0.274647887324
+        "saidi_with_cw": 210.429237,
+        "saidi_without_cw": 100.878375,
+        "share_zero_exclusion": 0.274647887
       },
       "2014": {
-        "med_gap_cw": 108.671770294,
-        "median_retained_share": 0.762791971098,
+        "med_gap_cw": 108.67177,
+        "median_retained_share": 0.762791971,
         "n": 568,
-        "saidi_with_cw": 212.895871895,
-        "saidi_without_cw": 104.224101601,
-        "share_zero_exclusion": 0.267605633803
+        "saidi_with_cw": 212.895872,
+        "saidi_without_cw": 104.224102,
+        "share_zero_exclusion": 0.267605634
       },
       "2015": {
-        "med_gap_cw": 89.4350688625,
-        "median_retained_share": 0.762766840477,
+        "med_gap_cw": 89.4350689,
+        "median_retained_share": 0.76276684,
         "n": 568,
-        "saidi_with_cw": 199.525641289,
-        "saidi_without_cw": 110.090572427,
-        "share_zero_exclusion": 0.274647887324
+        "saidi_with_cw": 199.525641,
+        "saidi_without_cw": 110.090572,
+        "share_zero_exclusion": 0.274647887
       },
       "2016": {
-        "med_gap_cw": 130.433505152,
-        "median_retained_share": 0.732905262525,
+        "med_gap_cw": 130.433505,
+        "median_retained_share": 0.732905263,
         "n": 568,
-        "saidi_with_cw": 245.976266007,
-        "saidi_without_cw": 115.542760854,
-        "share_zero_exclusion": 0.246478873239
+        "saidi_with_cw": 245.976266,
+        "saidi_without_cw": 115.542761,
+        "share_zero_exclusion": 0.246478873
       },
       "2017": {
-        "med_gap_cw": 386.249240226,
-        "median_retained_share": 0.617984996464,
+        "med_gap_cw": 386.24924,
+        "median_retained_share": 0.617984996,
         "n": 568,
-        "saidi_with_cw": 499.712454876,
-        "saidi_without_cw": 113.46321465,
-        "share_zero_exclusion": 0.181338028169
+        "saidi_with_cw": 499.712455,
+        "saidi_without_cw": 113.463215,
+        "share_zero_exclusion": 0.181338028
       },
       "2018": {
-        "med_gap_cw": 221.074090305,
-        "median_retained_share": 0.655743619044,
+        "med_gap_cw": 221.07409,
+        "median_retained_share": 0.655743619,
         "n": 568,
-        "saidi_with_cw": 336.862005295,
-        "saidi_without_cw": 115.78791499,
-        "share_zero_exclusion": 0.227112676056
+        "saidi_with_cw": 336.862005,
+        "saidi_without_cw": 115.787915,
+        "share_zero_exclusion": 0.227112676
       },
       "2022": {
-        "med_gap_cw": 225.292559833,
-        "median_retained_share": 0.649269411268,
+        "med_gap_cw": 225.29256,
+        "median_retained_share": 0.649269411,
         "n": 568,
-        "saidi_with_cw": 349.142330795,
-        "saidi_without_cw": 123.849770961,
-        "share_zero_exclusion": 0.18838028169
+        "saidi_with_cw": 349.142331,
+        "saidi_without_cw": 123.849771,
+        "share_zero_exclusion": 0.188380282
       }
     },
     "pct_change_2013_2022": {
-      "med_gap_cw": 105.651106822,
-      "saidi_with_cw": 65.919116489,
-      "saidi_without_cw": 22.7713776839
+      "med_gap_cw": 105.651107,
+      "saidi_with_cw": 65.9191165,
+      "saidi_without_cw": 22.7713777
     }
   },
   "within_utility": {
-    "mean_change_excluded_cw": 117.056288061,
-    "mean_change_saidi_with_cw": 141.130851453,
-    "mean_change_saidi_without_cw": 24.0745633922,
+    "mean_change_excluded_cw": 117.056288,
+    "mean_change_saidi_with_cw": 141.130851,
+    "mean_change_saidi_without_cw": 24.0745634,
     "n_utility_states": 568,
-    "share_of_change_from_excluded_part": 0.829416721119,
-    "share_of_utilities_worsening_with_med": 0.658450704225,
-    "share_of_utilities_worsening_without_med": 0.640845070423,
+    "share_of_change_from_excluded_part": 0.829416721,
+    "share_of_utilities_worsening_with_med": 0.658450704,
+    "share_of_utilities_worsening_without_med": 0.64084507,
     "span": "2013 to 2022",
-    "unweighted_share_from_excluded": 0.814372279424
+    "unweighted_share_from_excluded": 0.814372279
   },
   "within_utility_consecutive": {
-    "mean_change_excluded_cw": 119.785915669,
-    "mean_change_saidi_with_cw": 136.180006634,
-    "mean_change_saidi_without_cw": 16.394090965,
+    "mean_change_excluded_cw": 119.785916,
+    "mean_change_saidi_with_cw": 136.180007,
+    "mean_change_saidi_without_cw": 16.394091,
     "n_utility_states": 662,
-    "share_of_change_from_excluded_part": 0.879614553045,
-    "share_of_utilities_worsening_with_med": 0.61329305136,
-    "share_of_utilities_worsening_without_med": 0.604229607251,
+    "share_of_change_from_excluded_part": 0.879614553,
+    "share_of_utilities_worsening_with_med": 0.613293051,
+    "share_of_utilities_worsening_without_med": 0.604229607,
     "span": "2013 to 2018",
-    "unweighted_share_from_excluded": 0.790521290927
+    "unweighted_share_from_excluded": 0.790521291
   }
 }

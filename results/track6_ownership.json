@@ -25,151 +25,151 @@
   },
   "by_ownership": {
     "Coop": {
-      "mean_retained_share": 0.685482631371,
+      "mean_retained_share": 0.685482631,
       "median_customers": 20292.0,
-      "median_implied_sigma": 2.63106285082,
-      "median_retained_share": 0.740136054422,
+      "median_implied_sigma": 2.63106285,
+      "median_retained_share": 0.740136054,
       "median_saidi_with": 188.4,
       "median_saidi_without": 121.013,
       "n": 3317,
-      "share_reporting_ieee": 0.722942417847,
-      "share_zero_exclusion": 0.270425082906
+      "share_reporting_ieee": 0.722942418,
+      "share_zero_exclusion": 0.270425083
     },
     "IOU": {
-      "mean_retained_share": 0.624354492831,
+      "mean_retained_share": 0.624354493,
       "median_customers": 317878.5,
-      "median_implied_sigma": 2.65084357774,
-      "median_retained_share": 0.642648355189,
+      "median_implied_sigma": 2.65084358,
+      "median_retained_share": 0.642648355,
       "median_saidi_with": 177.0895,
       "median_saidi_without": 107.455,
       "n": 1136,
-      "share_reporting_ieee": 0.824823943662,
-      "share_zero_exclusion": 0.128521126761
+      "share_reporting_ieee": 0.824823944,
+      "share_zero_exclusion": 0.128521127
     },
     "Municipal": {
-      "mean_retained_share": 0.710005314247,
+      "mean_retained_share": 0.710005314,
       "median_customers": 15742.0,
-      "median_implied_sigma": 2.96826071865,
-      "median_retained_share": 0.901193539039,
+      "median_implied_sigma": 2.96826072,
+      "median_retained_share": 0.901193539,
       "median_saidi_with": 53.291,
       "median_saidi_without": 35.135,
       "n": 1738,
-      "share_reporting_ieee": 0.622554660529,
-      "share_zero_exclusion": 0.46087456847
+      "share_reporting_ieee": 0.622554661,
+      "share_zero_exclusion": 0.460874568
     }
   },
   "conditional": {
     "note": "reference class is Coop; state and year fixed effects in every specification; standard errors clustered by utility-state",
     "retained_share_no_size": {
-      "IOU_p": 1.83342921285e-06,
-      "IOU_se": 0.0139524348795,
-      "IOU_vs_Coop": -0.0665666164694,
-      "Municipal_p": 0.00557463540784,
-      "Municipal_se": 0.0153429746791,
-      "Municipal_vs_Coop": 0.0425277398711,
+      "IOU_p": 1.83342921e-06,
+      "IOU_se": 0.0139524349,
+      "IOU_vs_Coop": -0.0665666165,
+      "Municipal_p": 0.00557463541,
+      "Municipal_se": 0.0153429747,
+      "Municipal_vs_Coop": 0.0425277399,
       "log_customers": null,
       "log_customers_p": null,
       "n": 6191,
-      "r2": 0.0717273292178
+      "r2": 0.0717273292
     },
     "retained_share_with_size": {
-      "IOU_p": 0.0225926812157,
-      "IOU_se": 0.0196130438619,
-      "IOU_vs_Coop": -0.0447227042124,
-      "Municipal_p": 0.00722892723961,
-      "Municipal_se": 0.0153193794232,
-      "Municipal_vs_Coop": 0.0411495391844,
-      "log_customers": -0.00835669117243,
-      "log_customers_p": 0.0798118689645,
+      "IOU_p": 0.0225926812,
+      "IOU_se": 0.0196130439,
+      "IOU_vs_Coop": -0.0447227042,
+      "Municipal_p": 0.00722892724,
+      "Municipal_se": 0.0153193794,
+      "Municipal_vs_Coop": 0.0411495392,
+      "log_customers": -0.00835669117,
+      "log_customers_p": 0.079811869,
       "n": 6191,
-      "r2": 0.0725993850898
+      "r2": 0.0725993851
     },
     "zero_exclusion_no_size": {
-      "IOU_p": 1.17176069285e-16,
-      "IOU_se": 0.0209608759886,
-      "IOU_vs_Coop": -0.173680641287,
-      "Municipal_p": 2.34765435217e-18,
-      "Municipal_se": 0.0245530674816,
-      "Municipal_vs_Coop": 0.214574185021,
+      "IOU_p": 1.17176069e-16,
+      "IOU_se": 0.020960876,
+      "IOU_vs_Coop": -0.173680641,
+      "Municipal_p": 2.34765435e-18,
+      "Municipal_se": 0.0245530675,
+      "Municipal_vs_Coop": 0.214574185,
       "log_customers": null,
       "log_customers_p": null,
       "n": 6191,
-      "r2": 0.128021925389
+      "r2": 0.128021925
     },
     "zero_exclusion_with_size": {
-      "IOU_p": 0.198952290295,
-      "IOU_se": 0.0281939214767,
-      "IOU_vs_Coop": -0.0362162833358,
-      "Municipal_p": 1.3110560649e-17,
-      "Municipal_se": 0.0241025427346,
-      "Municipal_vs_Coop": 0.2059011291,
-      "log_customers": -0.0525888940179,
-      "log_customers_p": 8.58913153828e-14,
+      "IOU_p": 0.19895229,
+      "IOU_se": 0.0281939215,
+      "IOU_vs_Coop": -0.0362162833,
+      "Municipal_p": 1.31105606e-17,
+      "Municipal_se": 0.0241025427,
+      "Municipal_vs_Coop": 0.205901129,
+      "log_customers": -0.052588894,
+      "log_customers_p": 8.58913154e-14,
       "n": 6191,
-      "r2": 0.143549506409
+      "r2": 0.143549506
     }
   },
   "size_deciles": {
     "deciles": {
       "0": {
-        "Coop_median_r": 0.948051948052,
-        "IOU_median_r": 0.596153846154,
-        "gap_IOU_minus_Coop": -0.351898101898,
+        "Coop_median_r": 0.948051948,
+        "IOU_median_r": 0.596153846,
+        "gap_IOU_minus_Coop": -0.351898102,
         "median_customers": 3824.85,
         "n": 620
       },
       "1": {
-        "Coop_median_r": 0.806369571819,
-        "IOU_median_r": 0.634690697321,
-        "gap_IOU_minus_Coop": -0.171678874498,
+        "Coop_median_r": 0.806369572,
+        "IOU_median_r": 0.634690697,
+        "gap_IOU_minus_Coop": -0.171678874,
         "median_customers": 7111.0,
         "n": 619
       },
       "2": {
-        "Coop_median_r": 0.845113788487,
-        "IOU_median_r": 0.523025234325,
-        "gap_IOU_minus_Coop": -0.322088554162,
+        "Coop_median_r": 0.845113788,
+        "IOU_median_r": 0.523025234,
+        "gap_IOU_minus_Coop": -0.322088554,
         "median_customers": 11051.0,
         "n": 619
       },
       "3": {
-        "Coop_median_r": 0.765217391304,
-        "IOU_median_r": 0.438356164384,
-        "gap_IOU_minus_Coop": -0.326861226921,
+        "Coop_median_r": 0.765217391,
+        "IOU_median_r": 0.438356164,
+        "gap_IOU_minus_Coop": -0.326861227,
         "median_customers": 15151.0,
         "n": 619
       },
       "5": {
-        "Coop_median_r": 0.675880739358,
-        "IOU_median_r": 0.561056105611,
-        "gap_IOU_minus_Coop": -0.114824633748,
+        "Coop_median_r": 0.675880739,
+        "IOU_median_r": 0.561056106,
+        "gap_IOU_minus_Coop": -0.114824634,
         "median_customers": 27576.0,
         "n": 619
       },
       "6": {
-        "Coop_median_r": 0.665519483003,
-        "IOU_median_r": 0.68491755796,
-        "gap_IOU_minus_Coop": 0.019398074957,
+        "Coop_median_r": 0.665519483,
+        "IOU_median_r": 0.684917558,
+        "gap_IOU_minus_Coop": 0.019398075,
         "median_customers": 38944.0,
         "n": 619
       },
       "7": {
-        "Coop_median_r": 0.646265060241,
-        "IOU_median_r": 0.729143834701,
-        "gap_IOU_minus_Coop": 0.0828787744601,
+        "Coop_median_r": 0.64626506,
+        "IOU_median_r": 0.729143835,
+        "gap_IOU_minus_Coop": 0.0828787745,
         "median_customers": 64725.0,
         "n": 619
       },
       "8": {
-        "Coop_median_r": 0.737827715356,
-        "IOU_median_r": 0.694831792308,
-        "gap_IOU_minus_Coop": -0.0429959230479,
+        "Coop_median_r": 0.737827715,
+        "IOU_median_r": 0.694831792,
+        "gap_IOU_minus_Coop": -0.042995923,
         "median_customers": 162868.0,
         "n": 619
       }
     },
     "deciles_with_both": 8,
-    "median_gap": -0.143251754123,
+    "median_gap": -0.143251754,
     "n_deciles_iou_excludes_more": 6
   }
 }

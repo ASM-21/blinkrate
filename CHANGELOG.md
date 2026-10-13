@@ -1,10 +1,12 @@
 # Changelog
 
-## v1.2.0 (2026-09)
+## v1.2.0 (2026-10)
 
 A second literature pass, run to answer the two questions attacks A10 and A11
 left open, decided one of them. The repository's central comparison is
-withdrawn, and its thesis is restated on filed data only.
+withdrawn, and its thesis is restated on filed data only. Checking the release
+on other library versions and CPUs then found that CI would have failed on its
+first run, for numerical reasons rather than analytical ones; see Fixed.
 
 ### Withdrawn
 
@@ -50,6 +52,8 @@ withdrawn, and its thesis is restated on filed data only.
 - **LITERATURE.md second pass**, with the working group's own report of two to
   eight major event days a year, Fumagalli et al. (2006) as contrary evidence of
   thinner-than-normal tails, and the EIA FAQ.
+- **`tools/seed_spread.py`**, which rebuilds the calibration surface from other
+  seeds and reports how far each guarded figure moves.
 
 ### Corrected
 
@@ -67,6 +71,58 @@ withdrawn, and its thesis is restated on filed data only.
   v1.0.0 corrected in the README only. It now says 2.5 was a consensus frequency
   target, not derived from any reliability outcome. FINDINGS also opened by
   counting seven questions; there are eight.
+- **FINDINGS said the CAIDI identity holds "to nine significant figures."** The
+  median filing agrees to about eight (relative error 6.6e-9) and the 99th
+  percentile to 4.3e-8, so Q7 now says eight significant figures at the 99th
+  percentile.
+- **CONTRIBUTING said a calibration rebuild moves tracks 3, 6 and 8 at the third
+  decimal.** A rebuild is bit-identical. A different seed is what moves numbers,
+  and across five other seeds it moves 14 of the 105 guarded figures, all
+  model-implied, by up to 7.7%, eight of them by more than the guard's
+  tolerance. No conclusion changes. CONTRIBUTING now says so, ROADMAP lists
+  quoting the seed-to-seed range as the fix, and FALSIFICATION no longer
+  attributes the gap between A10's 6.04x and A8's 6.18x to resolution, since
+  A8's own figure moves further than that across seeds.
+
+### Fixed
+
+- **The bunching estimator's last digits belonged to the LAPACK build.** Its
+  counterfactual polynomial was fitted in a raw power basis with a condition
+  number up to 2.3e8, so under numpy 2.5 and scipy 1.18 the stored bunching
+  results no longer reproduced byte for byte and CI's first run would have
+  failed. The polynomial is now fitted in a Legendre basis scaled to the fitted
+  range, condition number at most 3.7 across the specification grid. It is the
+  same estimator: against exact rational arithmetic its error falls from 1.6e-9
+  to about 1e-14, stored results moved by at most 6.8e-9 relative, and no
+  reported figure changed. Two tests pin the conditioning and the agreement.
+- **Results were stored to more precision than reproduces.** At 12 significant
+  figures, a regression p-value near 1e-13 changed its last stored digit under
+  AMD Zen 3 code paths (numpy without AVX-512, OpenBLAS Zen kernels, selected by
+  environment variable on one machine), which fails the byte check on a runner
+  with that CPU whatever the library versions. Across five library stacks and
+  three CPU code paths the largest disagreement on any stored value is 5.4e-12
+  relative. Results are now stored to 9 significant figures, leaving every value
+  at least 70 times its cross-platform spread from a rounding boundary. The
+  most precise figure the prose quotes has five.
+- **Verified after both fixes:** calibration bit-identical, results
+  byte-identical, tests and the claims guard passing on Python 3.10 to 3.13 with
+  numpy 2.2.6 to 2.5.4, pandas 2.2.3 to 3.0.6, scipy 1.15.3 to 1.18.1 and
+  statsmodels 0.14.4 to 0.15.0, under both Intel AVX-512 and AMD Zen 3 code
+  paths.
+- **`verify.sh` failed at its first step on Python 3.12 and later**, whose venvs
+  ship without setuptools while the script installed without build isolation.
+  It now installs the build backend first and runs every check CI runs,
+  including the calibration rebuild and the byte comparison it used to leave to
+  a manual step. A test holds the two in step.
+- **The README said the claims guard checks 74 figures**, the count when the
+  sentence was written. It checks 105. A test now reads the count from the guard.
+- **The profile tool's usage examples**, which print with `--help`, opened with
+  the utility named in the README's independence disclaimer, by name and by EIA
+  id, and the tool's smoke test ran on that id. The test that keeps that utility
+  out of worked examples read only the prose; it now reads the code too, and the
+  examples use other utilities. The README's own example, `--name "Duke
+  Energy"`, matched more than one utility-state and stopped at the list of
+  matches; it now names one that resolves.
 
 ## v1.1.0 (2026-09)
 

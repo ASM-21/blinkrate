@@ -22,6 +22,17 @@ entirely. PUDL distributes processed Form 1 via Zenodo.
 
 ## Would strengthen what is already here
 
+**Monte Carlo error on model-implied figures.** The calibration surface is a
+seeded simulation, so model-implied figures reproduce bit for bit without being
+exact. Across five other seeds, 14 of the 105 guarded figures move by up to
+7.7%: the 7.66x threshold range spans 7.69x to 7.75x and the 14.32x combined
+space 14.22x to 14.82x. No conclusion changes, but several figures are quoted
+more finely than their Monte Carlo error allows, and the leave-one-state-out
+bound "under 8.4%" reaches 8.43% under one seed. Quoting the seed-to-seed range
+beside each model-implied figure, or raising the simulation count until that
+range sits inside the quoted precision, would fix it. `tools/seed_spread.py`
+measures it.
+
 **EIA-861 filing years 2019-2021.** Partly done: 2016-2018 were found in
 `IMMM-SFA/electricity_entity_boundaries` and folded in, which closed most of the
 gap and changed three conclusions. What remains is 2019-2021, without which 2022

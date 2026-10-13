@@ -69,9 +69,9 @@ fails on drift.
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 111 tests
+pytest                           # 119 tests
 python tools/check_claims.py     # every quoted figure recomputed
-python tools/utility_profile.py --name "Duke Energy" --figure
+python tools/utility_profile.py --name "Commonwealth Edison" --figure
 python tools/utility_profile.py --pair 200 120 --tails   # any filed pair
 ```
 
@@ -174,7 +174,7 @@ years. Finding 2016-2018 nearly doubled it, retracted one published result at
 p = 0.026, turned another into a range, and let two questions be answered that
 were previously marked unanswerable. Nothing was re-tuned to keep an old number.
 
-**Claims cannot drift.** `tools/check_claims.py` pairs 74 figures quoted in the
+**Claims cannot drift.** `tools/check_claims.py` pairs 105 figures quoted in the
 prose with the code that recomputes them, including the numbers inside
 retraction blockquotes, and also fails on missing hedges and overclaiming
 language. A test feeds it a corrupted README to demonstrate that the guard can
@@ -220,6 +220,7 @@ docs/DATA_ACCESS.md             provenance, licences, what is blocked
 tools/check_claims.py           drift and overclaim guard
 tools/utility_profile.py        run one utility's filed numbers through the engine
 tools/daily_tail_test.py        test the log-normal assumption on real daily data
+tools/seed_spread.py            how far each figure moves with the Monte Carlo seed
 ```
 
 ## Data

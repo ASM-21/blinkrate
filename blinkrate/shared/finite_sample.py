@@ -23,7 +23,8 @@ on the median matches the typical realization, which is what a single reported
 utility-year is. A regression test pins this.
 
 The calibration grid is cached to data/calibration_med.npz. Rebuild with
-`python -m blinkrate.shared.finite_sample`.
+`python -m blinkrate.shared.finite_sample`; add `--check` to compare a fresh
+build with the committed cache bit for bit instead of overwriting it.
 """
 
 from __future__ import annotations
@@ -154,7 +155,18 @@ def sensitivity_curve_fs(retained_share_observed: np.ndarray,
 
 
 if __name__ == "__main__":  # pragma: no cover
+    import sys
     cal = build_calibration()
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(CACHE, **cal)
-    print(f"wrote {CACHE} surface={cal['surface'].shape}")
+    if "--check" in sys.argv[1:]:
+        # What CI and verify.sh run: rebuild from the seed and compare with the
+        # committed cache bit for bit, writing nothing.
+        with np.load(CACHE) as z:
+            same = set(z.files) == set(cal) and all(
+                np.array_equal(cal[k], z[k]) for k in z.files)
+        if not same:
+            raise SystemExit("committed calibration surface does not reproduce")
+        print("calibration cache reproduces bit for bit")
+    else:
+        CACHE.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(CACHE, **cal)
+        print(f"wrote {CACHE} surface={cal['surface'].shape}")

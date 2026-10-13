@@ -20,14 +20,20 @@ PALETTE = {
 }
 
 
-# Stored results keep 12 significant figures. The 15th-16th digits of some
-# scipy p-values differ between scipy 1.15 and 1.17 (last-bit differences in
-# the t-distribution CDF), which is noise, but it made the committed JSON
-# differ byte-for-byte across library versions. Rounding here makes results
-# byte-reproducible across the supported stack, which is what lets CI enforce
-# that committed results equal regenerated ones. No claim anywhere in the prose
-# uses more than four significant figures.
-SIG_FIGS = 12
+# Stored results keep 9 significant figures, the precision that reproduces.
+# Below it, the last digits of a result belong to the platform rather than the
+# code: library versions, numpy's SIMD paths and the BLAS kernels picked for the
+# CPU all reorder floating-point arithmetic. Measured on every stored value
+# across five library stacks and three CPU code paths (Intel AVX-512 and AMD
+# Zen 3 kernels, selected by environment variable on one machine), the largest
+# disagreement is 5.4e-12 relative, on a regression p-value near 1e-13. At the
+# 12 figures stored before v1.2.0 that p-value changed its last digit under Zen 3
+# kernels, which fails CI's byte check. At 9, every value sits at least 70 times
+# its cross-platform spread from a rounding boundary. Tests that compare a
+# stored value with an exact one allow twice the largest rounding error (1e-8
+# relative). The most precise figure the prose quotes has five significant
+# figures (100.00%).
+SIG_FIGS = 9
 
 
 def _round_floats(obj):
