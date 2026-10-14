@@ -5,9 +5,11 @@ Track 8 attacks the other tracks. Every attack is run in
 `results/track8_falsification.json`. Reproduce with
 `python -m blinkrate.track8_falsification`.
 
-Thirteen attacks, eight of which landed. Two landed only after the panel grew
+Fourteen attacks, nine of which landed. Two landed only after the panel grew
 from four filing years to seven, which is worth stating plainly: **more data retracted a
-result that four years of data had supported at p = 0.026.**
+result that four years of data had supported at p = 0.026.** The fourteenth tests
+the assumption under every model-implied number against real daily data, and it
+fails.
 
 ---
 
@@ -488,6 +490,101 @@ This is the most consequential attack in the repository, and it came from
 reading, not computing. The machinery to run it existed since A11; what was
 missing was evidence about which windows mean anything.
 
+## A14: the assumption meets daily data. **Landed. Log-normality fails for both utilities.**
+
+Every model-implied number in this repository assumes daily SAIDI is log-normal,
+because IEEE 1366 does, and EIA-861 publishes no daily data to check that
+against. A10 to A13 could only ask how much would change if it were false.
+Two utilities' outage maps turned out to have been archived in public by git
+scraping, a snapshot of customers out every ten minutes or so, committed to a
+repository whenever it changed: PG&E from June 2019 to April 2022 and FPL by
+county from September 2019 to January 2023 (`data/daily/`). Integrated into
+daily customer-minutes, they give 628 well-observed days for PG&E and 890 for
+FPL. They are outage-map estimates of customers out, not the SAIDI either
+utility reports, and the comparison below with FPL's filing shows how far apart
+the two are. So this attack tests the shape of daily outage burden and how the
+exclusion rule acts on it, not the level of anyone's reported number.
+
+**The shape.** Log daily customer-minutes, fitted on positive days as the
+standard does, with the major event day threshold fitted on each whole series:
+
+| series | observed days | log skewness | log excess kurtosis | Shapiro-Wilk p | best fit (AIC below normal) | major event days a year at 2.5 |
+|---|---|---|---|---|---|---|
+| PG&E | 628 | +2.10 | +5.37 | 2.3e-27 | Student-t, 1.5 df (294) | 13.4 |
+| PG&E without shutoffs | 628 | +1.64 | +2.97 | 6.7e-24 | Student-t, 2 df (181) | 14.0 |
+| FPL | 890 | +3.80 | +22.52 | 3.9e-37 | Student-t, 2.5 df (603) | 7.8 |
+| log-normal, the standard's model | | 0 | 0 | | | 2.27 |
+| Laplace, A12's model | | 0 | +3 | | | 5.32 |
+
+Normality is rejected for every series by a wide margin, and both heavier-tailed
+families beat it in every series by more than 160 AIC points. The logs are right-skewed, which none of
+the symmetric families in A10 to A13 is: a light left tail and a heavy right one
+(`figures/track8_a14_daily_outages.png`). The standard's own rule would flag more
+qualifying days a year on these series than even a Laplace tail implies. Taking
+out PG&E's Public Safety Power Shutoffs, deliberate de-energizations rather than
+faults, lowers the skewness and kurtosis but changes none of these conclusions. Fumagalli et al.'s thinner-than-normal tails
+do not appear here; theirs were Italian districts with short interruptions
+excluded, a different object. The Hill index is reported in the results and, as
+in A12, is not diagnostic.
+
+**Does the map track the filing?** FPL 2022 is the one utility-year with both a
+filing and a near-complete year of map data (353 observed days, scaled here to
+the full year). Run through the
+standard's procedure with the threshold fitted on the preceding observed days,
+the map gives SAIDI of 1,491 minutes with major events and 103
+without, against 1,151 and 48 filed: **1.30x** the
+filing with major events and **2.14x** without. The map runs above
+the filing, and by more on ordinary days than on the days the rule removes.
+Part of that may be territory: the filing absorbed the former Gulf Power in
+2022 and the map does not cover it. The rest is what an operational estimate is. Levels
+from these series are not reported SAIDI, which is why everything else in this
+attack is a shape or a ratio.
+
+**The counterfactual, measured.** Q1's model-implied numbers say what a utility
+would have reported at other thresholds. With daily data that can be measured.
+For every calendar year observed on at least 120 days, with at least 120
+observed days before it, the threshold is fitted on the preceding observed days
+as the standard does. The measured window effect is the share of the year's
+customer-minutes kept at one qualifying day a year over the share kept at
+fifteen, A13's widest evidence window. Each model is then given only that year's
+own retained share at 2.5, exactly as the repository treats a filed pair, and
+asked for the same ratio:
+
+| utility-year | observed days | days past 2.5 | kept at 2.5 | measured | log-normal | Student-t 15 | Laplace |
+|---|---|---|---|---|---|---|---|
+| PG&E 2021 | 214 | 3 | 0.80 | 1.95x | 1.82x | 1.47x | 1.24x |
+| FPL 2021 | 287 | 2 | 0.91 | 1.09x | 1.35x | 1.23x | 1.13x |
+| FPL 2022 | 353 | 23 | 0.07 | 1.08x | 82.15x | 15.47x | 3.84x |
+| PG&E 2021, no shutoffs | 214 | 10 | 0.49 | 1.45x | 4.10x | 2.46x | 1.59x |
+
+The log-normal model overstates the measured effect in two of the three
+utility-years, by 1.24x and 76x, and comes within 7% in the
+third. Laplace, the low end of Q1's range, is the closest model in two of three.
+FPL 2022 shows the failure mode plainly. Hurricane Ian left 7% of the year's
+customer-minutes after exclusion, and the log-normal model can only produce that
+with enormous dispersion, under which the threshold's position matters a great
+deal. In the data the hurricane days clear every threshold in the window, and
+moving the threshold across it reclassifies only days that carry little of the
+year's total.
+
+**Robustness.** Every rule above is a choice, so each was varied. With silences
+of one or six hours counted as gaps instead of three, or days kept at 75% or
+100% observed instead of 90%, normality is rejected for both utilities every
+time and the log-normal model overstates in two or three of the three
+utility-years. Relaxing the year rule to 90 observed days adds three
+utility-years; five can be scored (PG&E's January to April 2022 has no day past
+2.5, so no model can be inverted), and the log-normal model overstates in four
+of the five while Laplace is closest in four.
+
+**What this does.** It turns the tail question from untested into tested, for two
+utilities. Log-normality fails for both. Where the repository's model-implied
+magnitudes are concerned, the data point toward the low, heavier-tailed end of
+Q1's range rather than the log-normal one. It does not settle the national
+picture: two large utilities in two extreme-weather states, during years that
+include PG&E's 2019 shutoffs and Hurricane Ian, measured as outage-map estimates
+with at most a little over two years of history behind each threshold where the
+standard uses five.
+
 ---
 
 ## Attacks not run
@@ -496,6 +593,7 @@ missing was evidence about which windows mean anything.
   than an estimate; its sensitivity to every input is the deliverable.
 - No temporal placebo on Q4's trend. The geographic placebo does related work,
   but a proper temporal one needs the 2019-2021 filings.
-- Nothing yet estimates the tail weight of real daily SAIDI. A10 locates the
-  breaking point between nu = 15 and nu = 30; which side reality falls on needs
-  daily series, which no public source provides at national scale.
+- Nothing estimates the tail weight of daily SAIDI at national scale. A14
+  measures it for two utilities' outage maps, where it is far heavier than
+  log-normal; a national answer needs EAGLE-I's county record or reported daily
+  SAIDI, neither reachable from the build environment.

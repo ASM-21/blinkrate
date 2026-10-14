@@ -3,12 +3,12 @@
 Everything here is already done except the push, which needs your GitHub
 credentials. Commits are authored as `Andrew Morrissey
 <77601626+ASM-21@users.noreply.github.com>`, the address GitHub attributes to
-ASM-21. Tags `v1.0.0`, `v1.1.0` and `v1.2.0` are annotated and point at verified commits.
+ASM-21. Tags `v1.0.0` to `v1.3.0` are annotated and point at verified commits.
 
 ## 1. Verify from nothing, one last time
 
 ```bash
-unzip blinkrate-v1.2.0.zip && cd blinkrate
+unzip blinkrate-v1.3.0.zip && cd blinkrate
 ./verify.sh            # isolated venv, cold install, every check CI makes
 ./verify.sh --fast     # reuses installed numpy/pandas/scipy if memory is tight
 ```
@@ -43,16 +43,17 @@ git push -u origin main
 git push origin --tags
 ```
 
-Pushing the tags also runs CI on `v1.0.0` and `v1.1.0`, each with the workflow
-it shipped with. Expect both runs to fail: those releases store results to 12
-significant figures and predate the bunching fix, the two problems listed under
-Fixed in CHANGELOG v1.2.0. The failures are a record of that problem rather than
-a regression, and the README badge follows `main`.
+Pushing all four tags in one push should not start CI runs for them: GitHub
+creates no push event when more than three tags arrive at once. If you push tags
+separately, `v1.0.0` and `v1.1.0` will run with the workflow they shipped with
+and fail, because they store results to 12 significant figures and predate the
+bunching fix (CHANGELOG v1.2.0, Fixed). That is a record of the problem, not a
+regression, and the README badge follows `main` either way.
 
 Suggested repository description:
 
 > How much of a US utility's reported reliability number is the measurement rule
-> rather than the grid? EIA-861, 2013-2018 and 2022, thirteen adversarial attacks.
+> rather than the grid? EIA-861, 2013-2018 and 2022, fourteen adversarial attacks.
 
 Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 `distribution-grid`, `falsification`, `reproducible-research`.
@@ -62,7 +63,7 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 - **CI.** Open the Actions tab and confirm the run on `main` is green. It
   rebuilds the calibration cache bit for bit, regenerates every result, fails on
   any byte difference, then runs the tests and the claims guard.
-- **Release.** Create a GitHub release from tag `v1.2.0` and paste the v1.2.0
+- **Release.** Create a GitHub release from tag `v1.3.0` and paste the v1.3.0
   section of CHANGELOG.md as the notes.
 - **DOI (optional).** Enabling the repository in Zenodo *before* creating the
   release mints a DOI from `.zenodo.json`. Add the DOI badge to the README and
@@ -73,13 +74,16 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 - No absolute paths, placeholder owners, example.com addresses, or TODO markers
   in tracked files.
 - Single commit author across the whole history, the attributable address above.
-- Only public data: EIA Form 861, a US federal government work, plus published
-  literature parameters. No utility-internal, customer or employer data anywhere
-  in the tree or the history. The README's independence disclaimer is enforced by
+- Only public data: EIA Form 861, a US federal government work; two utilities'
+  outage-map snapshots from public git-scraping archives (counts only, sources in
+  NOTICE); and published literature parameters. No utility-internal, customer or
+  employer data anywhere in the tree or the history. The README's independence disclaimer is enforced by
   the claims guard.
 - Bundled data licences recorded in NOTICE: EIA-861 is public domain; the three
   GitHub mirrors it was retrieved through are MIT, BSD-2-Clause, and unlicensed
-  redistribution of the public-domain originals.
+  redistribution of the public-domain originals. The outage-map archives are
+  Apache-2.0 (PG&E) and unlicensed (FPL), and only counts are redistributed.
+  `python tools/build_outage_snapshots.py` rebuilds those files byte for byte.
 - Versions agree across pyproject.toml, CITATION.cff, .zenodo.json and the newest
   CHANGELOG heading, and a test fails if they drift.
 - Every CI step passes from a fresh clone on the oldest and newest supported
@@ -89,5 +93,5 @@ Topics: `saidi`, `ieee-1366`, `electric-reliability`, `eia-861`,
 ## If something fails after pushing
 
 Do not force-push over a published tag. Fix forward in a new commit, re-run
-`./verify.sh`, and cut `v1.2.1`. CHANGELOG.md is where a reader looks to find out
+`./verify.sh`, and cut `v1.3.1`. CHANGELOG.md is where a reader looks to find out
 what moved, so every correction goes there first.

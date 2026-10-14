@@ -28,6 +28,14 @@ holder.
 `data/calibration_med.npz` is generated, not downloaded. Rebuild it with
 `python -m blinkrate.shared.finite_sample`.
 
+`data/daily/` is the one non-EIA dataset: per-snapshot customers-out counts for
+two utilities, derived from public git-scraping archives of their outage maps
+(PG&E 2019-2022 from `simonw/pge-outages-pre-2024`, Apache-2.0; FPL by county
+2019-2023 from `simonw/disaster-data`, no licence stated, counts only). Its
+README gives the pinned commits, the rebuild command
+(`python tools/build_outage_snapshots.py`), the checksums a rebuild reproduces,
+and what the series are not.
+
 ## The panel this produces
 
 Seven filing years: 2013 through 2018, then 2022. 7,068 utility-state-year rows
@@ -103,10 +111,25 @@ major-event-day gap as an internal indicator and cannot separate "more severe
 weather" from "more days classified as major events", which is precisely the
 distinction the track was scoped to make. Stated in the module and in FINDINGS.
 
-**Daily SAIDI series (track 3).** Not a proxy problem, a publication problem:
-EIA-861 reports annual aggregates only, and no utility publishes daily SAIDI at
-national scale. This is why track 3 inverts an identity instead of recomputing
-thresholds. The closest public substitute is ORNL's EAGLE-I county outage record
+**Daily SAIDI series (track 3), partly found.** Not a proxy problem, a
+publication problem: EIA-861 reports annual aggregates only, and no utility
+publishes daily SAIDI at national scale. This is why track 3 inverts an identity
+instead of recomputing thresholds.
+
+What was found, late: two utilities' outage maps archived by git scraping, a
+practice where a scheduled job commits each fetched snapshot to a public
+repository, so the commit history is a time series. A web search for daily
+outage data surfaced a 2019 blog post about scraping PG&E's outage map into git,
+which led to `simonw/pge-outages-pre-2024` (PG&E, 2019-2022). The scraper's
+sibling data repository, `simonw/disaster-data`, turned out to hold a
+county-level FPL history (2019-2023) that nothing in its name or description
+advertises. Both are vendored in `data/daily/` and tested in attack A14. They
+are outage-map estimates for two utilities, not reported SAIDI and not national,
+so the gap is narrowed rather than closed. The lesson generalizes the one above:
+**data that no publisher releases may still exist as the commit history of
+someone's scraper.**
+
+The closest public substitute at national scale is ORNL's EAGLE-I county outage record
 (Brelsford et al., Scientific Data 2024, DOI 10.1038/s41597-024-03095-5):
 customers out per county every 15 minutes, 2014 to 2022. It is distributed
 through Globus and Figshare at 1.1 to 1.2 GB a year, neither reachable from the

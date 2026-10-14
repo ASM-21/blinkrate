@@ -1,24 +1,25 @@
 """Track 8 - try to break the other tracks.
 
-Six attacks, aimed at the load-bearing assumptions rather than at the edges.
-Results are written to FALSIFICATION.md by tools/write_falsification.py; this
-module only computes them. An attack that fails to break a result is recorded
-just as carefully as one that succeeds.
+Fourteen attacks, aimed at the load-bearing assumptions rather than at the
+edges. FALSIFICATION.md reports them; this module only computes them. An attack
+that fails to break a result is recorded just as carefully as one that succeeds.
 
-A1  Track 3's log-normal assumption. Everything in track 3 rides on IEEE 1366's
-    own claim that daily SAIDI is log-normal. Rebuild the calibration under a
-    heavier-tailed daily distribution and see whether the sensitivity range
-    survives.
-A2  Track 3's median statistic. The calibration inverts the median realized
-    retained share. Redo it on the mean.
-A3  Track 3's bunching estimator. Vary polynomial degree, window width and fit
-    range; a bunching result that only exists at one specification is not one.
-A4  Track 2's headline. Recompute the share of the SAIDI increase coming from
-    the excluded part with the top and bottom 1% of utility-years trimmed.
-A5  Track 6's ownership gap. IOUs are far larger than co-ops. Restrict to
-    utilities above the median size and see whether the gap survives.
-A6  Track 1's null. A null can be a power problem. Report the smallest effect
-    the 2022 cross-section could have detected.
+A1   Track 3's log-normal assumption, with heavier-tailed daily SAIDI and the
+     standard's procedure unchanged (A1b re-inverts so the model reproduces the
+     same filed exclusion share, which is the fair version).
+A2   Track 3's median statistic, redone on the mean.
+A3   Track 3's bunching estimator across polynomial degree, window and fit range.
+A4   Track 2's headline with the top and bottom 1% of utility-years trimmed.
+A5   Track 6's ownership gap among utilities above median size only.
+A6   Track 1's null: the smallest effect the design could have detected.
+A7   Every headline with each state left out in turn.
+A8   The falsification criterion FINDINGS states for the repository as a whole.
+A9   The aggregation spread with the largest contributors left out.
+A10  How heavy daily tails must be before A8 part one fails.
+A11  How wide a threshold window A8 part one needs.
+A12  Laplace tails, the class the only US tail measurement points to.
+A13  The threshold windows the literature supports, under every tail model.
+A14  The model against real daily outages: two utilities' outage maps.
 """
 
 from __future__ import annotations
@@ -28,10 +29,11 @@ import pandas as pd
 from scipy import stats
 
 from . import track1_investment, track2_weather_split, track3_med_sensitivity
+from .shared import daily
 from .shared import finite_sample as fs
 from .shared import ingest
 from .shared import reliability_metrics as rm
-from .shared.io import save_results
+from .shared.io import PALETTE, save_figure, save_results, style_axes
 
 
 def a1_heavy_tail(n_sims: int = 300, seed: int = 101) -> dict:
@@ -960,6 +962,273 @@ def a13_evidence_grounded_window(year: int = 2022, min_customers: int = 100_000,
     }
 
 
+# --- A14: the model against real daily outages --------------------------------
+
+# A calendar year is scored only if it was observed on enough days, with enough
+# observed days before it to fit the threshold on, as the standard fits on the
+# preceding years.
+A14_MIN_DAYS = 120
+A14_MIN_PRIOR_DAYS = 120
+# The two utilities' full outage series, and the PG&E variant without Public
+# Safety Power Shutoffs, which are deliberate de-energizations rather than faults.
+A14_PRIMARY = {"pge": ("pge", "all"), "fpl": ("fpl", "all")}
+A14_VARIANT = {"pge_excl_psps": ("pge", "excl_psps")}
+A14_TAILS = ("lognormal", "t_nu15", "laplace")
+
+
+def _a14_predictor(n_sims: int, seed: int):
+    """What the repository's models predict for the realistic window, given only
+    a year's retained share at the standard's 2.5.
+
+    Log-normal is track 3's calibrated surface, the one every model-implied
+    number in Q1 inverts. Student-t (15 df) and Laplace are A13's surfaces.
+    Each model matches the year's own retained share, exactly as the
+    repository matches a filed one, then reads the window.
+    """
+    lo = round(beta_for_med_rate(15.0), 4)
+    hi = round(beta_for_med_rate(1.0), 4)
+    betas = np.array([lo, 2.5, hi])
+    col = {lo: 0, 2.5: 1, hi: 2}
+    sigma_grid = np.round(np.arange(0.1, 6.01, 0.1), 3)
+    rng = np.random.default_rng(seed)
+    surfaces = {"t_nu15": _tail_surface(15.0, sigma_grid, betas, n_sims, rng),
+                "laplace": _laplace_surface(sigma_grid, betas, n_sims, rng)}
+
+    def predict(r25: float) -> dict:
+        out = {}
+        sig = fs.implied_sigma_fs(np.array([r25]))[0]
+        if np.isfinite(sig):
+            r = fs.retained_share_fs(sig, np.array([lo, hi]))[0]
+            out["lognormal_predicted_x"] = float(r[1] / r[0])
+        else:
+            out["lognormal_predicted_x"] = None
+        for tail, surf in surfaces.items():
+            sweep, _ = _own_sweeps(surf, sigma_grid, col, np.array([r25]), lo, hi)
+            out[f"{tail}_predicted_x"] = float(sweep[0]) if len(sweep) else None
+        return out
+
+    return lo, hi, predict
+
+
+def _a14_score(series: dict, lo: float, hi: float, predict,
+               max_gap_s: int = daily.MAX_GAP_S,
+               min_coverage: float = daily.MIN_COVERAGE,
+               min_days: int = A14_MIN_DAYS,
+               min_prior_days: int = A14_MIN_PRIOR_DAYS) -> list[dict]:
+    """Measured and predicted window effect for every qualifying utility-year."""
+    rows = []
+    for label, (key, name) in series.items():
+        values = daily.observed_days(key, name, max_gap_s, min_coverage)
+        for uy in daily.utility_years(values, min_days, min_prior_days):
+            x = uy["values"]
+            r_lo, r25, r_hi = daily.retained_share_measured(
+                x, uy["mu"], uy["sd"], [lo, 2.5, hi])
+            n_med = int((np.log(x[x > 0]) > uy["mu"] + 2.5 * uy["sd"]).sum())
+            row = {"series": label, "year": uy["year"],
+                   "observed_days": uy["observed_days"],
+                   "prior_days": uy["prior_days"],
+                   "med_days_at_2_5": n_med,
+                   "med_days_per_year_at_2_5": n_med * 365.25 / uy["observed_days"],
+                   "retained_share_at_2_5": float(r25),
+                   "measured_window_x": float(r_hi / r_lo)}
+            # A year with no day past the 2.5 threshold has retained share 1,
+            # which no model can invert; it is scored as measured only.
+            row.update(predict(float(r25)) if r25 < 1.0 else
+                       {f"{t}_predicted_x": None for t in A14_TAILS})
+            pred = {t: row[f"{t}_predicted_x"] for t in A14_TAILS
+                    if row[f"{t}_predicted_x"] is not None}
+            ln = row["lognormal_predicted_x"]
+            row["lognormal_over_measured"] = (None if ln is None
+                                              else ln / row["measured_window_x"])
+            # closeness on the log scale: a factor of two too high and a factor
+            # of two too low are equally wrong
+            row["closest_model"] = (min(pred, key=lambda t: abs(np.log(
+                pred[t] / row["measured_window_x"]))) if pred else None)
+            rows.append(row)
+    return rows
+
+
+def _a14_summary(rows: list[dict]) -> dict:
+    ln = [r["lognormal_over_measured"] for r in rows
+          if r["lognormal_over_measured"] is not None]
+    measured = [r["measured_window_x"] for r in rows]
+    return {
+        "n_utility_years": len(rows),
+        "n_model_evaluable": len(ln),
+        "measured_window_x_range": [min(measured), max(measured)],
+        "n_lognormal_overstates": sum(v > 1.0 for v in ln),
+        "lognormal_over_measured_range": [min(ln), max(ln)] if ln else None,
+        "closest_model_counts": {t: sum(r["closest_model"] == t for r in rows)
+                                 for t in A14_TAILS},
+    }
+
+
+def _a14_against_filing(year: int = 2022) -> dict:
+    """FPL 2022 is the one utility-year with both a filing and a full year of
+    map data. Compares the map's year, run through the standard's procedure,
+    with what FPL filed."""
+    df = ingest.analysis_sample()
+    filed = df[(df["year"] == year) & (df["utility_id"]
+                                       == daily.UTILITIES["fpl"]["eia_id"])].iloc[0]
+    d = daily.daily("fpl")
+    d = d[d["coverage"] >= daily.MIN_COVERAGE]
+    values = d["cm_all"]
+    uy = next(u for u in daily.utility_years(values, A14_MIN_DAYS, A14_MIN_PRIOR_DAYS)
+              if u["year"] == year)
+    idx = pd.to_datetime(pd.Index(d.index))
+    this = d[idx.year == year]
+    saidi = (this["cm_all"] / this["customers_served"]).to_numpy(float)
+    med = np.log(this["cm_all"].to_numpy(float)) > uy["mu"] + 2.5 * uy["sd"]
+    scale = 365.0 / len(this)
+    proxy_with = float(saidi.sum() * scale)
+    proxy_without = float(saidi[~med].sum() * scale)
+    return {
+        "year": year,
+        "observed_days": int(len(this)),
+        "map_saidi_with_med": proxy_with,
+        "map_saidi_without_med": proxy_without,
+        "map_med_days": int(med.sum()),
+        "filed_saidi_with": float(filed["saidi_with"]),
+        "filed_saidi_without": float(filed["saidi_without"]),
+        "map_over_filed_with": proxy_with / float(filed["saidi_with"]),
+        "map_over_filed_without": proxy_without / float(filed["saidi_without"]),
+        "map_customers_served": float(this["customers_served"].mean()),
+        "filed_customers": float(filed["customers"]),
+        "note": ("the map covers FPL's legacy territory only; the 2022 filing "
+                 "also includes the former Gulf Power, merged that January. "
+                 "Annual figures scale the observed days to 365."),
+    }
+
+
+def _a14_figure(shapes_input: dict, rows: list[dict]) -> None:
+    import matplotlib.pyplot as plt
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 4.4))
+    colors = {"pge": PALETTE["with_med"], "fpl": PALETTE["without_med"]}
+    for key, vals in shapes_input.items():
+        logs = np.sort(np.log(vals[vals > 0]))
+        z = (logs - logs.mean()) / logs.std(ddof=1)
+        q = stats.norm.ppf((np.arange(1, len(z) + 1) - 0.5) / len(z))
+        ax1.scatter(q, z, s=7, alpha=0.6, color=colors[key],
+                    label=daily.UTILITIES[key]["name"])
+    lim = np.array([-3.5, 3.5])
+    ax1.plot(lim, lim, color=PALETTE["muted"], lw=1, ls="--",
+             label="log-normal (IEEE 1366)")
+    ax1.axhline(2.5, color=PALETTE["accent"], lw=1)
+    ax1.text(-3.3, 2.65, "major event day line, 2.5 SD", fontsize=8,
+             color=PALETTE["accent"])
+    ax1.set_xlabel("normal quantile")
+    ax1.set_ylabel("standardized log daily customer-minutes")
+    ax1.set_title("Daily outage burden against a log-normal", fontsize=10)
+    ax1.legend(fontsize=8, frameon=False, loc="upper left")
+    style_axes(ax1)
+
+    labels = [f"{daily.UTILITIES[r['series']]['name']} {r['year']}" for r in rows]
+    xs = np.arange(len(rows))
+    width = 0.2
+    series = [("measured", "measured_window_x", PALETTE["with_med"]),
+              ("log-normal", "lognormal_predicted_x", PALETTE["without_med"]),
+              ("Student-t 15", "t_nu15_predicted_x", PALETTE["accent"]),
+              ("Laplace", "laplace_predicted_x", PALETTE["muted"])]
+    for i, (name, field, color) in enumerate(series):
+        ax2.bar(xs + (i - 1.5) * width, [r[field] or np.nan for r in rows], width,
+                color=color, label=name)
+    ax2.set_yscale("log")
+    ax2.set_xticks(xs)
+    ax2.set_xticklabels(labels, fontsize=8)
+    ax2.set_ylabel("window effect: kept SAIDI at 1 day/yr over 15 days/yr")
+    ax2.set_title("Effect of the realistic threshold window, measured and modelled",
+                  fontsize=10)
+    ax2.legend(fontsize=8, frameon=False)
+    style_axes(ax2)
+    fig.tight_layout()
+    save_figure(fig, "track8_a14_daily_outages")
+
+
+def a14_real_daily_outages(n_sims: int = 250, seed: int = 114,
+                           figure: bool = True) -> dict:
+    """Every model-implied number here assumes daily SAIDI is log-normal, and
+    EIA-861 has no daily data to test that with. Two utilities' outage maps,
+    archived in public by git scraping, do: PG&E (June 2019 to April 2022) and
+    FPL by county (September 2019 to January 2023). See shared/daily.py for what
+    these series are and are not.
+
+    Three questions. Is log daily outage burden normal? Does the map track what
+    the utility filed? And, the one that matters for Q1, does the repository's
+    model predict how the exclusion responds to the threshold? For each
+    qualifying utility-year the standard's procedure is applied to the days
+    themselves: a threshold fitted on the preceding observed days, then the
+    share of the year's customer-minutes surviving at 1 and at 15 qualifying
+    days a year. That measured window effect is set against what each tail
+    model predicts from the same year's retained share at 2.5.
+    """
+    lo, hi, predict = _a14_predictor(n_sims, seed)
+    values = {label: daily.observed_days(k, s).to_numpy(float)
+              for label, (k, s) in {**A14_PRIMARY, **A14_VARIANT}.items()}
+    shapes = {}
+    for label, v in values.items():
+        shp = daily.tail_shape(v)
+        aic = shp["tail_family"]["aic"]
+        shp["normal_rejected"] = bool(shp["shapiro_wilk_p"] < 0.01)
+        shp["aic_normal_minus_best"] = float(aic["normal"] - min(aic.values()))
+        shapes[label] = shp
+
+    rows = _a14_score(A14_PRIMARY, lo, hi, predict)
+    rows_variant = _a14_score(A14_VARIANT, lo, hi, predict)
+    summary = _a14_summary(rows)
+
+    # Every rule above is a choice, so each is varied. The year rule matters
+    # most: at 90 observed days three more utility-years qualify.
+    robustness = {}
+    for name, gap, cov, min_days in (
+            ("gap_1h", 3600, daily.MIN_COVERAGE, A14_MIN_DAYS),
+            ("gap_6h", 6 * 3600, daily.MIN_COVERAGE, A14_MIN_DAYS),
+            ("coverage_75pct", daily.MAX_GAP_S, 0.75, A14_MIN_DAYS),
+            ("coverage_full_days", daily.MAX_GAP_S, 1.0, A14_MIN_DAYS),
+            ("years_from_90_days", daily.MAX_GAP_S, daily.MIN_COVERAGE, 90)):
+        alt = _a14_score(A14_PRIMARY, lo, hi, predict, gap, cov, min_days, min_days)
+        alt_shapes = [daily.tail_shape(daily.observed_days(k, s, gap, cov).to_numpy(float))
+                      for k, s in A14_PRIMARY.values()]
+        robustness[name] = {
+            **_a14_summary(alt),
+            "normal_rejected_for_both": bool(all(
+                a["shapiro_wilk_p"] < 0.01 and a["tail_family"]["best"] != "normal"
+                for a in alt_shapes)),
+        }
+
+    if figure:
+        _a14_figure({k: values[k] for k in A14_PRIMARY}, rows)
+
+    return {
+        "sources": {k: {"utility": u["name"], "archive": u["archive"],
+                        "commit": u["commit"]}
+                    for k, u in daily.UTILITIES.items()},
+        "rules": {"max_gap_hours": daily.MAX_GAP_S / 3600,
+                  "min_day_coverage": daily.MIN_COVERAGE,
+                  "min_observed_days_per_year": A14_MIN_DAYS,
+                  "min_prior_observed_days": A14_MIN_PRIOR_DAYS},
+        "window_beta": [lo, hi],
+        "windows_in_med_days_per_year": [1.0, 15.0],
+        "nominal_med_days_per_year": float(daily.NOMINAL_MED_PER_YEAR),
+        "laplace_med_days_per_year": float(rm.DAYS_PER_YEAR * 0.5
+                                           * np.exp(-2.5 * np.sqrt(2.0))),
+        "tail_shape": shapes,
+        "against_filing": _a14_against_filing(),
+        "utility_years": rows,
+        "utility_years_excl_psps": rows_variant,
+        "summary": summary,
+        "summary_excl_psps": _a14_summary(rows_variant),
+        "robustness": robustness,
+        "caveats": ("outage-map customers out is an operational estimate, not "
+                    "reported IEEE 1366 SAIDI; two utilities; at most a little "
+                    "over two years of history to fit each threshold on where the "
+                    "standard asks for five"),
+        "reading": ("log-normality fails on both utilities' daily data; the "
+                    "log-normal model's prediction of the threshold window's "
+                    "effect ranges from about right to far too high, and a "
+                    "heavier-tailed model is closer in most utility-years"),
+    }
+
+
 def run(save: bool = True) -> dict:
     out = {
         "A1_heavy_tail": a1_heavy_tail(),
@@ -976,6 +1245,7 @@ def run(save: bool = True) -> dict:
         "A11_threshold_window": a11_threshold_window(),
         "A12_pareto_tail": a12_pareto_tail(),
         "A13_evidence_grounded_window": a13_evidence_grounded_window(),
+        "A14_real_daily_outages": a14_real_daily_outages(),
     }
     if save:
         save_results("track8_falsification", out)

@@ -648,6 +648,314 @@
     },
     "year": 2022
   },
+  "A14_real_daily_outages": {
+    "against_filing": {
+      "filed_customers": 5764583.0,
+      "filed_saidi_with": 1150.55,
+      "filed_saidi_without": 48.07,
+      "map_customers_served": 5241182.74,
+      "map_med_days": 23,
+      "map_over_filed_with": 1.29562483,
+      "map_over_filed_without": 2.14382908,
+      "map_saidi_with_med": 1490.68115,
+      "map_saidi_without_med": 103.053864,
+      "note": "the map covers FPL's legacy territory only; the 2022 filing also includes the former Gulf Power, merged that January. Annual figures scale the observed days to 365.",
+      "observed_days": 353,
+      "year": 2022
+    },
+    "caveats": "outage-map customers out is an operational estimate, not reported IEEE 1366 SAIDI; two utilities; at most a little over two years of history to fit each threshold on where the standard asks for five",
+    "laplace_med_days_per_year": 5.31863274,
+    "nominal_med_days_per_year": 2.26652784,
+    "reading": "log-normality fails on both utilities' daily data; the log-normal model's prediction of the threshold window's effect ranges from about right to far too high, and a heavier-tailed model is closer in most utility-years",
+    "robustness": {
+      "coverage_75pct": {
+        "closest_model_counts": {
+          "laplace": 2,
+          "lognormal": 1,
+          "t_nu15": 0
+        },
+        "lognormal_over_measured_range": [
+          1.08240541,
+          74.250886
+        ],
+        "measured_window_x_range": [
+          1.08416138,
+          2.01761838
+        ],
+        "n_lognormal_overstates": 3,
+        "n_model_evaluable": 3,
+        "n_utility_years": 3,
+        "normal_rejected_for_both": true
+      },
+      "coverage_full_days": {
+        "closest_model_counts": {
+          "laplace": 2,
+          "lognormal": 1,
+          "t_nu15": 0
+        },
+        "lognormal_over_measured_range": [
+          0.932828698,
+          76.070767
+        ],
+        "measured_window_x_range": [
+          1.08520274,
+          1.95074782
+        ],
+        "n_lognormal_overstates": 2,
+        "n_model_evaluable": 3,
+        "n_utility_years": 3,
+        "normal_rejected_for_both": true
+      },
+      "gap_1h": {
+        "closest_model_counts": {
+          "laplace": 2,
+          "lognormal": 1,
+          "t_nu15": 0
+        },
+        "lognormal_over_measured_range": [
+          1.12202989,
+          66.3268461
+        ],
+        "measured_window_x_range": [
+          1.07497334,
+          2.07619916
+        ],
+        "n_lognormal_overstates": 3,
+        "n_model_evaluable": 3,
+        "n_utility_years": 3,
+        "normal_rejected_for_both": true
+      },
+      "gap_6h": {
+        "closest_model_counts": {
+          "laplace": 2,
+          "lognormal": 1,
+          "t_nu15": 0
+        },
+        "lognormal_over_measured_range": [
+          1.14764813,
+          74.302988
+        ],
+        "measured_window_x_range": [
+          1.08383384,
+          2.01493699
+        ],
+        "n_lognormal_overstates": 3,
+        "n_model_evaluable": 3,
+        "n_utility_years": 3,
+        "normal_rejected_for_both": true
+      },
+      "years_from_90_days": {
+        "closest_model_counts": {
+          "laplace": 4,
+          "lognormal": 1,
+          "t_nu15": 0
+        },
+        "lognormal_over_measured_range": [
+          0.933746381,
+          75.7434146
+        ],
+        "measured_window_x_range": [
+          1.08451978,
+          1.94723764
+        ],
+        "n_lognormal_overstates": 4,
+        "n_model_evaluable": 5,
+        "n_utility_years": 6,
+        "normal_rejected_for_both": true
+      }
+    },
+    "rules": {
+      "max_gap_hours": 3.0,
+      "min_day_coverage": 0.9,
+      "min_observed_days_per_year": 120,
+      "min_prior_observed_days": 120
+    },
+    "sources": {
+      "fpl": {
+        "archive": "github.com/simonw/disaster-data",
+        "commit": "6ab407fc8a2e42809c6fa80b57b992b40e0895bf",
+        "utility": "FPL"
+      },
+      "pge": {
+        "archive": "github.com/simonw/pge-outages-pre-2024",
+        "commit": "d1561539277a42890b85bb57f97f5bc8598c5454",
+        "utility": "PG&E"
+      }
+    },
+    "summary": {
+      "closest_model_counts": {
+        "laplace": 2,
+        "lognormal": 1,
+        "t_nu15": 0
+      },
+      "lognormal_over_measured_range": [
+        0.933746381,
+        75.7434146
+      ],
+      "measured_window_x_range": [
+        1.08451978,
+        1.94723764
+      ],
+      "n_lognormal_overstates": 2,
+      "n_model_evaluable": 3,
+      "n_utility_years": 3
+    },
+    "summary_excl_psps": {
+      "closest_model_counts": {
+        "laplace": 1,
+        "lognormal": 0,
+        "t_nu15": 0
+      },
+      "lognormal_over_measured_range": [
+        2.83022948,
+        2.83022948
+      ],
+      "measured_window_x_range": [
+        1.44742657,
+        1.44742657
+      ],
+      "n_lognormal_overstates": 1,
+      "n_model_evaluable": 1,
+      "n_utility_years": 1
+    },
+    "tail_shape": {
+      "fpl": {
+        "aic_normal_minus_best": 603.470376,
+        "hill_alpha_top_5pct": 0.56659042,
+        "log_excess_kurtosis": 22.5245269,
+        "log_skewness": 3.79559321,
+        "med_days_at_2_5": 19,
+        "med_days_per_year_at_2_5": 7.79747191,
+        "n_days": 890,
+        "n_positive_days": 890,
+        "normal_rejected": true,
+        "shapiro_wilk_p": 3.94e-37,
+        "tail_family": {
+          "aic": {
+            "laplace": 1825.76981,
+            "normal": 2320.31581,
+            "student_t": 1716.84544
+          },
+          "best": "student_t",
+          "student_t_df": 2.5
+        }
+      },
+      "pge": {
+        "aic_normal_minus_best": 293.938405,
+        "hill_alpha_top_5pct": 0.814292751,
+        "log_excess_kurtosis": 5.36947538,
+        "log_skewness": 2.09939283,
+        "med_days_at_2_5": 23,
+        "med_days_per_year_at_2_5": 13.3769904,
+        "n_days": 628,
+        "n_positive_days": 628,
+        "normal_rejected": true,
+        "shapiro_wilk_p": 2.33e-27,
+        "tail_family": {
+          "aic": {
+            "laplace": 1718.17867,
+            "normal": 1958.31653,
+            "student_t": 1664.37812
+          },
+          "best": "student_t",
+          "student_t_df": 1.5
+        }
+      },
+      "pge_excl_psps": {
+        "aic_normal_minus_best": 180.55615,
+        "hill_alpha_top_5pct": 1.29382872,
+        "log_excess_kurtosis": 2.97116295,
+        "log_skewness": 1.64128027,
+        "med_days_at_2_5": 24,
+        "med_days_per_year_at_2_5": 13.9585987,
+        "n_days": 628,
+        "n_positive_days": 628,
+        "normal_rejected": true,
+        "shapiro_wilk_p": 6.68e-24,
+        "tail_family": {
+          "aic": {
+            "laplace": 1547.63897,
+            "normal": 1710.41584,
+            "student_t": 1529.85969
+          },
+          "best": "student_t",
+          "student_t_df": 2.0
+        }
+      }
+    },
+    "utility_years": [
+      {
+        "closest_model": "lognormal",
+        "laplace_predicted_x": 1.24327999,
+        "lognormal_over_measured": 0.933746381,
+        "lognormal_predicted_x": 1.8182261,
+        "measured_window_x": 1.94723764,
+        "med_days_at_2_5": 3,
+        "med_days_per_year_at_2_5": 5.1203271,
+        "observed_days": 214,
+        "prior_days": 307,
+        "retained_share_at_2_5": 0.795147378,
+        "series": "pge",
+        "t_nu15_predicted_x": 1.47304424,
+        "year": 2021
+      },
+      {
+        "closest_model": "laplace",
+        "laplace_predicted_x": 1.12874288,
+        "lognormal_over_measured": 1.24445866,
+        "lognormal_predicted_x": 1.35234732,
+        "measured_window_x": 1.08669525,
+        "med_days_at_2_5": 2,
+        "med_days_per_year_at_2_5": 2.54529617,
+        "observed_days": 287,
+        "prior_days": 220,
+        "retained_share_at_2_5": 0.910505737,
+        "series": "fpl",
+        "t_nu15_predicted_x": 1.23342539,
+        "year": 2021
+      },
+      {
+        "closest_model": "laplace",
+        "laplace_predicted_x": 3.84122055,
+        "lognormal_over_measured": 75.7434146,
+        "lognormal_predicted_x": 82.1452315,
+        "measured_window_x": 1.08451978,
+        "med_days_at_2_5": 23,
+        "med_days_per_year_at_2_5": 23.7981586,
+        "observed_days": 353,
+        "prior_days": 507,
+        "retained_share_at_2_5": 0.0690544277,
+        "series": "fpl",
+        "t_nu15_predicted_x": 15.4697515,
+        "year": 2022
+      }
+    ],
+    "utility_years_excl_psps": [
+      {
+        "closest_model": "laplace",
+        "laplace_predicted_x": 1.58906963,
+        "lognormal_over_measured": 2.83022948,
+        "lognormal_predicted_x": 4.09654935,
+        "measured_window_x": 1.44742657,
+        "med_days_at_2_5": 10,
+        "med_days_per_year_at_2_5": 17.067757,
+        "observed_days": 214,
+        "prior_days": 307,
+        "retained_share_at_2_5": 0.489099725,
+        "series": "pge_excl_psps",
+        "t_nu15_predicted_x": 2.45862213,
+        "year": 2021
+      }
+    ],
+    "window_beta": [
+      1.7381,
+      2.7774
+    ],
+    "windows_in_med_days_per_year": [
+      1.0,
+      15.0
+    ]
+  },
   "A1_heavy_tail": {
     "by_case": {
       "nu10_sigma1.0": {
@@ -1431,6 +1739,32 @@
           "windows_in_med_days_per_year": "literature_model"
         }
       },
+      "A14_real_daily_outages": {
+        "default": "outage_map_data",
+        "exceptions": {
+          "caveats": "meta",
+          "closest_model": "model_implied",
+          "closest_model_counts": "model_implied",
+          "filed_customers": "filed_data",
+          "filed_saidi_with": "filed_data",
+          "filed_saidi_without": "filed_data",
+          "laplace_med_days_per_year": "model_implied",
+          "laplace_predicted_x": "model_implied",
+          "lognormal_over_measured": "model_implied",
+          "lognormal_over_measured_range": "model_implied",
+          "lognormal_predicted_x": "model_implied",
+          "n_lognormal_overstates": "model_implied",
+          "n_model_evaluable": "model_implied",
+          "nominal_med_days_per_year": "model_implied",
+          "note": "meta",
+          "reading": "meta",
+          "rules": "meta",
+          "sources": "meta",
+          "t_nu15_predicted_x": "model_implied",
+          "window_beta": "model_implied",
+          "windows_in_med_days_per_year": "literature_model"
+        }
+      },
       "A1_heavy_tail": {
         "default": "model_implied",
         "exceptions": {}
@@ -1482,7 +1816,8 @@
       "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
       "literature_model": "a payback model driven by published literature parameters",
       "meta": "status, blockers, substitutions and audit counts",
-      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed",
+      "outage_map_data": "computed from public outage-map snapshots archived by git scraping (PG&E 2019-2022, FPL 2019-2023); estimated customers out, not reported IEEE 1366 SAIDI"
     }
   }
 }

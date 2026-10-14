@@ -21,17 +21,19 @@ issue showing any of them fails under a specification the repository does not
 already test. *Start at:* `blinkrate/shared/reliability_metrics.py` and
 `blinkrate/track8_falsification.py`.
 
-**2. Run the tail test on real daily outage data.** Every model-implied number
-here rests on daily SAIDI being log-normal, and the evidence is mixed: the
-working group saw more major event days than the model predicts, while the one
-formal fit test found (Fumagalli et al. 2006, Italian districts) found thinner
-tails. `tools/daily_tail_test.py` settles it for any series you can get. ORNL's
-EAGLE-I county data (Scientific Data 2024, DOI 10.1038/s41597-024-03095-5, via
-Globus or Figshare) works directly with `--eaglei --state XX`; Massachusetts
-utility outage records are the most promising source of true daily SAIDI.
-*Finish line:* the tool's output for at least one utility or state, committed
-under `results/external/` with the source recorded. The tool is validated on
-synthetic data already; read its Hill caveat before quoting a tail index.
+**2. Run the tail test on more daily outage data.** Every model-implied number
+here rests on daily SAIDI being log-normal. Attack A14 found it false for the two
+utilities with daily data in this repository, PG&E and FPL, measured from
+archived outage maps; whether that holds beyond two storm-prone utilities is
+open, and the one formal fit test in the literature (Fumagalli et al. 2006,
+Italian districts) found thinner tails. `tools/daily_tail_test.py` runs the same
+test on any series. ORNL's EAGLE-I county data (Scientific Data 2024, DOI
+10.1038/s41597-024-03095-5, via Globus or Figshare) works directly with
+`--eaglei --state XX`. Another utility's outage-map archive, if one exists in
+git, can be added to `tools/build_outage_snapshots.py` and then joins A14
+itself. *Finish line:* the tool's output for at least one more utility or state,
+committed under `results/external/` with the source recorded, or a third archive
+in A14. Read the tool's Hill caveat before quoting a tail index.
 
 **3. Supply the 2019-2021 filings.** The panel jumps 2018 to 2022. Catalyst
 Cooperative's PUDL has them as `core_eia861__yearly_reliability`, distributed
@@ -63,8 +65,8 @@ than only reweighted. *Start at:* `blinkrate/track9_aggregation.py`.
 Anything quoted in README.md, FINDINGS.md or FALSIFICATION.md must be:
 
 1. produced by code in `blinkrate/`, written to `results/` as JSON, and
-   declared `filed_data` or `model_implied` in `blinkrate/shared/provenance.py`
-   (an undeclared result refuses to save);
+   declared `filed_data`, `model_implied` or `outage_map_data` in
+   `blinkrate/shared/provenance.py` (an undeclared result refuses to save);
 2. pinned by a test in `tests/` with a tolerance tight enough to fail on a real
    change;
 3. registered in `tools/check_claims.py` so the build breaks if the prose and the
@@ -89,15 +91,21 @@ resolved relative to the repository root rather than to the installed package,
 so this is a clone-and-run research repo, not a library you can `pip install`
 from a wheel and use elsewhere. `verify.sh` installs editable for that reason.
 
+`data/daily/` is derived from two public outage-map archives and rebuilt with
+`python tools/build_outage_snapshots.py`, which clones them and needs network
+access to GitHub; the output must match the checksums in `data/daily/README.md`,
+and a test holds the vendored files to them.
+
 `data/calibration_med.npz` is generated. Rebuild it with
 `python -m blinkrate.shared.finite_sample` (about 20 seconds, and bit-identical
 to the committed cache since it is fully seeded), or add `--check` to compare a
 fresh build with the committed cache without writing, which is what CI runs.
 
 The seed makes the surface's Monte Carlo noise reproducible; it does not remove
-it. Rebuilt from five other seeds, 14 of the 105 guarded figures move, all of
-them model-implied, by up to 7.7%, and eight move by more than the guard's
-tolerance (the 7.66x threshold range lands between 7.69x and 7.75x).
+it. Rebuilt from five other seeds, 19 of the 118 guarded figures change, every
+one of them model-implied or holding a model-implied prediction, by up to 7.7%,
+and 13 change by more than the guard's tolerance (the 7.66x threshold range
+lands between 7.69x and 7.75x).
 `python tools/seed_spread.py` measures this. Changing the seed or the simulation
 count therefore changes quoted figures: rerun the tracks and the guard after
 either, and update the prose.

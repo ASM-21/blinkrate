@@ -12,8 +12,12 @@ to know which without reading the method:
                     standard's own assumption, and attacks A1, A10 and A11 show
                     how much these numbers move when it is relaxed.
 
-Two more kinds cover the rest:
+Three more kinds cover the rest:
 
+  outage_map_data   computed from two utilities' public outage maps, archived by
+                    git scraping (attack A14). Measured, and free of the
+                    distributional assumption, but an estimate of customers out
+                    rather than the SAIDI a utility reports.
   literature_model  a payback model whose inputs are published parameters rather
                     than filings (track 5).
   meta              status text, blockers, substitution notes, audit counts.
@@ -34,6 +38,7 @@ from __future__ import annotations
 
 FILED = "filed_data"
 MODEL = "model_implied"
+OUTAGE = "outage_map_data"
 LIT = "literature_model"
 META = "meta"
 
@@ -43,6 +48,9 @@ KINDS = {
     MODEL: ("depends on inverting IEEE 1366's exclusion under an assumed "
             "daily-SAIDI distribution, log-normal unless stated; see attacks A1, "
             "A10 and A11 for how far these move when it is relaxed"),
+    OUTAGE: ("computed from public outage-map snapshots archived by git "
+             "scraping (PG&E 2019-2022, FPL 2019-2023); estimated customers out, "
+             "not reported IEEE 1366 SAIDI"),
     LIT: "a payback model driven by published literature parameters",
     META: "status, blockers, substitutions and audit counts",
 }
@@ -141,6 +149,19 @@ REGISTRY: dict[str, dict[str, dict]] = {
                               working_group_observed_range=LIT),
         "A13_evidence_grounded_window": _b(MODEL, cross_utility_spread_p90_p10=FILED,
                                            windows_in_med_days_per_year=LIT),
+        # measured on outage maps, set against what each model predicts from
+        # the same year's retained share; the predictions and anything compared
+        # with them inherit the model
+        "A14_real_daily_outages": _b(
+            OUTAGE, sources=META, rules=META, caveats=META, reading=META, note=META,
+            window_beta=MODEL, nominal_med_days_per_year=MODEL,
+            laplace_med_days_per_year=MODEL, windows_in_med_days_per_year=LIT,
+            lognormal_predicted_x=MODEL, t_nu15_predicted_x=MODEL,
+            laplace_predicted_x=MODEL, lognormal_over_measured=MODEL,
+            closest_model=MODEL, n_lognormal_overstates=MODEL, n_model_evaluable=MODEL,
+            lognormal_over_measured_range=MODEL, closest_model_counts=MODEL,
+            filed_saidi_with=FILED, filed_saidi_without=FILED,
+            filed_customers=FILED),
     },
     "track9_aggregation": {
         "by_year": _b(FILED),

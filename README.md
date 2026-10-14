@@ -25,8 +25,9 @@ and both are measured directly from the filings. Which of the two SAIDI series
 EIA publishes a benchmark ranks on moves half the large-utility field across
 performance quartiles, and that survives comparing utilities within like storm
 exposure. How the national figure is averaged moves it by a factor of 2.07
-across six defensible rules; sweep the threshold as well and the space of
-defensible national values for one year spans **14.32x**.
+across six defensible rules; sweep the threshold as well, under the log-normal
+model, and the space of defensible national values for one year spans
+**14.32x**.
 
 The threshold itself matters, but less than this repository first said. On the
 range of thresholds the evidence supports, one to fifteen qualifying days a year,
@@ -34,7 +35,10 @@ it moves customer-weighted fleet SAIDI **3.16x** under IEEE 1366's own
 log-normal model and **1.52x** under a heavier-tailed Laplace model,
 roughly 50 to 120 minutes a year. Over a wider sweep, beta 1.5 to 3.5, the
 log-normal model gives 37 min/yr to 287 min/yr, a **7.66x range**; no alternative
-in the literature is that wide.
+in the literature is that wide. Daily data for two utilities, recovered from
+public archives of their outage maps, points to the low end: log-normality fails
+for both, and the log-normal model overstated how much the realistic window moved
+their outage burden in two of three utility-years (attack A14).
 
 > **Withdrawn.** Earlier versions led with a comparison: moving the threshold
 > from 1.5 to 3.0 changes one large utility's reported SAIDI by a median of
@@ -58,18 +62,20 @@ What holds regardless is everything measured directly from the filings rather
 than through the model: the zero-exclusion mass point, the rank reversal between
 the two published series, the everyday deterioration trend, and the spread across
 aggregation rules. Whether daily outages are log-normal, which decides every
-model-implied number here, can now be tested in one command on real data with
-`tools/daily_tail_test.py`; no such data is reachable from the environment this
-was built in.
+model-implied number here, has now been tested on the only daily data found,
+outage-map estimates for PG&E and FPL rather than reported SAIDI, and it fails
+for both (A14). `tools/daily_tail_test.py` runs the same test on any other daily
+series.
 
 Built on 6,245 utility-state-years of EIA-861 reliability filings, 2013-2018 and
-2022. Every headline number is regenerated from code and pinned by a test that
-fails on drift.
+2022, plus two utilities' daily outage-map histories, PG&E 2019-2022 and FPL
+2019-2023. Every headline number is regenerated from code and pinned by a test
+that fails on drift.
 
 ```bash
 pip install -e .
 python -m blinkrate.run_all      # writes results/ and figures/
-pytest                           # 119 tests
+pytest                           # 134 tests
 python tools/check_claims.py     # every quoted figure recomputed
 python tools/utility_profile.py --name "Commonwealth Edison" --figure
 python tools/utility_profile.py --pair 200 120 --tails   # any filed pair
@@ -98,7 +104,7 @@ searched and what it changed: **[LITERATURE.md](LITERATURE.md)**.
 
 | | Question | Answer | Basis | Confidence |
 |---|---|---|---|---|
-| Q1 | What is the threshold parameter worth? | 7.66x range in fleet SAIDI; the standard sits 0.45 from where the mechanism stops working | model-implied | direction solid, **magnitude assumption-dependent** |
+| Q1 | What is the threshold parameter worth? | 1.52x to 3.16x of fleet SAIDI on the thresholds the evidence supports, depending on tails; daily data for two utilities points to the low end | model-implied; A14 outage-map data | direction solid, **magnitude assumption-dependent** |
 | Q2 | Do utilities cluster where the rule rewards? | One large mass point, at *zero* exclusion (12.0x excess mass), which is the unflattering direction | filed data | solid |
 | Q3 | Does the exclusion change *who* looks reliable? | 40 to 57% of large IOUs change quartile depending on which series you rank on | filed data | solid |
 | Q4 | Is the decade's deterioration weather or classification? | Both, and separable: the spikes are weather, the drift into using the rule is methodology | filed data | trend **positive under every aggregator, significant under four of six**; the excluded-share figure is **mostly the Gulf coast** |
@@ -112,7 +118,7 @@ Prior art and what the literature search changed: **[LITERATURE.md](LITERATURE.m
 How to publish it, and what was checked first: **[UPLOAD.md](UPLOAD.md)**.
 What broke under attack: **[FALSIFICATION.md](FALSIFICATION.md)**.
 
-## Three figures
+## Four figures
 
 **The threshold sweep** (Q1, model-implied). The same filed outage records,
 re-evaluated at other values of the major-event-day parameter. The flat region
@@ -132,6 +138,14 @@ in the same states does not move.
 filings into one national number, and the trend under each.
 
 ![National SAIDI under six aggregation rules, and the trend under each](figures/track9_aggregation.png)
+
+**The assumption against daily data** (A14, outage-map data). Left: two
+utilities' daily outage burden against the log-normal IEEE 1366 assumes; the
+right tail bends far above the line. Right: how much the realistic threshold
+window moved each scored utility-year, measured, and what each model predicted
+from that year's retained share alone.
+
+![Daily outage burden for PG&E and FPL against a log-normal, and the measured versus modelled effect of the threshold window](figures/track8_a14_daily_outages.png)
 
 ## The method, in one paragraph
 
@@ -159,22 +173,24 @@ simulator, and round-trips the inversion.
 
 **Filed data and model output are separated in the data, not just the prose.**
 Every results file labels each number `filed_data` (computed straight from
-EIA-861) or `model_implied` (depends on the log-normal inversion), and a result
-that has not been declared refuses to save. Tests hold those labels to the
+EIA-861), `model_implied` (depends on the log-normal inversion) or, for attack
+A14 alone, `outage_map_data`, and a result that has not been declared refuses to
+save. Tests hold those labels to the
 "Basis:" line on each answer in FINDINGS, so the two cannot drift apart.
 
-**Falsification is a track, not an appendix.** Eight of thirteen attacks
+**Falsification is a track, not an appendix.** Nine of fourteen attacks
 landed. The most consequential came from reading rather than computing: once
 the literature showed which threshold windows are realistic, the repository's
 own headline comparison failed on every one of them, and it is withdrawn in
-place rather than defended.
+place rather than defended. The latest took the log-normal assumption itself to
+the only daily data found, and it failed there too.
 
 **More data was allowed to break things.** The panel started at four filing
 years. Finding 2016-2018 nearly doubled it, retracted one published result at
 p = 0.026, turned another into a range, and let two questions be answered that
 were previously marked unanswerable. Nothing was re-tuned to keep an old number.
 
-**Claims cannot drift.** `tools/check_claims.py` pairs 105 figures quoted in the
+**Claims cannot drift.** `tools/check_claims.py` pairs 118 figures quoted in the
 prose with the code that recomputes them, including the numbers inside
 retraction blockquotes, and also fails on missing hedges and overclaiming
 language. A test feeds it a corrupted README to demonstrate that the guard can
@@ -189,8 +205,9 @@ fail.
 - **No weather severity index.** Q4 works around this with a geographic placebo
   built from the 2017 hurricane tracks, which is suggestive but not a direct
   test.
-- **No daily SAIDI at national scale**, which is why Q1 is model-implied rather
-  than measured.
+- **Daily outage data for two utilities only**, as outage-map estimates rather
+  than reported SAIDI (A14), which is why Q1 remains model-implied rather than
+  measured.
 - **The 2019-2021 filings**, so 2022 is a single later observation rather than a
   continuation.
 
@@ -204,6 +221,7 @@ blinkrate/
   shared/reliability_metrics.py MED engine, tunable beta, closed form
   shared/finite_sample.py       simulated median-realization calibration
   shared/provenance.py          filed_data vs model_implied, declared per result
+  shared/daily.py               daily outage-map series and A14's measurements
   track1_investment.py          Q5 capital deployment, three designs
   track2_weather_split.py       Q4 weather vs classification + geographic placebo
   track3_med_sensitivity.py     Q1-Q3 threshold sweep, bunching, ranking
@@ -212,15 +230,17 @@ blinkrate/
   track6_ownership.py           Q6 ownership stratification
   track7_validation.py          Q7 engine and source-data checks
   track9_aggregation.py         Q8 how much the averaging rule is worth
-  track8_falsification.py       thirteen attacks on the above
+  track8_falsification.py       fourteen attacks on the above
   run_all.py
 data/raw/                       vendored EIA-861 (US Gov, public domain)
+data/daily/                     two utilities' outage-map snapshots, and their README
 docs/derivation.md              the exclusion identity
 docs/DATA_ACCESS.md             provenance, licences, what is blocked
 tools/check_claims.py           drift and overclaim guard
 tools/utility_profile.py        run one utility's filed numbers through the engine
 tools/daily_tail_test.py        test the log-normal assumption on real daily data
 tools/seed_spread.py            how far each figure moves with the Monte Carlo seed
+tools/build_outage_snapshots.py rebuild data/daily/ from the public archives
 ```
 
 ## Data
@@ -228,6 +248,10 @@ tools/seed_spread.py            how far each figure moves with the Monte Carlo s
 EIA Form 861, filing years 2013 through 2018 and 2022. US federal government
 work, public domain, retrieved through GitHub mirrors because eia.gov is
 unreachable from the build environment. Mirror attribution in [NOTICE](NOTICE).
+
+Daily outage-map snapshots for PG&E (2019-2022) and FPL (2019-2023), derived from
+public git-scraping archives; sources, licences and what the series are not are
+in [data/daily/README.md](data/daily/README.md).
 
 Apache-2.0. Bundled EIA-861 data is a US federal government work in the public
 domain; mirror provenance and licences are in [NOTICE](NOTICE). Citation in

@@ -14,8 +14,9 @@ changed.
 
 **Scope conditions, shared by every answer below.** US investor-owned,
 cooperative and municipal distribution utilities filing EIA-861; 2013-2018 and
-2022; annual aggregates only, never daily series; no spending variable anywhere;
-no external weather index. Q1 and Q8's counterfactuals are model-implied under
+2022; annual aggregates, except that attack A14 tests the daily assumption on
+two utilities' outage maps; no spending variable anywhere; no external weather
+index. Q1 and Q8's counterfactuals are model-implied under
 IEEE 1366's own log-normality assumption and are not measurements.
 
 **Falsification criterion for the repository as a whole.** The central claim is
@@ -66,7 +67,11 @@ on 278 Italian districts (Fumagalli et al. 2006), rejected log-normality in the
 other direction, with tails thinner than normal. And US event-level tail indices
 of 0.73 to 1.47 (Ahmad and Dobson 2025) turned out not to discriminate: this
 repository's own tail test gives a wide log-normal a Hill index of 1.23, inside
-that range. The tails remain unsettled. A13 is what settles part one.
+that range. Nationally the tails remain unsettled. Daily data found since for two
+utilities (A14), outage-map estimates rather than reported SAIDI, rejects
+log-normality for both, with right-skewed logs and more qualifying days a year
+than even a Laplace tail implies: 13.4 for PG&E and 7.8 for FPL, against 5.32.
+A13 is what settles part one, and it does not depend on the tails.
 
 **What the repository claims instead.** The thesis survives in a narrower form,
 on filed data that involves no distributional assumption. Measurement choices
@@ -102,7 +107,10 @@ answers are computed directly from what utilities reported and depend on no
 distributional assumption. *Model-implied* answers pass through the exclusion
 identity in `docs/derivation.md` and inherit IEEE 1366's log-normal assumption;
 the central model-implied comparison did not survive the evidence on realistic
-threshold windows (A13) and is withdrawn above. Weight them accordingly.
+threshold windows (A13) and is withdrawn above. Weight them accordingly. A third
+kind, *outage-map data*, appears only in attack A14: measured daily
+customer-minutes for two utilities, free of the distributional assumption but
+not the SAIDI either utility reports.
 
 **Sample.** 6,245 utility-state-years from EIA-861 reliability filings for 2013
 through 2018 and 2022. Six consecutive years plus one later observation. The
@@ -121,13 +129,14 @@ repository asks what that choice, and the surrounding discretion, is worth.
 
 ## Q1. How much of a reported SAIDI is the threshold parameter?
 
-*Basis: model-implied.*
+*Basis: model-implied. The two-utility check against daily data (A14) is outage-map data.*
 
 **Materially, though less than the first version said. Under IEEE 1366's own
 log-normal model, sweeping the threshold from 1.5 to 3.5 moves customer-weighted
 fleet SAIDI over a 7.66x range. On the thresholds the evidence supports, one to
 fifteen qualifying days a year, the same records move it
-3.16x under log-normal tails and 1.52x under Laplace ones.**
+3.16x under log-normal tails and 1.52x under Laplace ones. Daily data for two
+utilities points to the low end.**
 
 | threshold beta | fleet SAIDI without MED | vs the standard | expected qualifying days/yr |
 |---|---|---|---|
@@ -156,6 +165,21 @@ more days past any threshold. The threshold choice is worth roughly 50 to 120
 minutes a year of national SAIDI on realistic windows, which is the number to
 quote.
 
+**Measured, for two utilities.** Attack A14 found the daily data this question
+lacked, for two utilities: outage-map estimates of customers out, archived by
+git scraping, for PG&E 2019-2022 and FPL 2019-2023. Applying the standard's
+procedure to the days themselves, moving the threshold across the realistic
+window changed what the rule leaves of each scored utility-year's outage burden
+by **1.08x to 1.95x**. Given only each year's own
+retained share, as Q1 is given a filed pair, the log-normal model overstated
+that in two of the three utility-years, by 1.24x and 76x (the second is FPL in
+the year of Hurricane Ian), and came within 7% in the third. Laplace, the model
+behind the table's low end, was closest in two of three. Single utilities are not
+the fleet and outage-map estimates are not reported SAIDI, so the table above
+stands as model-implied. But where the model could be checked it erred toward
+overstating the threshold's effect, which is reason to weight the 50 to 120
+minutes toward its low end.
+
 **Prior work.** That the 2.5-beta threshold is unstable, and that alternative
 definitions help some utilities while hurting others, is established (IEEE 2013;
 LBNL, *Evaluating the Performance of the IEEE Standard 1366 Method*). The
@@ -179,8 +203,10 @@ outages, matched so every distribution reproduces the same observed exclusion
 share. The direction survives everywhere (a lower threshold always excludes
 more), but the sweep ratio spans **3.03x** across distributions and the cliff
 disappears entirely. **The direction is a property of the rule. The magnitude is
-a property of the log-normal.** Daily SAIDI series from any utility would settle
-it.
+a property of the log-normal.** Daily series from two utilities now test it
+(A14): log-normality fails for both, and the log-normal magnitude was too large
+in two of their three scored utility-years. A national answer still needs daily
+data at national scale.
 
 ## Q2. Do utilities cluster anywhere the rule would reward?
 
@@ -523,16 +549,19 @@ territory and on wildfire grounds rather than on avoided outage minutes.
 Every question lands in the same place from a different direction: **what gets
 reported is decided more by measurement rules than by anything on the poles.**
 
-The threshold parameter moves fleet SAIDI 7.66x. Half the large-IOU field
-changes quartile depending on which published series you rank on. Nearly a third
+The threshold parameter, on the thresholds the evidence supports, moves fleet
+SAIDI 1.52x to 3.16x depending on the tails, and the only daily data found points
+to the low end. Half the large-IOU field changes quartile depending on which
+published series you rank on. Nearly a third
 of utilities do not apply the exclusion rule at all, and which standard they file
 under moves their number more than ownership does. Two carve-outs stack to remove
 41% of median outage minutes. And the one thing that should move the number
 (capital deployment) cannot be detected inside a utility even when the rollout is
 observed directly.
 
-And the aggregation rule adds a second order of magnitude on top of the first:
-threshold and averaging together span 14.32x for a single year.
+And the aggregation rule stacks on top: averaging alone moves the national
+figure 2.07x, and under the log-normal model's widest sweep, threshold and
+averaging together span 14.32x for a single year.
 
 The everyday series is the exception that makes the point. Strip the exclusions away
 and what remains is a slow, boring, highly significant 3.21 minutes per year of
@@ -544,8 +573,10 @@ tightly as the target, and state which series a benchmark is built on.
 
 ## What would change these conclusions
 
-- **Daily SAIDI from any utility** would replace Q1's model-implied sweep with a
-  measurement and settle attack A1 outright.
+- **Daily SAIDI at national scale.** Two utilities' outage maps (A14) already
+  reject the log-normal assumption and point Q1 toward its low end. Reported
+  daily SAIDI, or EAGLE-I's county record, for many utilities would replace Q1's
+  model-implied sweep with a measurement.
 - **FERC Form 1** would give Q5 a spending variable and unblock the
   vegetation-management question entirely.
 - **A storm severity index keyed to service territories** would turn Q4's

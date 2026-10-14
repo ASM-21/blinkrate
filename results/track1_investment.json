@@ -26,7 +26,8 @@
       "filed_data": "computed directly from EIA-861 filings; no assumption about the distribution of daily outages",
       "literature_model": "a payback model driven by published literature parameters",
       "meta": "status, blockers, substitutions and audit counts",
-      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed"
+      "model_implied": "depends on inverting IEEE 1366's exclusion under an assumed daily-SAIDI distribution, log-normal unless stated; see attacks A1, A10 and A11 for how far these move when it is relaxed",
+      "outage_map_data": "computed from public outage-map snapshots archived by git scraping (PG&E 2019-2022, FPL 2019-2023); estimated customers out, not reported IEEE 1366 SAIDI"
     }
   },
   "cross_sections": {

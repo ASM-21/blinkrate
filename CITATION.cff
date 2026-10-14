@@ -8,8 +8,8 @@ authors:
     orcid: "https://orcid.org/0009-0004-8758-2687"
 repository-code: "https://github.com/ASM-21/blinkrate"
 url: "https://github.com/ASM-21/blinkrate"
-version: 1.2.0
-date-released: 2026-10-13
+version: 1.3.0
+date-released: 2026-10-14
 license: Apache-2.0
 keywords:
   - SAIDI
@@ -32,7 +32,11 @@ abstract: >-
   fleet SAIDI moves 1.52x to 3.16x depending on the daily-outage tail model. A
   comparison between the threshold's effect on one utility and the spread
   between utilities, reported in earlier versions, fails on every
-  evidence-grounded threshold window and is withdrawn. Of all filings, 29.8%
+  evidence-grounded threshold window and is withdrawn. Daily outage-map
+  histories for two large utilities, recovered from public git-scraping
+  archives, reject the log-normal assumption IEEE 1366 makes for daily SAIDI,
+  and on them the log-normal model overstates the threshold's measured effect
+  in two of three utility-years. Of all filings, 29.8%
   report no major event days; for large IEEE-standard filers the rate is
   consistent with genuine zero-event years, and the excess is concentrated among
   smaller utilities and self-defined-standard filers. A within-utility design

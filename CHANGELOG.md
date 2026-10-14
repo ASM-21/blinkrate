@@ -1,5 +1,72 @@
 # Changelog
 
+## v1.3.0 (2026-10)
+
+The assumption under every model-implied number here, that daily SAIDI is
+log-normal, had never been tested in this repository because no daily data was
+reachable. Two utilities' outage maps turned out to be archived in public by git
+scraping. On them the assumption fails, and the model built on it overstates the
+threshold's measured effect in two of three utility-years.
+
+### Added
+
+- **Daily outage data for two utilities** (`data/daily/`). PG&E's outage map
+  from June 2019 to April 2022 and FPL's county outage page from September 2019
+  to January 2023, as committed to two public git-scraping archives, give 628
+  and 890 well-observed days of customer-minutes. `tools/build_outage_snapshots.py`
+  rebuilds both files from pinned archive commits, byte for byte. They are
+  outage-map estimates of customers out, not reported SAIDI, and
+  `data/daily/README.md` says what else they are not.
+- **Attack A14**, the log-normal assumption against that data. Log-normality
+  fails for both utilities: Shapiro-Wilk p at most 6.7e-24, both heavier-tailed
+  families ahead of the normal by more than 160 AIC points in every series, and
+  right-skewed logs that no symmetric tail model captures. The standard's rule
+  would flag 13.4 (PG&E) and 7.8 (FPL) days a year, against the 2.27 its model
+  assumes and the 5.32 of a Laplace tail. Applied to the days themselves, the
+  realistic threshold window moved each scored utility-year 1.08x to 1.95x.
+  Given only each year's retained share, the log-normal model overstated that
+  in two of the three utility-years, by 76x in FPL's Hurricane Ian year, and
+  Laplace came closest in two of three. Every rule A14 makes (gap length, day
+  coverage, which years qualify) is varied, and the conclusions hold.
+- **FPL 2022 against its filing.** Through the standard's procedure the map
+  gives 1.30x the filed SAIDI with major events and 2.14x without, so levels
+  from these series are not reported SAIDI, and A14 uses only shapes and ratios.
+- **`outage_map_data`**, a third provenance kind, for A14's measured numbers;
+  its predictions are labelled model-implied and the filed FPL values filed data.
+- **`blinkrate/shared/daily.py`**: integer-exact integration of snapshots into
+  local calendar days, daylight-saving days included, and tail fits that involve
+  no optimizer with a convergence test (closed-form normal and Laplace; Student-t
+  by EM profiled over a fixed grid of degrees of freedom), so A14 reproduces byte
+  for byte on every library stack and CPU tested.
+- `tools/daily_tail_test.py --archive pge|fpl` runs the tail test on the vendored
+  series; `tests/test_daily.py` checks the data against its published checksums
+  and the integration against records with known answers.
+
+### Restated
+
+- **Q1** now reports the two-utility measurement beside the model-implied window
+  range, and reads the 50 to 120 minutes toward its low end. The README's Q1 row
+  no longer leads with the 7.66x wide-sweep figure or the log-normal cliff, and
+  FINDINGS' closing thread no longer opens with 7.66x.
+
+### Fixed
+
+- **`tools/daily_tail_test.py` fitted the Student-t with scipy's general
+  optimizer**, which stops at a poor local optimum on real outage data, nearly
+  100 log-likelihood units short on PG&E's series and enough to change the best
+  family. It now shares A14's profile fit. Its major-event-day rate is now per
+  observed day, so a series with gaps is not credited with years nobody watched.
+- **Shapiro-Wilk p-values are stored to three significant figures.** At values
+  this small, scipy 1.18 differs from 1.17 by up to 1e-7 relative on identical
+  input, which would have broken byte-identical results.
+- **`tools/seed_spread.py` counted a claim as moving only when its first number
+  moved**, so table rows that lead with a year or a count were missed though
+  the guard would fail on them. It now flags any claim whose other numbers
+  change. With A14 included, 19 of 118 guarded figures change across five other
+  seeds, 13 beyond the guard's tolerance; CONTRIBUTING and ROADMAP say so.
+- Track 8's module docstring still described six attacks and a writer script
+  that does not exist.
+
 ## v1.2.0 (2026-10)
 
 A second literature pass, run to answer the two questions attacks A10 and A11

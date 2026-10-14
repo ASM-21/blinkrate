@@ -1093,6 +1093,83 @@ def test_zero_exclusion_benchmark_rescopes_q2():
         assert z["other_to_ieee_ratio_by_size"][band] > 1.5
 
 
+# --- A14: the model against two utilities' daily outage maps ---------------
+
+def _a14() -> dict:
+    return _results("track8_falsification")["A14_real_daily_outages"]
+
+
+def test_a14_rejects_lognormality_for_both_utilities():
+    """The finding A14 exists for. Every series, PG&E without its shutoffs
+    included, rejects normality of the logs and prefers both heavier-tailed
+    families by a wide margin. The logs are right-skewed, which no symmetric
+    tail model in A10 to A13 captures."""
+    for key, s in _a14()["tail_shape"].items():
+        assert s["shapiro_wilk_p"] < 1e-20, key
+        assert s["tail_family"]["best"] != "normal", key
+        aic = s["tail_family"]["aic"]
+        assert aic["normal"] - aic["laplace"] > 160, key
+        assert aic["normal"] - aic["student_t"] > 160, key
+        assert s["log_skewness"] > 1.0, key
+
+
+def test_a14_major_event_rates_exceed_even_the_laplace_model():
+    """FINDINGS says the standard's rule flags more days a year on these series
+    than a Laplace tail implies; that is a comparison with A12's 5.32."""
+    a = _a14()
+    assert a["laplace_med_days_per_year"] == pytest.approx(5.32, abs=0.01)
+    for key, s in a["tail_shape"].items():
+        assert s["med_days_per_year_at_2_5"] > a["laplace_med_days_per_year"], key
+
+
+def test_a14_map_runs_above_the_filing_and_more_on_ordinary_days():
+    f = _a14()["against_filing"]
+    assert f["year"] == 2022 and f["observed_days"] >= 350
+    assert 1.0 < f["map_over_filed_with"] < f["map_over_filed_without"]
+    # the filing includes the former Gulf Power, the map does not
+    assert f["filed_customers"] > f["map_customers_served"]
+
+
+def test_a14_lognormal_overstates_most_scored_utility_years():
+    a = _a14()
+    s = a["summary"]
+    assert s["n_utility_years"] == 3 and s["n_model_evaluable"] == 3
+    assert s["n_lognormal_overstates"] == 2
+    assert s["closest_model_counts"]["laplace"] == 2
+    # the one year the log-normal model gets about right, it is within 7%
+    near = [r for r in a["utility_years"] if r["lognormal_over_measured"] < 1.0]
+    assert len(near) == 1 and abs(1.0 - near[0]["lognormal_over_measured"]) < 0.07
+    lo, hi = s["measured_window_x_range"]
+    assert 1.0 < lo and hi < 2.0
+    # without shutoffs, PG&E's year joins the overstated ones
+    assert a["summary_excl_psps"]["n_lognormal_overstates"] == 1
+
+
+def test_a14_conclusions_survive_every_rule_it_varies():
+    """FALSIFICATION states the robustness in words; these are the numbers."""
+    a = _a14()
+    for name, r in a["robustness"].items():
+        assert r["normal_rejected_for_both"], name
+        assert r["n_lognormal_overstates"] > r["n_model_evaluable"] / 2, name
+        assert (r["closest_model_counts"]["laplace"]
+                > r["closest_model_counts"]["lognormal"]), name
+    loose = a["robustness"]["years_from_90_days"]
+    assert loose["n_utility_years"] == 6 and loose["n_model_evaluable"] == 5
+    assert loose["n_lognormal_overstates"] == 4
+    assert loose["closest_model_counts"]["laplace"] == 4
+
+
+def test_a14_provenance_separates_measured_from_modelled():
+    from blinkrate.shared import provenance as pv
+    f, b = "track8_falsification", "A14_real_daily_outages"
+    assert pv.kind_of(f, b) == "outage_map_data"
+    assert pv.kind_of(f, b, "measured_window_x") == "outage_map_data"
+    for field in ("lognormal_predicted_x", "laplace_predicted_x",
+                  "t_nu15_predicted_x", "lognormal_over_measured", "closest_model"):
+        assert pv.kind_of(f, b, field) == "model_implied", field
+    assert pv.kind_of(f, b, "filed_saidi_with") == "filed_data"
+
+
 # --- the daily tail tool, validated before any real data arrives -----------
 
 def _synthetic(kind: str, seed: int = 42):

@@ -311,6 +311,44 @@ def claims() -> list[tuple[str, float, float]]:
     add(f"median\n{a12['implied_pareto_alpha']['median']:.2f} and interquartile range",
         a12["implied_pareto_alpha"]["median"], 0.01)
 
+    # --- A14: the assumption against two utilities' daily outage maps --------
+    a14 = t8["A14_real_daily_outages"]
+    sh = a14["tail_shape"]
+    add(f"{sh['pge']['med_days_per_year_at_2_5']:.1f} for PG&E and",
+        sh["pge"]["med_days_per_year_at_2_5"], 0.05)
+    add(f"{sh['fpl']['med_days_per_year_at_2_5']:.1f} for FPL, against",
+        sh["fpl"]["med_days_per_year_at_2_5"], 0.05)
+    lo14, hi14 = a14["summary"]["measured_window_x_range"]
+    add(f"**{lo14:.2f}x to {hi14:.2f}x**", lo14, 0.005)
+    yr14 = {(r["series"], r["year"]): r for r in a14["utility_years"]}
+    add(f"by {yr14[('fpl', 2021)]['lognormal_over_measured']:.2f}x and "
+        f"{yr14[('fpl', 2022)]['lognormal_over_measured']:.0f}x",
+        yr14[("fpl", 2021)]["lognormal_over_measured"], 0.005)
+    f14 = a14["against_filing"]
+    add(f"**{f14['map_over_filed_with']:.2f}x** the filing with major events",
+        f14["map_over_filed_with"], 0.005)
+    add(f"**{f14['map_over_filed_without']:.2f}x** without",
+        f14["map_over_filed_without"], 0.005)
+    # FALSIFICATION.md's two A14 tables, row by row
+    for key, name in (("pge", "PG&E"), ("pge_excl_psps", "PG&E without shutoffs"),
+                      ("fpl", "FPL")):
+        s14 = sh[key]
+        fam = s14["tail_family"]
+        best = {"student_t": f"Student-t, {fam['student_t_df']:g} df",
+                "laplace": "Laplace", "normal": "normal"}[fam["best"]]
+        add(f"| {name} | {s14['n_days']} | {s14['log_skewness']:+.2f} | "
+            f"{s14['log_excess_kurtosis']:+.2f} | {s14['shapiro_wilk_p']:.1e} | "
+            f"{best} ({s14['aic_normal_minus_best']:.0f}) | "
+            f"{s14['med_days_per_year_at_2_5']:.1f} |", s14["n_days"], 0)
+    for r in a14["utility_years"] + a14["utility_years_excl_psps"]:
+        base = {"pge": "PG&E", "fpl": "FPL", "pge_excl_psps": "PG&E"}[r["series"]]
+        label = f"{base} {r['year']}" + (
+            ", no shutoffs" if r["series"] == "pge_excl_psps" else "")
+        add(f"| {label} | {r['observed_days']} | {r['med_days_at_2_5']} | "
+            f"{r['retained_share_at_2_5']:.2f} | {r['measured_window_x']:.2f}x | "
+            f"{r['lognormal_predicted_x']:.2f}x | {r['t_nu15_predicted_x']:.2f}x | "
+            f"{r['laplace_predicted_x']:.2f}x |", r["year"], 0)
+
     zb = t3["zero_exclusion_benchmark"]
     ie = zb["by_standard_and_size"]["IEEE"]
     add(f"about **{100 * zb['benchmarks']['nominal_2_27_per_year']:.1f}%** of the time",
@@ -380,6 +418,9 @@ REQUIRED_HEDGES = [
     ("not diagnostic",
      "a wide log-normal gives a Hill index inside the measured Pareto range, so "
      "an in-range Hill index must never be presented as evidence of a Pareto tail"),
+    ("outage-map estimates",
+     "A14's daily series are outage-map estimates of customers out, not the SAIDI "
+     "either utility reports; the qualifier must stay wherever they are used"),
     ("rests on two analyst choices",
      "A11 found the headline comparison also depends on the threshold window, "
      "holding only at about +/-0.75 or wider even under log-normal tails; the "

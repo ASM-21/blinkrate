@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import subprocess
 import sys
 import tempfile
@@ -53,20 +54,36 @@ def claim_values(results_dir: Path) -> list[tuple[str, float, float]]:
     return guard.claims()
 
 
+_NUMBER = re.compile(r"-?\d[\d,]*\.?\d*")
+
+
+def _rest(text: str) -> str:
+    """The claim with its first number masked: what the guard matches exactly."""
+    return _NUMBER.sub("#", text, count=1)
+
+
 def compare(base: list, runs: list[list]) -> list[dict]:
-    """Every claim whose value differs in any run, with its range and tolerance."""
+    """Every claim that changes in any run, with its range and tolerance.
+
+    The guard checks a claim's first number against a tolerance and every other
+    number in it exactly. So a claim moves if its first number moves, and it
+    breaks the guard either way when any other number in it changes, which is
+    how table rows that lead with a year or a count move.
+    """
     rows = []
     for run in runs:
         if len(run) != len(base):
             raise SystemExit("claim lists differ in length; cannot align them")
     for i, (text, v0, tol) in enumerate(base):
         vals = [run[i][1] for run in runs]
-        if all(v == v0 for v in vals):
+        rest_changed = any(_rest(run[i][0]) != _rest(text) for run in runs)
+        if all(v == v0 for v in vals) and not rest_changed:
             continue
         dev = max(abs(v - v0) for v in vals)
         rows.append({"claim": text, "committed": v0, "min": min(vals),
                      "max": max(vals), "max_rel": dev / abs(v0) if v0 else float("inf"),
-                     "tolerance": tol, "exceeds_tolerance": dev > tol})
+                     "tolerance": tol, "other_numbers_change": rest_changed,
+                     "exceeds_tolerance": dev > tol or rest_changed})
     return rows
 
 
@@ -96,6 +113,8 @@ def main() -> int:
           f"{'max move':>9s} {'guard tol':>9s}")
     for r in rows:
         flag = "  beyond tolerance" if r["exceeds_tolerance"] else ""
+        if r["other_numbers_change"]:
+            flag += " (other numbers in it change)"
         print(f"{r['claim'][:40]:40s} {r['committed']:10.4g} {r['min']:10.4g} "
               f"{r['max']:10.4g} {r['max_rel']:9.2%} {r['tolerance']:9.3g}{flag}")
     return 0

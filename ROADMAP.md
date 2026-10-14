@@ -4,13 +4,21 @@ Ordered by how much each item would change a conclusion, not by effort.
 
 ## Would settle an open falsification result
 
-**Daily SAIDI series from any utility.** The model-implied results rest on
-log-normal daily outages, and the literature is split on whether that holds.
-`tools/daily_tail_test.py` now runs the test on any daily series, including
-EAGLE-I county files directly; what is missing is the data, which is too large
-to vendor and unreachable from the build environment. Note that this would no
-longer revive the withdrawn comparison on its own: A13 found it fails on every
-evidence-grounded window even under log-normal tails.
+**Daily SAIDI for more utilities, and the reported series.** Partly done.
+Attack A14 tests the log-normal assumption on PG&E's and FPL's outage maps,
+archived by git scraping, and it fails for both; on them the log-normal model
+also overstates the threshold's measured effect in two of three utility-years.
+What is missing is breadth and the reported series: two large utilities in
+extreme-weather states, measured as outage-map estimates. Three routes, cheapest
+first. Other git-scraping archives of outage maps may exist for other
+utilities, and `tools/build_outage_snapshots.py` takes a new one in a few lines.
+EAGLE-I's county record covers the country at 15-minute resolution;
+`tools/daily_tail_test.py` reads it directly, but it is too large to vendor and
+unreachable from the build environment. And daily SAIDI as utilities record it
+for the standard itself, which surfaces in some state reliability proceedings,
+would test the reported series rather than an estimate of it. None of this would revive the withdrawn
+comparison: A13 found it fails on every evidence-grounded window even under
+log-normal tails.
 
 **A storm severity index keyed to service territories.** Track 2 cannot separate
 weather severity from classification, which is the question it exists to answer.
@@ -24,7 +32,7 @@ entirely. PUDL distributes processed Form 1 via Zenodo.
 
 **Monte Carlo error on model-implied figures.** The calibration surface is a
 seeded simulation, so model-implied figures reproduce bit for bit without being
-exact. Across five other seeds, 14 of the 105 guarded figures move by up to
+exact. Across five other seeds, 19 of the 118 guarded figures change, by up to
 7.7%: the 7.66x threshold range spans 7.69x to 7.75x and the 14.32x combined
 space 14.22x to 14.82x. No conclusion changes, but several figures are quoted
 more finely than their Monte Carlo error allows, and the leave-one-state-out
